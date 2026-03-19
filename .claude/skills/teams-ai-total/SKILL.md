@@ -1,20 +1,20 @@
 ---
 name: teams-ai-total
-description: 產生 Teams AI 日報總覽 index.html。當用戶說「產生索引」、「列出日報」、「generate index」、「teams-ai-total」時觸發。讀取 ./dailyReport/ 下所有 daily_report_*.html 檔案，生成 index.html 列出所有日報並提供快速連結。
+description: 產生 Teams AI 日報總覽 index.html。當用戶說「產生索引」、「列出日報」、「generate index」、「teams-ai-total」時觸發。讀取 ./docs/ 下所有 daily_report_*.html 檔案，生成 index.html 列出所有日報並提供快速連結。
 ---
 
 # Teams AI 日報總覽產生器
 
-你的目標是掃描 `./dailyReport/` 目錄，列出所有 `daily_report_*.html` 檔案，生成一個精美的 `./dailyReport/index.html` 總覽頁面。
+你的目標是掃描 `./docs/` 目錄，列出所有 `daily_report_*.html` 檔案，生成一個精美的 `./docs/index.html` 總覽頁面。
 
 ## 步驟
 
 ### 1. 掃描日報檔案
 
-使用 Bash 列出 `./dailyReport/` 下所有符合 `daily_report_*.html` 模式的檔案：
+使用 Bash 列出 `./docs/` 下所有符合 `daily_report_*.html` 模式的檔案：
 
 ```bash
-ls ./dailyReport/daily_report_*.html 2>/dev/null | sort -r
+ls ./docs/daily_report_*.html 2>/dev/null | sort -r
 ```
 
 取得檔名列表後，從每個檔名提取日期（格式 `YYYY-MM-DD`）：
@@ -31,9 +31,9 @@ ls ./dailyReport/daily_report_*.html 2>/dev/null | sort -r
 ```bash
 node -e "
 const fs = require('fs');
-const files = fs.readdirSync('./dailyReport').filter(f => f.match(/^daily_report_\d{4}-\d{2}-\d{2}\.html$/)).sort().reverse();
+const files = fs.readdirSync('./docs').filter(f => f.match(/^daily_report_\d{4}-\d{2}-\d{2}\.html$/)).sort().reverse();
 const result = files.map(f => {
-  const html = fs.readFileSync('./dailyReport/' + f, 'utf8');
+  const html = fs.readFileSync('./docs/' + f, 'utf8');
   const date = f.match(/daily_report_(\d{4}-\d{2}-\d{2})\.html/)[1];
   const cards = (html.match(/<div class=\"card\"/g) || []).length;
   const featured = (html.match(/<div class=\"featured-item\">/g) || []).length;
@@ -46,7 +46,7 @@ console.log(JSON.stringify(result, null, 2));
 
 ### 3. 生成 index.html
 
-將結果寫入 `./dailyReport/index.html`，使用下方模板。
+將結果寫入 `./docs/index.html`，使用下方模板。
 
 ## HTML 模板
 
@@ -169,12 +169,12 @@ console.log(JSON.stringify(result, null, 2));
 
 ## 輸出
 
-- **檔案路徑**：`./dailyReport/index.html`
+- **檔案路徑**：`./docs/index.html`
 - **排序**：最新日期在最上方（降序）
-- **完成後**：告知用戶並提示在瀏覽器開啟 `dailyReport/index.html`
+- **完成後**：告知用戶並提示在瀏覽器開啟 `docs/index.html`
 
 ## 注意事項
 
-- 若 `./dailyReport/` 不存在或沒有任何 `daily_report_*.html`，輸出空狀態提示頁
+- 若 `./docs/` 不存在或沒有任何 `daily_report_*.html`，輸出空狀態提示頁
 - 每次執行都完整重寫 `index.html`（不是增量更新）
 - 中文導讀數若為 0，仍正常顯示（`0 篇中文導讀`）

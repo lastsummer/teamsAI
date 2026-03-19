@@ -15,15 +15,15 @@ archive/AI news/messages_YYYY-MM-DDT....json   ← 原始訊息 JSON
     │
     │ Step 2：生成日報（Claude Code Skill）
     ▼
-dailyReport/daily_report_YYYY-MM-DD.html       ← 每日 AI 新聞日報
+docs/daily_report_YYYY-MM-DD.html       ← 每日 AI 新聞日報
     │
     │ Step 3：生成雙語導讀（Claude Code Skill）
     ▼
-dailyReport/YYYY-MM-DD/article_N.html          ← 英文必讀文章中文導讀
+docs/YYYY-MM-DD/article_N.html          ← 英文必讀文章中文導讀
     │
     │ Step 4：生成總覽索引（Claude Code Skill）
     ▼
-dailyReport/index.html                         ← 所有日報的入口頁
+docs/index.html                         ← 所有日報的入口頁
 ```
 
 ---
@@ -46,7 +46,7 @@ ai news/
 │   └── AI news/
 │       └── messages_YYYY-MM-DDT....json   # 原始訊息存檔
 │
-├── dailyReport/
+├── docs/
 │   ├── index.html                         # 日報總覽（Step 4 產出）
 │   ├── daily_report_YYYY-MM-DD.html       # 每日日報（Step 2 產出）
 │   └── YYYY-MM-DD/
@@ -167,7 +167,7 @@ archive/AI news/messages_2026-03-19T03-03-48-034Z.json
 ### 輸出
 
 ```
-dailyReport/daily_report_2026-03-19.html
+docs/daily_report_2026-03-19.html
 ```
 
 **內容包含：**
@@ -191,7 +191,7 @@ dailyReport/daily_report_2026-03-19.html
 
 ### 處理邏輯
 
-1. 讀取 `dailyReport/` 下最新的日報 HTML
+1. 讀取 `docs/` 下最新的日報 HTML
 2. 解析必讀文章清單（`featured-list` 區塊）
 3. 對每篇文章：
    - WebFetch 抓取原文
@@ -211,8 +211,8 @@ dailyReport/daily_report_2026-03-19.html
 ### 輸出
 
 ```
-dailyReport/2026-03-19/article_1.html
-dailyReport/2026-03-19/article_2.html
+docs/2026-03-19/article_1.html
+docs/2026-03-19/article_2.html
 ...
 ```
 
@@ -236,7 +236,7 @@ dailyReport/2026-03-19/article_2.html
 
 ### 處理邏輯
 
-1. 掃描 `dailyReport/` 下所有 `daily_report_*.html`
+1. 掃描 `docs/` 下所有 `daily_report_*.html`
 2. 從每份日報提取統計數字（訊息數、必讀數、已翻譯數）
 3. 依日期降序排列，最新在最上方
 4. 完整重寫 `index.html`
@@ -244,7 +244,7 @@ dailyReport/2026-03-19/article_2.html
 ### 輸出
 
 ```
-dailyReport/index.html
+docs/index.html
 ```
 
 ---
@@ -265,7 +265,7 @@ node index.js fetch
 /teams-ai-total
 
 # 5. 在瀏覽器開啟查看
-open dailyReport/index.html
+open docs/index.html
 ```
 
 ### 補抓歷史資料
