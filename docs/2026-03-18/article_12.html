@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>從 1 到 3 個平行 Claude Code Agents - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.5rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+  .tip {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #48bb78;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    color: #9ae6b4;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-18.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>從 1 到 3 個平行 Claude Code Agents：突破 16% 使用率的方法</h1>
+    <div class="article-meta">原文來源：<a href="https://dev.to/0xandrewshu/from-1-to-3-parallel-claude-code-agents-how-i-broke-past-16-utilization-mee" target="_blank">dev.to</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+    <h2>核心摘要</html>
+    <p>作者在 Claude Code Max 20x 方案（$200/月）上只達到 16% 使用率，透過逐步擴展至 3 個平行 agents<span class="zh">（並行代理）</span>，最終突破 45%+ 使用率並頻繁觸及每週速率限制。文章的核心論點是：先讓第一個 agent 真正忙起來，再考慮增加更多。</p>
+
+    <h2>關鍵技術：Git Worktrees</h2>
+    <p>多個 agents 在同一個 repository<span class="zh">（代碼倉庫）</span>工作會產生 merge conflicts<span class="zh">（合併衝突）</span>和資源競爭。解決方案是 Git worktrees<span class="zh">（Git 工作樹）</span>——為同一個 repository 建立多個獨立的工作目錄，各自連結到不同的 branch<span class="zh">（分支）</span>，共享 git history<span class="zh">（提交歷史）</span>。</p>
+
+    <h2>實作步驟</h2>
+    <ul>
+      <li><strong>第一步：確認 agent 真的很忙。</strong>若 agent 在等待你的回應或頻繁被中斷，優先解決這些問題，而非增加 agent 數量</li>
+      <li><strong>第二步：任務隔離。</strong>前後端分離、基礎設施 vs 應用代碼分離、或 feature pipeline<span class="zh">（功能流水線）</span>等方式建立真正的工作邊界</li>
+      <li><strong>第三步：基礎設施並行化。</strong>各 agent 需要獨立的 database<span class="zh">（資料庫）</span>、不同的 port<span class="zh">（連接埠）</span>和環境配置</li>
+      <li><strong>第四步：Claude Skills 自動化。</strong>作者開發了 Skills 腳本自動完成 worktree 建立、port 分配和資料庫配置，已在 GitHub 開源</li>
+    </ul>
+
+    <div class="tip">💡 核心建議：「不要從工具開始。先讓第一個 agent 完全忙碌，然後再為第二個找一個隔離的任務。」</div>
+
+    <h2>對程式設計師的意義</h2>
+    <p>Claude Code Max 方案的使用率低落是普遍問題。Git worktrees 是解決 parallel agent<span class="zh">（並行代理）</span>衝突最乾淨的方案，且不需要複雜的基礎設施改變。這個模式適用於任何需要 multi-agent<span class="zh">（多代理）</span>開發的團隊，特別是在大型 codebase<span class="zh">（代碼庫）</span>重構或多功能同步開發時。</p>
+  </div>
+</body>
+</html>

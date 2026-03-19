@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OWASP MCP 前十大漏洞 - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body h3 {
+    color: #a0aec0;
+    margin: 1rem 0 0.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.6rem; }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+  .warning {
+    background: #1a1d27;
+    border: 1px solid #744210;
+    border-left: 3px solid #d69e2e;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+    color: #d69e2e;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-18.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>OWASP MCP 前十大漏洞：為何您的 AI Agents 容易受到攻擊</h1>
+    <div class="article-meta">原文來源：<a href="https://dev.to/rfounds/the-owasp-mcp-top-10-why-your-ai-agents-are-vulnerable-431h" target="_blank">dev.to</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+    <h2>核心摘要</h2>
+    <p>OWASP Foundation<span class="zh">（開放網路應用安全專案基金會）</span>發布了 MCP Top 10 安全漏洞框架，涵蓋 Model Context Protocol<span class="zh">（模型上下文協議）</span>部署中最常見的十類安全風險。作者同時開發了 Ferrok（MCP 安全掃描器）以協助自動偵測這些漏洞。</p>
+
+    <h2>十大漏洞速覽</h2>
+    <ul>
+      <li><strong>MCP-01 Tool Poisoning<span class="zh">（工具投毒）</span>：</strong>攻擊者在 tool descriptions<span class="zh">（工具描述）</span>中注入惡意指令，操縱 AI 執行非預期動作（例如：讀取 ~/.ssh/id_rsa）</li>
+      <li><strong>MCP-02 Excessive Permissions<span class="zh">（過度權限）</span>：</strong>工具缺乏 least-privilege constraints<span class="zh">（最小權限限制）</span>，授予過寬的檔案系統或網路存取</li>
+      <li><strong>MCP-03 Schema Misuse<span class="zh">（Schema 誤用）</span>：</strong>弱型別輸入驗證，類似 SQL injection<span class="zh">（SQL 注入）</span>的注入漏洞</li>
+      <li><strong>MCP-04 Transport Security<span class="zh">（傳輸安全）</span>：</strong>未加密連線、設定中的 hardcoded credentials<span class="zh">（硬編碼憑證）</span></li>
+      <li><strong>MCP-05 Insufficient Access Controls<span class="zh">（存取控制不足）</span>：</strong>缺乏認證、rate limiting<span class="zh">（速率限制）</span>或授權檢查</li>
+      <li><strong>MCP-06 Data Leakage<span class="zh">（資料洩漏）</span>：</strong>工具回應暴露內部路徑、資料庫結構或 stack traces<span class="zh">（堆疊追蹤）</span></li>
+      <li><strong>MCP-07 Insecure Data Handling<span class="zh">（不安全資料處理）</span>：</strong>PII<span class="zh">（個人識別資訊）</span>或憑證出現在 chat logs<span class="zh">（對話紀錄）</span>或訓練資料中</li>
+      <li><strong>MCP-08 Lack of Logging<span class="zh">（缺乏日誌）</span>：</strong>大多數伺服器沒有 audit trails<span class="zh">（稽核軌跡）</span></li>
+      <li><strong>MCP-09 Third-Party Server Risks<span class="zh">（第三方伺服器風險）</span>：</strong>透過 <code>npx -y</code> 安裝未審查套件的 supply chain vulnerabilities<span class="zh">（供應鏈漏洞）</span></li>
+      <li><strong>MCP-10 Authorization Protocol Violations<span class="zh">（授權協議違規）</span>：</strong>OAuth 實作不當、token 儲存不安全</li>
+    </ul>
+
+    <h2>對程式設計師的意義</h2>
+    <p>MCP 普及速度遠超安全成熟度。現在就應審計 tool descriptions、限制 input schemas、強制 HTTPS、檢查第三方套件供應鏈，並為所有 MCP tool 呼叫建立 comprehensive logging<span class="zh">（完整日誌）</span>。凡是在生產環境部署 AI agent 的團隊，這份清單是必讀的安全基準。</p>
+  </div>
+</body>
+</html>

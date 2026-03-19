@@ -1,11 +1,21 @@
 ---
 name: teams-ai-total
-description: 產生 Teams AI 日報總覽 index.html。當用戶說「產生索引」、「列出日報」、「generate index」、「teams-ai-total」時觸發。讀取 ./docs/ 下所有 daily_report_*.html 檔案，生成 index.html 列出所有日報並提供快速連結。
+description: 產生 Teams AI 日報總覽 index.html。當用戶說「產生索引」、「列出日報」、「generate index」、「teams-ai-total」時觸發。可選擇性指定日期（如「產生到 2026-03-18 為止的索引」），讀取 ./docs/ 下的 daily_report_*.html 檔案，生成 index.html 列出所有（或截至指定日期的）日報並提供快速連結。
 ---
 
 # Teams AI 日報總覽產生器
 
-你的目標是掃描 `./docs/` 目錄，列出所有 `daily_report_*.html` 檔案，生成一個精美的 `./docs/index.html` 總覽頁面。
+你的目標是掃描 `./docs/` 目錄，列出 `daily_report_*.html` 檔案，生成一個精美的 `./docs/index.html` 總覽頁面。
+
+## 日期參數
+
+用戶可以在訊息中指定截止日期，支援以下格式：
+- `2026-03-18`（YYYY-MM-DD）
+- `03/18`、`3月18日` 等自然語言日期
+
+**若有指定日期**：只列出檔名日期 ≤ 指定日期的日報。
+
+**若未指定日期**：列出全部日報（預設行為）。
 
 ## 步驟
 
@@ -19,6 +29,7 @@ ls ./docs/daily_report_*.html 2>/dev/null | sort -r
 
 取得檔名列表後，從每個檔名提取日期（格式 `YYYY-MM-DD`）：
 - 檔名格式：`daily_report_2026-03-19.html` → 日期：`2026-03-19`
+- 若用戶指定了截止日期，過濾掉日期 > 截止日期的檔案
 
 ### 2. 讀取每份日報的摘要資訊
 
@@ -31,7 +42,11 @@ ls ./docs/daily_report_*.html 2>/dev/null | sort -r
 ```bash
 node -e "
 const fs = require('fs');
-const files = fs.readdirSync('./docs').filter(f => f.match(/^daily_report_\d{4}-\d{2}-\d{2}\.html$/)).sort().reverse();
+const cutoff = process.argv[1]; // 'YYYY-MM-DD' 或空字串
+let files = fs.readdirSync('./docs').filter(f => f.match(/^daily_report_\d{4}-\d{2}-\d{2}\.html$/)).sort().reverse();
+if (cutoff) {
+  files = files.filter(f => f.match(/daily_report_(\d{4}-\d{2}-\d{2})/)[1] <= cutoff);
+}
 const result = files.map(f => {
   const html = fs.readFileSync('./docs/' + f, 'utf8');
   const date = f.match(/daily_report_(\d{4}-\d{2}-\d{2})\.html/)[1];

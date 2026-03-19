@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CVE-2026-4270：AWS API MCP 檔案存取繞過漏洞 - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.5rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+  .alert {
+    background: #2d1515;
+    border: 1px solid #742a2a;
+    border-left: 3px solid #fc8181;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+    color: #fc8181;
+    font-size: 0.9rem;
+  }
+  .info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+  }
+  .info-table td {
+    padding: 0.5rem 0.8rem;
+    border: 1px solid #2d3748;
+    color: #cbd5e0;
+  }
+  .info-table td:first-child {
+    color: #718096;
+    width: 35%;
+    background: #1a1d27;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-18.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>[GHSA-2cpp-j2fc-qhp7] AWS API MCP 檔案存取限制繞過漏洞</h1>
+    <div class="article-meta">原文來源：<a href="https://github.com/advisories/GHSA-2cpp-j2fc-qhp7" target="_blank">github.com/advisories</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+    <div class="alert">⚠️ 安全警告：如果你正在使用 <code>awslabs.aws-api-mcp-server</code>，請立即升級至 1.3.9 或更新版本。</div>
+
+    <h2>漏洞概述</h2>
+    <p>AWS API MCP Server<span class="zh">（AWS API MCP 伺服器）</span>存在 file access restriction bypass<span class="zh">（檔案存取限制繞過）</span>漏洞，攻擊者可透過 alternate paths<span class="zh">（替代路徑）</span>繞過 "no-access" 和 "workdir" 模式的保護，暴露本機任意檔案內容給 MCP client applications<span class="zh">（MCP 客戶端應用程式）</span>。</p>
+
+    <h2>受影響資訊</h2>
+    <table class="info-table">
+      <tr><td>套件名稱</td><td><code>awslabs.aws-api-mcp-server</code> (pip)</td></tr>
+      <tr><td>受影響版本</td><td>≥ 0.2.14, &lt; 1.3.9</td></tr>
+      <tr><td>修補版本</td><td>1.3.9</td></tr>
+      <tr><td>CVE 編號</td><td>CVE-2026-4270</td></tr>
+      <tr><td>CVSS 分數</td><td>6.8（中等）</td></tr>
+      <tr><td>弱點類型</td><td>CWE-424 — 替代路徑保護不當</td></tr>
+    </table>
+
+    <h2>漏洞原理</h2>
+    <ul>
+      <li><strong>no-access 模式：</strong>設計上應完全阻止 AWS CLI<span class="zh">（AWS 命令列工具）</span>命令存取本機路徑，但可被繞過</li>
+      <li><strong>workdir 模式：</strong>設計上應將操作限制在指定目錄內，但攻擊者可透過 path traversal<span class="zh">（路徑遍歷）</span>等手段存取其他位置</li>
+      <li><strong>影響：</strong>High confidentiality impact<span class="zh">（高機密性影響）</span>，本機敏感檔案（如 SSH keys<span class="zh">（SSH 金鑰）</span>、credentials<span class="zh">（憑證）</span>）可能被洩露</li>
+    </ul>
+
+    <h2>對程式設計師的意義</h2>
+    <p>這個漏洞再次印證 MCP server 的安全邊界設計需要嚴格測試。如果你在 AI agent 工作流程中使用 AWS API MCP Server，攻擊者可能透過精心構造的工具呼叫讀取你機器上的任意檔案。立即執行 <code>pip install awslabs.aws-api-mcp-server==1.3.9</code> 升級，並審查你的 MCP server 是否都有做 input path sanitization<span class="zh">（輸入路徑淨化）</span>。</p>
+  </div>
+</body>
+</html>

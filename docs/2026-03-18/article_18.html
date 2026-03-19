@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>使用 MCP 和 GitHub Copilot 自動化收件匣分類 - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.5rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+  .category {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    margin-right: 0.5rem;
+  }
+  .cat-red { background: #742a2a; color: #fc8181; }
+  .cat-orange { background: #7b341e; color: #fbd38d; }
+  .cat-green { background: #1c4532; color: #9ae6b4; }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-18.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>從 150 封未讀到零壓力：使用 MCP 和 GitHub Copilot 自動化收件匣分類</h1>
+    <div class="article-meta">原文來源：<a href="https://devblogs.microsoft.com/all-things-azure/from-150-unread-to-zero-stress-automating-inbox-triage-with-mcp-and-github-copilot/" target="_blank">devblogs.microsoft.com</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+    <h2>核心摘要</h2>
+    <p>作者利用 MCP<span class="zh">（Model Context Protocol，模型上下文協議）</span>搭配 WorkIQ 將 GitHub Copilot CLI<span class="zh">（命令列介面）</span>連接至 Microsoft 365 資料，打造一套自動化郵件與 Teams 訊息分類系統，解決每天面對 150+ 封未讀郵件的焦慮問題。</p>
+
+    <h2>分類系統設計</h2>
+    <ul>
+      <li><span class="category cat-red">🔴 Action Required</span> 需要直接行動的請求</li>
+      <li><span class="category cat-orange">🟠 Review Needed</span> 需要決策或時效性資訊</li>
+      <li><span class="category cat-green">🟢 Informational</span> 僅供參考的 FYI 內容</li>
+    </ul>
+
+    <h2>解決的技術挑戰</h2>
+    <ul>
+      <li><strong>Timeout 問題：</strong>大時間範圍查詢導致失敗。解法：chunked queries<span class="zh">（分塊查詢）</span>，將多週掃描切分為 7 天區段，加入 graceful fallback<span class="zh">（優雅降級）</span>與重試機制</li>
+      <li><strong>重複項目問題：</strong>跨執行的重複訊息。解法：rolling JSONL index<span class="zh">（滾動 JSONL 索引）</span>搭配 semantic dedup<span class="zh">（語意去重）</span>，比 fuzzy string matching<span class="zh">（模糊字串比對）</span>更準確地識別同意不同詞的訊息</li>
+    </ul>
+
+    <h2>關鍵學習</h2>
+    <ul>
+      <li>Prompt engineering<span class="zh">（提示工程）</span>的精確性對分類準確率至關重要</li>
+      <li>resilience patterns<span class="zh">（韌性模式）</span>（fallback、chunking）在 MCP 整合中不可或缺</li>
+      <li>Plain markdown + JSONL 檔案是輕量有效的 state management<span class="zh">（狀態管理）</span>方案</li>
+    </ul>
+
+    <h2>對程式設計師的意義</h2>
+    <p>這個案例展示了 MCP 如何讓 AI assistant<span class="zh">（AI 助理）</span>突破對話框，直接操作 Microsoft 365 等企業系統。WorkIQ MCP 開源在 GitHub，可作為建構類似 productivity automation<span class="zh">（生產力自動化）</span>工具的起點，特別適合需要處理大量非同步溝通的工程師或 PM。</p>
+  </div>
+</body>
+</html>

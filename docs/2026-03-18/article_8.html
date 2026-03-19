@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>每個 MCP Agent 都需要獨立觀察者 - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.5rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+  .quote {
+    border-left: 3px solid #4a5568;
+    padding: 0.5rem 1rem;
+    margin: 1rem 0;
+    color: #a0aec0;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-18.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>為什麼每個 MCP Agent 都需要一個獨立的觀察者</h1>
+    <div class="article-meta">原文來源：<a href="https://dev.to/irparent/why-every-mcp-agent-needs-an-independent-observer-10fh" target="_blank">dev.to</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+    <h2>核心摘要</h2>
+    <p>文章提出一個關鍵問題：讓 AI agent<span class="zh">（AI 代理）</span>自己記錄自己的行為，從根本上就是不可信的。作者引用一句話：「如果 agent 控制日誌，那日誌就是虛構的。」解決方案是透過 MCP 協議建立獨立的 observability server<span class="zh">（可觀測性伺服器）</span>，作為平行進程而非嵌入代碼。</p>
+
+    <h2>關鍵要點</h2>
+    <ul>
+      <li><strong>Self-reporting problem<span class="zh">（自我回報問題）</span>：</strong>LLM<span class="zh">（大型語言模型）</span>會壓縮、摘要和捏造，自我記錄的 logs<span class="zh">（日誌）</span>會丟失關鍵細節（如失敗重試、資料來源混淆）</li>
+      <li><strong>分散式系統先例：</strong>Prometheus<span class="zh">（普羅米修斯，監控工具）</span>、load balancers<span class="zh">（負載平衡器）</span>都使用獨立探測，而非讓系統自我回報狀態</li>
+      <li><strong>MCP-native 架構：</strong>獨立的 observer MCP server<span class="zh">（觀察者 MCP 伺服器）</span>作為 peer process<span class="zh">（同層進程）</span>運行，agent 透過標準協議發現並使用它</li>
+      <li><strong>核心功能：</strong><code>log_trace</code>（記錄完整執行路徑含 token 成本）、<code>evaluate_output</code>（PII 偵測、注入模式檢查）、<code>get_traces</code>（查詢獨立記錄）</li>
+      <li><strong>合規需求：</strong>EU AI Act<span class="zh">（歐盟 AI 法案）</span>的 traceability<span class="zh">（可追溯性）</span>要求將於 2026 年 8 月生效</li>
+    </ul>
+
+    <h2>對程式設計師的意義</h2>
+    <p>目前 LangChain、Google、Anthropic、Microsoft 等主流框架均缺乏 protocol-native observability<span class="zh">（協議原生可觀測性）</span>。隨著 AI agent 開始處理高風險任務（財務、醫療、法律），獨立驗證機制將從「最佳實踐」變成監管要求。現在就建立這個架構模式，可為未來的 compliance<span class="zh">（合規性）</span>審計做好準備。</p>
+  </div>
+</body>
+</html>

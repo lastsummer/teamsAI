@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bifrost：AI Agent 最快 MCP 閘道 - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.5rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+  .highlight {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+    color: #9f7aea;
+    font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-18.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>適用於 AI 代理的最快 MCP 閘道：採用 Bifrost 的高吞吐量路由</h1>
+    <div class="article-meta">原文來源：<a href="https://dev.to/kuldeep_paul/fastest-mcp-gateway-for-ai-agents-high-throughput-routing-with-bifrost-2fjo" target="_blank">dev.to</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+    <h2>核心摘要</h2>
+    <p>Bifrost 是以 Go<span class="zh">（Go 程式語言）</span>建構的高效能 MCP gateway<span class="zh">（MCP 閘道）</span>，每個請求僅增加約 11 微秒的 overhead<span class="zh">（額外負擔）</span>，可支撐每秒數千個請求。它解決了多 MCP server 協調時的 context inflation<span class="zh">（上下文膨脹）</span>、延遲累積與安全風險等核心痛點。</p>
+
+    <h2>關鍵技術特性</h2>
+    <ul>
+      <li><strong>Go 原生編譯：</strong>消除直譯器執行 overhead，提供最低延遲</li>
+      <li><strong>Code Mode<span class="zh">（代碼模式）</span>：</strong>透過 meta-tools<span class="zh">（元工具）</span>（<code>listToolFiles</code>、<code>readToolFile</code>、<code>executeToolCode</code>）取代一次性暴露所有 tool definitions<span class="zh">（工具定義）</span>，可減少高達 50% 的 token usage<span class="zh">（token 使用量）</span></li>
+      <li><strong>Semantic caching<span class="zh">（語意快取）</span>：</strong>降低重複查詢的 token 消耗與回應時間</li>
+      <li><strong>Automatic failover<span class="zh">（自動容錯轉移）</span>：</strong>搭配 adaptive load balancing<span class="zh">（自適應負載平衡）</span>，支援 20+ 供應商路由</li>
+      <li><strong>安全治理：</strong>Virtual keys<span class="zh">（虛擬金鑰）</span>、MCP tool filtering<span class="zh">（工具過濾）</span>、audit logs<span class="zh">（稽核日誌）</span>、vault integration<span class="zh">（密鑰庫整合）</span></li>
+      <li><strong>可觀測性：</strong>Prometheus metrics<span class="zh">（Prometheus 指標）</span>和 OpenTelemetry tracing<span class="zh">（OpenTelemetry 追蹤）</span></li>
+    </ul>
+
+    <div class="highlight">⚡ 效能指標：多步驟工作流程執行速度快 30-40%，每個 agent 任務所需的模型呼叫次數減少 3-4 倍</div>
+
+    <h2>對程式設計師的意義</h2>
+    <p>如果你正在建構需要協調多個 MCP servers 的 AI agent 系統，Bifrost 提供了一個 drop-in replacement<span class="zh">（即插即用替換方案）</span>——只需更改 base URL 配置即可接入。開源、可在私有 VPC<span class="zh">（虛擬私有雲）</span>內部署，適合對安全性與效能有要求的企業級 AI 應用。</p>
+  </div>
+</body>
+</html>
