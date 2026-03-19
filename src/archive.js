@@ -25,13 +25,13 @@ function setLastFetchTime(channelId, time) {
   saveState(state);
 }
 
-function saveMessages(archiveDir, channelName, messages) {
+function saveMessages(archiveDir, channelName, messages, fileDate) {
   if (messages.length === 0) return;
 
   const dir = path.join(archiveDir, sanitizeName(channelName));
   fs.mkdirSync(dir, { recursive: true });
 
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const timestamp = (fileDate || new Date()).toISOString().replace(/[:.]/g, '-');
   const filename = `messages_${timestamp}.json`;
   const filepath = path.join(dir, filename);
 

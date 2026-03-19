@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teams AI 日報總覽</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.4rem;
+  }
+  .header .meta {
+    color: #718096;
+    font-size: 0.9rem;
+  }
+  .grid {
+    max-width: 700px;
+    margin: 0 auto;
+    display: grid;
+    gap: 1rem;
+  }
+  .card {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    transition: border-color 0.2s, transform 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .card:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+  }
+  .card-left { flex: 1; }
+  .card-date {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 0.4rem;
+  }
+  .card-stats {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .stat-badge {
+    font-size: 0.78rem;
+    color: #718096;
+  }
+  .stat-badge span {
+    color: #9f7aea;
+    font-weight: 600;
+  }
+  .card-arrow {
+    color: #4a5568;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .card:hover .card-arrow { color: #667eea; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <h1>Teams AI 日報總覽</h1>
+    <div class="meta">共 1 份日報</div>
+  </div>
+  <div class="grid">
+    <a class="card" href="daily_report_2026-03-19.html">
+      <div class="card-left">
+        <div class="card-date">2026年03月19日</div>
+        <div class="card-stats">
+          <span class="stat-badge">📰 <span>162</span> 則資訊</span>
+          <span class="stat-badge">⭐ <span>15</span> 篇必讀</span>
+          <span class="stat-badge">🌐 <span>7</span> 篇中文導讀</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+  </div>
+</body>
+</html>

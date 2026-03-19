@@ -3,7 +3,7 @@ const { getChannelMessages } = require('./graph');
 const { getLastFetchTime, setLastFetchTime, saveMessages } = require('./archive');
 const path = require('path');
 
-async function fetchAll(config) {
+async function fetchAll(config, options = {}) {
   console.log(`[${new Date().toISOString()}] 開始抓取 Teams 訊息...`);
 
   let accessToken;
@@ -19,25 +19,36 @@ async function fetchAll(config) {
   for (const channel of config.channels) {
     console.log(`\n頻道：${channel.name}`);
     try {
-      const lastFetch = getLastFetchTime(channel.channelId);
-      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
-      const lastFetchDate = lastFetch ? new Date(lastFetch) : null;
-      const since = (!lastFetchDate || lastFetchDate < twoDaysAgo)
-        ? oneDayAgo.toISOString()
-        : lastFetch;
+      let since;
+      if (options.since) {
+        since = options.since;
+      } else {
+        const lastFetch = getLastFetchTime(channel.channelId);
+        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+        const lastFetchDate = lastFetch ? new Date(lastFetch) : null;
+        since = (!lastFetchDate || lastFetchDate < twoDaysAgo)
+          ? oneDayAgo.toISOString()
+          : lastFetch;
+      }
       console.log(`  抓取自：${since}`);
+      if (options.until) console.log(`  抓取至：${options.until}`);
 
       const fetchStart = new Date().toISOString();
-      const messages = await getChannelMessages(
+      let messages = await getChannelMessages(
         accessToken,
         channel.teamId,
         channel.channelId,
         since
       );
 
-      saveMessages(archiveDir, channel.name, messages);
-      setLastFetchTime(channel.channelId, fetchStart);
+      if (options.until) {
+        const untilDate = new Date(options.until);
+        messages = messages.filter(m => new Date(m.createdDateTime) < untilDate);
+      }
+
+      saveMessages(archiveDir, channel.name, messages, options.fileDate);
+      if (!options.since) setLastFetchTime(channel.channelId, fetchStart);
 
       if (messages.length === 0) {
         console.log('  沒有新訊息');

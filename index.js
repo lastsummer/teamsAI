@@ -35,8 +35,17 @@ async function main() {
   }
 
   if (args[0] === 'fetch') {
-    // 立即執行一次
-    await fetchAll(config);
+    const daysAgo = parseInt(args[1]);
+    if (!isNaN(daysAgo) && daysAgo >= 2) {
+      // 抓取 N 天前到 N-1 天前的資訊，檔名使用 N-1 天前的時間
+      const since = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
+      const until = new Date(Date.now() - (daysAgo - 1) * 24 * 60 * 60 * 1000);
+      console.log(`抓取區間：${since.toISOString()} ~ ${until.toISOString()}`);
+      await fetchAll(config, { since: since.toISOString(), until: until.toISOString(), fileDate: until });
+    } else {
+      // 立即執行一次（正常模式）
+      await fetchAll(config);
+    }
     return;
   }
 
@@ -44,8 +53,9 @@ async function main() {
   const schedule = config.schedule || '0 * * * *';
   console.log(`排程已啟動，規則：${schedule}`);
   console.log('提示：');
-  console.log('  node index.js fetch           立即抓取一次');
-  console.log('  node index.js list-teams      列出所有 Teams');
+  console.log('  node index.js fetch              立即抓取一次（昨天至今）');
+  console.log('  node index.js fetch <N>          抓取 N 天前至 N-1 天前，檔名用 N-1 天前日期');
+  console.log('  node index.js list-teams         列出所有 Teams');
   console.log('  node index.js list-channels <teamId>  列出頻道\n');
 
   // 啟動時先執行一次
