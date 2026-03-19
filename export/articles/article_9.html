@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCP Server with .NET</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; line-height: 1.7; }
+    .hero { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 48px 24px; text-align: center; border-bottom: 1px solid #2d3748; }
+    .hero .badge { display: inline-block; background: rgba(159,122,234,0.15); color: #b794f4; border: 1px solid rgba(159,122,234,0.3); border-radius: 999px; padding: 4px 14px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; }
+    .hero h1 { font-size: clamp(20px, 4vw, 32px); font-weight: 700; color: #fff; max-width: 800px; margin: 0 auto 16px; }
+    .hero .meta { color: #718096; font-size: 14px; }
+    .hero .meta a { color: #b794f4; text-decoration: none; }
+    .container { max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+    .lang-toggle { display: flex; gap: 8px; margin-bottom: 32px; }
+    .lang-btn { padding: 6px 16px; border-radius: 6px; border: 1px solid #2d3748; background: transparent; color: #a0aec0; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+    .lang-btn.active { background: #553c9a; border-color: #553c9a; color: #fff; }
+    .section { margin-bottom: 40px; }
+    .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #b794f4; font-weight: 600; margin-bottom: 12px; }
+    p { color: #a0aec0; margin-bottom: 12px; font-size: 15px; }
+    .code-block { background: #1a202c; border: 1px solid #2d3748; border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; font-family: 'Fira Code', 'Courier New', monospace; font-size: 13px; color: #68d391; overflow-x: auto; }
+    .code-block .comment { color: #4a5568; }
+    .code-block .attr { color: #f6ad55; }
+    .code-block .kw { color: #63b3ed; }
+    .code-block .str { color: #68d391; }
+    .card { background: #1a202c; border: 1px solid #2d3748; border-left: 3px solid #b794f4; border-radius: 8px; padding: 16px 20px; margin-bottom: 12px; }
+    .card h3 { font-size: 15px; color: #e2e8f0; margin-bottom: 8px; }
+    .card p { font-size: 14px; color: #718096; margin: 0; }
+    code { background: #2d3748; color: #68d391; padding: 2px 6px; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 13px; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; color: #b794f4; text-decoration: none; font-size: 14px; margin-bottom: 24px; }
+    .lang-section { display: none; }
+    .lang-section.active { display: block; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .tag { background: rgba(159,122,234,0.1); color: #b794f4; border: 1px solid rgba(159,122,234,0.2); padding: 3px 10px; border-radius: 999px; font-size: 11px; }
+    ul { margin: 8px 0 12px 20px; }
+    li { color: #a0aec0; font-size: 14px; margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="badge">MCP · .NET · 後端開發</div>
+    <h1>MCP Server with .NET<br><span style="font-size:0.65em;color:#a0aec0">使用 .NET SDK 建立 MCP 伺服器</span></h1>
+    <div class="meta">
+      2026-03-13 &nbsp;|&nbsp; Antonio Di Motta &nbsp;|&nbsp; <a href="https://dev.to/antdimot/mcp-server-with-net-5cih" target="_blank">dev.to &rarr;</a>
+      <div class="tags" style="justify-content:center;margin-top:10px">
+        <span class="tag">#MCP</span><span class="tag">#dotNET</span><span class="tag">#AIAgent</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <a class="back-link" href="../daily_report.html">&#8592; 返回日報</a>
+
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="showLang('zh')">繁體中文</button>
+      <button class="lang-btn" onclick="showLang('en')">English</button>
+    </div>
+
+    <!-- Chinese Version -->
+    <div id="lang-zh" class="lang-section active">
+      <div class="section">
+        <div class="section-label">摘要</div>
+        <p>作者 Antonio Di Motta 使用官方 .NET SDK 1.0 建立符合 MCP 規範的伺服器，後端使用 PostgreSQL，示範如何讓 LLM 以自然語言查詢企業資料。</p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">技術架構</div>
+
+        <div class="card">
+          <h3>[McpServerTool] — 工具定義</h3>
+          <p>使用自訂屬性標記函式，讓 LLM 能識別並呼叫。例如 <code>GetCustomer</code> 工具可以非同步查詢資料庫，依姓名篩選客戶資料。</p>
+        </div>
+
+        <div class="card">
+          <h3>[McpServerPrompt] — 提示模板</h3>
+          <p>使用 <code>McpServerPrompt</code> 屬性建立複雜的上下文回應模板，如 <code>SuggestProductByCustomer</code>，包含 system、user 與 assistant 角色的結構化訊息。</p>
+        </div>
+
+        <div class="card">
+          <h3>自然語言查詢範例</h3>
+          <p>支援如下的自然語言請求：</p>
+          <ul>
+            <li>「給我客戶清單」</li>
+            <li>「告訴我最昂貴的訂單」</li>
+            <li>「USB-C Hub 總共訂購了幾個？」</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">程式碼片段概覽</div>
+        <div class="code-block">
+<span class="comment">// Tool 定義範例</span>
+[<span class="attr">McpServerTool</span>, <span class="attr">Description</span>(<span class="str">"Get customer by name"</span>)]
+<span class="kw">public static async</span> Task&lt;Customer&gt; GetCustomer(
+    <span class="attr">[Description</span>(<span class="str">"Customer full name"</span>)] string name,
+    AppDbContext db)
+{
+    <span class="kw">return await</span> db.Customers
+        .FirstOrDefaultAsync(c => c.FullName == name);
+}
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">重點結語</div>
+        <p>MCP 已支援 .NET 官方 SDK 並達到生產就緒狀態，讓 .NET 開發者能夠輕鬆將後端系統暴露給 AI 助手。完整範例已在 GitHub 上開源。</p>
+      </div>
+    </div>
+
+    <!-- English Version -->
+    <div id="lang-en" class="lang-section">
+      <div class="section">
+        <div class="section-label">Summary</div>
+        <p>Antonio Di Motta builds an MCP-compliant server using the official .NET SDK 1.0 with a PostgreSQL backend, demonstrating how LLMs can query enterprise data using natural language.</p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Technical Architecture</div>
+
+        <div class="card">
+          <h3>[McpServerTool] — Tool Definitions</h3>
+          <p>Custom attributes mark functions that LLMs can recognize and execute. The <code>GetCustomer</code> tool demonstrates async database querying with name-based filtering.</p>
+        </div>
+
+        <div class="card">
+          <h3>[McpServerPrompt] — Prompt Templates</h3>
+          <p>Use <code>McpServerPrompt</code> attribute to create complex contextual response templates like <code>SuggestProductByCustomer</code>, with structured system, user, and assistant role messages.</p>
+        </div>
+
+        <div class="card">
+          <h3>Natural Language Query Examples</h3>
+          <p>The server responds to natural language queries such as:</p>
+          <ul>
+            <li>"Give me the customer list"</li>
+            <li>"Tell me the most expensive order"</li>
+            <li>"How many USB-C Hubs have been ordered?"</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Code Snippet Overview</div>
+        <div class="code-block">
+<span class="comment">// Tool definition example</span>
+[<span class="attr">McpServerTool</span>, <span class="attr">Description</span>(<span class="str">"Get customer by name"</span>)]
+<span class="kw">public static async</span> Task&lt;Customer&gt; GetCustomer(
+    [<span class="attr">Description</span>(<span class="str">"Customer full name"</span>)] string name,
+    AppDbContext db)
+{
+    <span class="kw">return await</span> db.Customers
+        .FirstOrDefaultAsync(c => c.FullName == name);
+}
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Key Takeaways</div>
+        <p>MCP is now production-ready with official .NET SDK support. The complete working example is available on GitHub as a reference implementation for .NET developers building AI-powered backends.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showLang(lang) {
+      document.querySelectorAll('.lang-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('lang-' + lang).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

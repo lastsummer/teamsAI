@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>使用 Claude Code 搭配 Ruby on Rails：實地筆記</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; line-height: 1.7; }
+    .hero { background: linear-gradient(135deg, #1a2a1a 0%, #162016 50%, #0f300f 100%); padding: 48px 24px; text-align: center; border-bottom: 1px solid #2d3748; }
+    .hero .badge { display: inline-block; background: rgba(72,187,120,0.15); color: #68d391; border: 1px solid rgba(72,187,120,0.3); border-radius: 999px; padding: 4px 14px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; }
+    .hero h1 { font-size: clamp(20px, 4vw, 32px); font-weight: 700; color: #fff; max-width: 800px; margin: 0 auto 16px; }
+    .hero .meta { color: #718096; font-size: 14px; }
+    .hero .meta a { color: #68d391; text-decoration: none; }
+    .hero .meta a:hover { text-decoration: underline; }
+    .container { max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+    .lang-toggle { display: flex; gap: 8px; margin-bottom: 32px; }
+    .lang-btn { padding: 6px 16px; border-radius: 6px; border: 1px solid #2d3748; background: transparent; color: #a0aec0; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+    .lang-btn.active { background: #276749; border-color: #276749; color: #fff; }
+    .section { margin-bottom: 40px; }
+    .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #68d391; font-weight: 600; margin-bottom: 12px; }
+    h2 { font-size: 20px; color: #e2e8f0; margin-bottom: 12px; font-weight: 600; }
+    p { color: #a0aec0; margin-bottom: 12px; font-size: 15px; }
+    .highlight-box { background: #1a202c; border: 1px solid #2d3748; border-left: 3px solid #68d391; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px; }
+    .highlight-box .stat { font-size: 36px; font-weight: 800; color: #68d391; }
+    .highlight-box .stat-label { font-size: 14px; color: #718096; margin-top: 4px; }
+    .card { background: #1a202c; border: 1px solid #2d3748; border-radius: 8px; padding: 16px 20px; margin-bottom: 12px; }
+    .card h3 { font-size: 15px; color: #e2e8f0; margin-bottom: 8px; }
+    .card p { font-size: 14px; color: #718096; margin: 0; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; color: #68d391; text-decoration: none; font-size: 14px; margin-bottom: 24px; }
+    .back-link:hover { color: #9ae6b4; }
+    .lang-section { display: none; }
+    .lang-section.active { display: block; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .tag { background: rgba(72,187,120,0.1); color: #68d391; border: 1px solid rgba(72,187,120,0.2); padding: 3px 10px; border-radius: 999px; font-size: 11px; }
+    ul { margin: 8px 0 12px 20px; }
+    li { color: #a0aec0; font-size: 14px; margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="badge">ClaudeCode · Rails · 實戰</div>
+    <h1>使用 Claude Code 搭配 Ruby on Rails：實地筆記<br><span style="font-size:0.65em;color:#a0aec0">Field Notes: Claude Code in a Rails Codebase</span></h1>
+    <div class="meta">
+      2026-03-12 &nbsp;|&nbsp; Robby Russell &nbsp;|&nbsp; <a href="https://robbyonrails.com/articles/2026/03/12/field-notes-claude-code-in-a-rails-codebase/" target="_blank">robbyonrails.com &rarr;</a>
+      <div class="tags" style="justify-content:center;margin-top:10px">
+        <span class="tag">#ClaudeCode</span><span class="tag">#RubyOnRails</span><span class="tag">#開發工具</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <a class="back-link" href="../daily_report.html">&#8592; 返回日報</a>
+
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="showLang('zh')">繁體中文</button>
+      <button class="lang-btn" onclick="showLang('en')">English</button>
+    </div>
+
+    <!-- Chinese Version -->
+    <div id="lang-zh" class="lang-section active">
+      <div class="section">
+        <div class="section-label">摘要</div>
+        <p>Planet Argon 團隊（由 Robby Russell 帶領）在真實 Rails 客戶專案中試用 Claude Code，非展示用途，而是長期維護的複雜既有程式庫，並分享實戰心得。</p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">核心發現</div>
+        <div class="highlight-box">
+          <div class="stat">45分 → 10分</div>
+          <div class="stat-label">除錯時間大幅縮短，生產力提升約 4 倍</div>
+        </div>
+        <p>這是在真實的 Rails 遺留程式庫中，而非全新專案，效果更令人信服。</p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">實戰建議</div>
+
+        <div class="card">
+          <h3>模型選型策略</h3>
+          <p>團隊分享何時應使用 Sonnet 與 Opus，以及在會話途中根據任務複雜度切換模型的時機與方法。</p>
+        </div>
+
+        <div class="card">
+          <h3>RSpec 與 Minitest 整合</h3>
+          <p>說明如何與 Rails 測試框架整合，以及如何結合錯誤監控系統的 payload 進行高效除錯。</p>
+        </div>
+
+        <div class="card">
+          <h3>CLAUDE.md 結構設計</h3>
+          <p>如何為專案建立有效的說明檔案，避免成為雜亂的知識轉儲，讓 Claude 更精準理解程式庫架構。</p>
+        </div>
+
+        <div class="card">
+          <h3>防止非預期修改</h3>
+          <p>分享防止 Claude Code 在程式庫中進行意外修改的策略，在授予 AI 足夠彈性的同時保持控制。</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">目標讀者</div>
+        <p>本文明確寫給「對炒作持懷疑態度，但好奇到足以做實驗的開發者」，並指出團隊中的早期採用者確實享有先機，但這個優勢「一旦你看到 AI 真正有幫助的地方，很快就會消失」。</p>
+      </div>
+    </div>
+
+    <!-- English Version -->
+    <div id="lang-en" class="lang-section">
+      <div class="section">
+        <div class="section-label">Summary</div>
+        <p>Planet Argon engineers used Claude Code on actual client Ruby on Rails projects — not demos or new apps, but established codebases with complex architectures — and documented their practical experiences.</p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Key Finding</div>
+        <div class="highlight-box">
+          <div class="stat">45min → 10min</div>
+          <div class="stat-label">Debugging sessions dramatically shortened — ~4x productivity improvement</div>
+        </div>
+        <p>This was achieved in real legacy Rails codebases, making the result more credible than greenfield demos.</p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Recommendations</div>
+
+        <div class="card">
+          <h3>Model Selection Strategy</h3>
+          <p>When to use Sonnet versus Opus, and how to switch models mid-session based on task complexity.</p>
+        </div>
+
+        <div class="card">
+          <h3>RSpec and Minitest Integration</h3>
+          <p>Integration approaches with Rails test frameworks, and using error monitoring payloads for efficient debugging workflows.</p>
+        </div>
+
+        <div class="card">
+          <h3>CLAUDE.md Structure</h3>
+          <p>How to structure project documentation files without creating disorganized knowledge dumps, so Claude better understands the codebase architecture.</p>
+        </div>
+
+        <div class="card">
+          <h3>Preventing Unintended Changes</h3>
+          <p>Strategies to prevent Claude Code from making unexpected changes to the codebase while still giving it enough flexibility to be useful.</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Target Audience</div>
+        <p>Written for "developers who are skeptical of the hype but curious enough to run an experiment." Early adopters on development teams gain an initial advantage that "closes quickly once you see where they actually help."</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showLang(lang) {
+      document.querySelectorAll('.lang-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('lang-' + lang).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

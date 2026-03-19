@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP Tool Design: Why Your AI Agent Is Failing - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117; color: #e2e8f0;
+    max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; line-height: 1.8;
+  }
+  .back-link { display: inline-block; margin-bottom: 1.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem; }
+  .back-link:hover { text-decoration: underline; }
+  .article-header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #2d3748; }
+  .article-header h1 { font-size: 1.5rem; font-weight: 700; color: #e2e8f0; line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-meta { font-size: 0.85rem; color: #4a5568; }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-body h2 { color: #e2e8f0; margin: 1.5rem 0 0.8rem; font-weight: 600; font-size: 1.15rem; }
+  .article-body h3 { color: #a0aec0; margin: 1.2rem 0 0.6rem; font-weight: 600; font-size: 1rem; }
+  .article-body p { margin-bottom: 1rem; color: #cbd5e0; }
+  .article-body ul { margin: 0.8rem 0 1rem 1.5rem; color: #cbd5e0; }
+  .article-body li { margin-bottom: 0.4rem; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice { background: #1a1d27; border: 1px solid #2d3748; border-left: 3px solid #9f7aea; border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #718096; }
+  .tip { background: #1a1d27; border: 1px solid #276749; border-left: 3px solid #48bb78; border-radius: 8px; padding: 0.8rem 1rem; margin: 1rem 0; font-size: 0.9rem; color: #9ae6b4; }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-19.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>MCP Tool Design: Why Your AI Agent Is Failing (And How to Fix It)</h1>
+    <div class="article-meta">原文來源：<a href="https://dev.to/aws-heroes/mcp-tool-design-why-your-ai-agent-is-failing-and-how-to-fix-it-40fc" target="_blank">https://dev.to/aws-heroes/mcp-tool-design-why-your-ai-agent-is-failing-and-how-to-fix-it-40fc</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+    <h2>核心摘要</h2>
+    <p>MCP 伺服器失敗不是協議的問題，而是工具設計<span class="zh">（tool design）</span>的問題。GitHub 和 Block 等團隊通過減少工具數量和採用以結果為導向的設計<span class="zh">（outcome-oriented design）</span>，獲得了可量化的改善。文章提出「能力三角框架<span class="zh">（Capability Triangle）</span>」，平衡三方：LLM（推理）、伺服器（運算）和領域專家（用戶上下文）。</p>
+
+    <h2>關鍵設計原則</h2>
+
+    <h3>1. 工具數量：少即是多</h3>
+    <ul>
+      <li>最佳 MCP 伺服器包含 <strong>5-15 個工具</strong>，超過 20 個工具後性能會崩潰</li>
+      <li>GitHub 將工具從 40 個削減至 13 個，基準測試<span class="zh">（benchmark）</span>顯著提升</li>
+      <li>超過 20 個工具會導致上下文窗口膨脹<span class="zh">（context window bloat）</span>和工具幻覺<span class="zh">（tool hallucination）</span></li>
+    </ul>
+
+    <h3>2. 以結果導向，而非 API 操作導向</h3>
+    <ul>
+      <li>以 API 端點映射工具會製造高成本的多步驟呼叫鏈</li>
+      <li>以結果導向的工具將業務邏輯封裝在伺服器端，降低 token<span class="zh">（令牌）</span>消耗、延遲和失敗點</li>
+      <li>帕累托法則<span class="zh">（Pareto principle）</span>適用：20% 的 API 能力服務 80% 的用戶需求</li>
+    </ul>
+
+    <h3>3. 工具描述品質決定成敗</h3>
+    <ul>
+      <li>97% 的品質問題來自工具描述不良</li>
+      <li>六要素描述（用途、指引、限制、參數、長度、範例）可提升任務完成率 5.85 個百分點</li>
+      <li>工具描述是 LLM 的主要決策介面；模糊描述導致選錯工具</li>
+    </ul>
+
+    <div class="tip">✅ 實作建議：使用 JSON Schema<span class="zh">（JSON 模式）</span>定義參數類型安全<span class="zh">（type safety）</span>，並在描述中提供至少一個具體使用範例。</div>
+
+    <h2>對程式設計師的意義</h2>
+    <p>這篇文章為建立 AI agent 整合的開發者提供了可直接執行的框架。能力三角框架<span class="zh">（Capability Triangle）</span>重新定義了以用戶需求而非 API 結構來設計工具。開發者可以立即應用這些基於證據的實踐：將工具限制在 5-15 個，按六要素撰寫描述，以結果而非操作來設計。這些改變對 Claude Code 技能設計同樣直接適用。</p>
+  </div>
+</body>
+</html>

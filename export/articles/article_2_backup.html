@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>8 個 Claude Code 設定在幾分鐘內自訂</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; line-height: 1.7; }
+    .hero { background: linear-gradient(135deg, #1a1f2e 0%, #16213e 50%, #0f3460 100%); padding: 48px 24px; text-align: center; border-bottom: 1px solid #2d3748; }
+    .hero .badge { display: inline-block; background: rgba(99,179,237,0.15); color: #63b3ed; border: 1px solid rgba(99,179,237,0.3); border-radius: 999px; padding: 4px 14px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; }
+    .hero h1 { font-size: clamp(20px, 4vw, 32px); font-weight: 700; color: #fff; max-width: 800px; margin: 0 auto 16px; }
+    .hero .meta { color: #718096; font-size: 14px; }
+    .hero .meta a { color: #63b3ed; text-decoration: none; }
+    .hero .meta a:hover { text-decoration: underline; }
+    .container { max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+    .lang-toggle { display: flex; gap: 8px; margin-bottom: 32px; }
+    .lang-btn { padding: 6px 16px; border-radius: 6px; border: 1px solid #2d3748; background: transparent; color: #a0aec0; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+    .lang-btn.active { background: #2b6cb0; border-color: #2b6cb0; color: #fff; }
+    .section { margin-bottom: 40px; }
+    .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #4299e1; font-weight: 600; margin-bottom: 12px; }
+    p { color: #a0aec0; margin-bottom: 12px; font-size: 15px; }
+    .tip-card { background: #1a202c; border: 1px solid #2d3748; border-left: 3px solid #4299e1; border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; }
+    .tip-card .tip-num { font-size: 11px; color: #4299e1; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+    .tip-card h3 { font-size: 16px; color: #e2e8f0; margin-bottom: 8px; }
+    .tip-card p { font-size: 14px; color: #718096; margin: 0; }
+    code { background: #2d3748; color: #68d391; padding: 2px 6px; border-radius: 4px; font-family: 'Fira Code', 'Courier New', monospace; font-size: 13px; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; color: #4299e1; text-decoration: none; font-size: 14px; margin-bottom: 24px; }
+    .back-link:hover { color: #63b3ed; }
+    .lang-section { display: none; }
+    .lang-section.active { display: block; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .tag { background: rgba(66,153,225,0.1); color: #63b3ed; border: 1px solid rgba(66,153,225,0.2); padding: 3px 10px; border-radius: 999px; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="badge">ClaudeCode · 開發工具</div>
+    <h1>8 個 Claude Code 設定在幾分鐘內自訂<br><span style="font-size:0.65em;color:#a0aec0">8 Claude Code Settings to Customize in Minutes</span></h1>
+    <div class="meta">
+      2026-03-13 &nbsp;|&nbsp; Vishwas Gopinath &nbsp;|&nbsp; <a href="https://www.builder.io/blog/claude-code-settings" target="_blank">builder.io &rarr;</a>
+      <div class="tags" style="justify-content:center;margin-top:10px">
+        <span class="tag">#ClaudeCode</span><span class="tag">#開發工具</span><span class="tag">#生產力</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <a class="back-link" href="../daily_report.html">&#8592; 返回日報</a>
+
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="showLang('zh')">繁體中文</button>
+      <button class="lang-btn" onclick="showLang('en')">English</button>
+    </div>
+
+    <!-- Chinese Version -->
+    <div id="lang-zh" class="lang-section active">
+      <div class="section">
+        <div class="section-label">摘要</div>
+        <p>Builder.io 的 Vishwas Gopinath 整理了 Claude Code CLI 工具的 8 項快速自訂設定，強調大多數調整只需幾分鐘即可完成，甚至可以直接請 Claude 自己完成設定。</p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">8 項核心自訂</div>
+
+        <div class="tip-card">
+          <div class="tip-num">設定 01</div>
+          <h3>建立 Shell 別名 (cc alias)</h3>
+          <p>在 <code>~/.zshrc</code> 或 <code>~/.bashrc</code> 中加入 <code>alias cc='claude --dangerously-skip-permissions'</code>，略過每次的確認提示。額外可加 <code>ccp</code>（計畫模式）與 <code>ccr</code>（恢復上次會話）別名。</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-num">設定 02</div>
+          <h3>Context Window 自動壓縮閾值</h3>
+          <p>預設在 95% 容量才觸發壓縮，建議調整至 60–75%，透過環境變數 <code>CLAUDE_AUTOCOMPACT_PCT_OVERRIDE</code> 設定，讓對話保持連貫。</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-num">設定 03</div>
+          <h3>個人 CLAUDE.md 全域設定</h3>
+          <p>在 <code>~/.claude/CLAUDE.md</code> 建立全域個人設定，跨所有會話保持偏好。建議保持在 50 行以內，以具體規則（如偏好 pnpm 而非 npm）取代模糊指示。</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-num">設定 04</div>
+          <h3>即時狀態列顯示</h3>
+          <p>在終端底部顯示即時資訊：當前目錄、git 分支狀態，以及以色彩編碼的 context 使用量（50% 以下綠色、50–80% 黃色、80% 以上紅色）。</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-num">設定 05</div>
+          <h3>編輯後自動格式化</h3>
+          <p>設定 PostToolUse hook，在每次檔案編輯後自動執行 Prettier，還可串接 ESLint 進行整合式程式碼品質維護。</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-num">設定 06</div>
+          <h3>自訂 Spinner 動詞</h3>
+          <p>透過設定替換預設的等待動畫文字，改為個人化詞彙，或在預設清單後附加自訂動詞。</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-num">設定 07</div>
+          <h3>完成時播放音效</h3>
+          <p>設定任務完成後自動播放通知音效，讓你在等待長時間任務時可以切換做其他事。</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-num">設定 08</div>
+          <h3>設定輸出風格</h3>
+          <p>自訂 Claude 回應的格式與風格，確保輸出符合你的開發偏好與閱讀習慣。</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">重點結語</div>
+        <p>文章強調 Claude Code 本身就能協助完成大多數設定——只需描述你想要的偏好，Claude 就會處理技術細節，大幅降低手動編輯設定檔的摩擦力。</p>
+      </div>
+    </div>
+
+    <!-- English Version -->
+    <div id="lang-en" class="lang-section">
+      <div class="section">
+        <div class="section-label">Summary</div>
+        <p>Vishwas Gopinath from Builder.io presents 8 practical customizations for Claude Code, Anthropic's CLI tool. Most adjustments require minimal setup time and can be implemented by simply asking Claude what you want.</p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">8 Key Customizations</div>
+
+        <div class="tip-card">
+          <div class="tip-num">Setting 01</div>
+          <h3>Shell Alias Setup</h3>
+          <p>Add <code>alias cc='claude --dangerously-skip-permissions'</code> to your shell config to skip permission prompts. Also add <code>ccp</code> for plan mode and <code>ccr</code> to resume sessions.</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-num">Setting 02</div>
+          <h3>Context Window Auto-Compaction</h3>
+          <p>Rather than waiting until 95% capacity, trigger compaction at 60-75% via the <code>CLAUDE_AUTOCOMPACT_PCT_OVERRIDE</code> environment variable to maintain conversation coherence.</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-num">Setting 03</div>
+          <h3>Personal CLAUDE.md File</h3>
+          <p>Create <code>~/.claude/CLAUDE.md</code> for persistent preferences across all sessions. Keep under 50 lines with specific rules (e.g. prefer pnpm over npm) rather than vague guidance.</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-num">Setting 04</div>
+          <h3>Live Status Line</h3>
+          <p>Display a terminal status line showing current directory, git branch, and color-coded context usage (green &lt;50%, yellow 50–80%, red &gt;80%).</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-num">Setting 05</div>
+          <h3>Automatic Code Formatting</h3>
+          <p>Configure PostToolUse hooks to auto-run Prettier after each file edit. Chain ESLint for integrated code quality maintenance.</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-num">Setting 06</div>
+          <h3>Custom Spinner Verbs</h3>
+          <p>Replace default spinner messages with personalized alternatives, or append custom verbs to the defaults list.</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-num">Setting 07</div>
+          <h3>Completion Sound</h3>
+          <p>Configure a sound notification when tasks complete, allowing you to multitask while waiting for long-running operations.</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-num">Setting 08</div>
+          <h3>Output Style</h3>
+          <p>Customize Claude's response format and style to match your development preferences and reading habits.</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Key Takeaway</div>
+        <p>Claude Code itself can configure most settings — just describe your preferences and Claude handles the technical setup, reducing friction compared to manual config file editing.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showLang(lang) {
+      document.querySelectorAll('.lang-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('lang-' + lang).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

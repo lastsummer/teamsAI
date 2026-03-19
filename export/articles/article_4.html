@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Using Claude Code with Ruby on Rails: Field Notes - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; line-height: 1.8; }
+  .back-link { display: inline-block; margin-bottom: 1.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem; }
+  .back-link:hover { text-decoration: underline; }
+  .article-header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #2d3748; }
+  .article-header h1 { font-size: 1.5rem; font-weight: 700; color: #e2e8f0; line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-meta { font-size: 0.85rem; color: #4a5568; }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h1, .article-body h2, .article-body h3 { color: #e2e8f0; margin: 1.5rem 0 0.8rem; font-weight: 600; }
+  .article-body h1 { font-size: 1.3rem; }
+  .article-body h2 { font-size: 1.15rem; }
+  .article-body h3 { font-size: 1rem; }
+  .article-body p { margin-bottom: 1rem; color: #cbd5e0; }
+  .article-body ul, .article-body ol { margin: 0.8rem 0 1rem 1.5rem; color: #cbd5e0; }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code { background: #2d3748; color: #f6ad55; font-family: 'Fira Code', monospace; font-size: 0.85em; padding: 0.1rem 0.4rem; border-radius: 4px; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice { background: #1a1d27; border: 1px solid #2d3748; border-left: 3px solid #9f7aea; border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #718096; }
+  .highlight { background: #1a1d27; border: 1px solid #2d3748; border-left: 3px solid #48bb78; border-radius: 8px; padding: 0.8rem 1rem; margin: 1rem 0; color: #9ae6b4; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>Using Claude Code with Ruby on Rails: Field Notes</h1>
+    <div class="article-meta">原文來源：<a href="https://robbyonrails.com/articles/2026/03/12/field-notes-claude-code-in-a-rails-codebase/" target="_blank">https://robbyonrails.com/articles/2026/03/12/field-notes-claude-code-in-a-rails-codebase/</a></div>
+  </div>
+  <div class="notice">以下為原文內容，英文術語後方附有中文對照（<span class="zh">紫色</span>）以輔助閱讀。</div>
+  <div class="article-body">
+    <p>Over the past few months, a few of us at Planet Argon have been experimenting with Claude Code on real client Ruby on Rails <span class="zh">（Ruby on Rails，一個流行的 Web 框架）</span> projects. Not demos or greenfield apps <span class="zh">（全新應用）</span>, but the kind of long-lived codebases <span class="zh">（長期維護的程式碼庫）</span> where a backtrace <span class="zh">（堆疊追蹤）</span> can eat forty-five minutes before you even understand the call chain <span class="zh">（呼叫鏈）</span>.</p>
+
+    <div class="highlight">
+      Key finding: Some debugging sessions that used to take ~45 minutes now wrap up closer to 10 minutes.
+      <span class="zh">（核心發現：原本需要約 45 分鐘的除錯工作，現在約 10 分鐘即可完成。）</span>
+    </div>
+
+    <p>The authors are not ready to make big claims. But they've developed enough of a feel for when to reach for it, which model to use, and how to keep it from making a mess of your codebase <span class="zh">（避免搞亂程式碼庫）</span> that it felt worth writing down.</p>
+
+    <h3>Key Topics Covered <span class="zh">（涵蓋的主要主題）</span></h3>
+    <ul>
+      <li><strong>Model selection <span class="zh">（模型選擇）</span></strong>: Sonnet vs Opus and when to switch mid-session <span class="zh">（何時在會話中途切換）</span></li>
+      <li><strong>RSpec and Minitest workflows <span class="zh">（測試框架工作流程）</span></strong></li>
+      <li><strong>Debugging with error monitoring payloads <span class="zh">（利用錯誤監控數據進行除錯）</span></strong></li>
+      <li><strong>How to structure <code>CLAUDE.md</code></strong> without turning it into a dumping ground <span class="zh">（如何組織設定檔而不讓它變成垃圾場）</span></li>
+    </ul>
+
+    <p>It's written for developers who are skeptical of the hype <span class="zh">（對炒作持懷疑態度的開發者）</span> but curious enough to run an experiment.</p>
+
+    <p>The engineers on your team who've already started experimenting with tools like this probably have a small head start <span class="zh">（已有小小的先發優勢）</span>. The gap closes quickly once you see where they actually help.</p>
+
+    <h3>Why This Matters <span class="zh">（為何重要）</span></h3>
+    <p>This is one of the first practical, real-world assessments of Claude Code in a production Rails codebase <span class="zh">（生產環境的 Rails 程式碼庫）</span>—not a toy project, but actual client work with legacy code <span class="zh">（遺留程式碼）</span> and real debugging challenges. The measured 4-5x speedup in debugging sessions represents significant productivity gains for backend developers.</p>
+  </div>
+</body>
+</html>

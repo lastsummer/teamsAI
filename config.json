@@ -1,0 +1,15 @@
+{
+  "azure": {
+    "clientId": "YOUR_CLIENT_ID",
+    "tenantId": "YOUR_TENANT_ID"
+  },
+  "channels": [
+    {
+      "name": "AI news",
+      "teamId": "6f470f0a-ee72-49cb-a010-6d6d94bdf9ae",
+      "channelId": "19:3f45ada9fec642a49baa30699ecb237c@thread.tacv2"
+    }
+  ],
+  "schedule": "0 * * * *",
+  "archiveDir": "./archive"
+}

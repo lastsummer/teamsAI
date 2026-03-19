@@ -1,0 +1,19 @@
+{
+  "name": "ai-news",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "fetch": "node index.js fetch",
+    "list-teams": "node index.js list-teams"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@azure/msal-node": "^5.0.6",
+    "axios": "^1.13.6",
+    "node-cron": "^4.2.1"
+  }
+}

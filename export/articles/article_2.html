@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Y Combinator 執行長用 Claude Code 在 7 天內完成 100 個 PR - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+  .notice a { color: #667eea; }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>Y Combinator 執行長用 Claude Code 在 7 天內完成 100 個 PR。以下是他的確切設置。</h1>
+    <div class="article-meta">來源：<a href="https://civillearning.medium.com/the-y-combinator-ceo-crushed-100-prs-in-7-days-with-claude-code-heres-his-exact-setup-42231b8dcf2b" target="_blank">AI on Medium</a> | March 13, 2026</div>
+  </div>
+  <div class="notice">📌 以下為核心摘要與關鍵要點整理，完整內容請閱讀<a href="https://civillearning.medium.com/the-y-combinator-ceo-crushed-100-prs-in-7-days-with-claude-code-heres-his-exact-setup-42231b8dcf2b" target="_blank">原文連結</a>（需 Medium 會員）</div>
+  <div class="article-body">
+
+<h2>🚀 核心概念 | Core Concept</h2>
+
+<p><strong>中文概述：</strong><br>
+Y Combinator 總裁兼 CEO Garry Tan 公開了他如何使用 Claude Code 在 7 天內完成 100 個 pull requests 的工作流程。他開源了一個名為 <code>gstack</code> 的系統，透過為 AI 編碼助手設定「專門模式」，讓 AI 在規劃、審查、交付和測試等不同階段扮演不同角色，大幅提升開發效率。</p>
+
+<p><strong>English Summary:</strong><br>
+Garry Tan, President and CEO of Y Combinator, has open-sourced his workflow for completing 100 pull requests in 7 days using Claude Code. He created a system called <code>gstack</code> that gives the AI coding assistant specialized modes, allowing it to play different roles during planning, reviewing, shipping, and testing phases, dramatically improving development efficiency.</p>
+
+<h2>🎯 gstack 系統亮點 | gstack System Highlights</h2>
+
+<ul>
+  <li><strong>專門化模式設計</strong> | Specialized mode design<br>
+  為不同工作階段設定明確的 AI "檔位" | Explicit AI "gears" for different work phases</li>
+  
+  <li><strong>避免通用助手問題</strong> | Avoiding generic assistant issues<br>
+  通用 AI 助手混合所有思維模式，導致平庸結果 | Generic AI assistants blend all thinking modes, leading to mediocre results</li>
+  
+  <li><strong>角色切換機制</strong> | Role-switching mechanism<br>
+  "現在像創辦人思考"、"現在像資深工程師思考" | "Think like a founder now", "Think like a staff engineer now"</li>
+  
+  <li><strong>開源免費</strong> | Open source & free<br>
+  Garry Tan 將整個系統開源供社群使用 | Garry Tan open-sourced the entire system for community use</li>
+</ul>
+
+<h2>💡 為什麼重要 | Why This Matters</h2>
+
+<p><strong>對開發者的啟示 | Insights for Developers：</strong></p>
+<ul>
+  <li>AI 編碼工具的效率關鍵在於<strong>如何使用</strong>，而非工具本身</li>
+  <li>The key to AI coding tool efficiency is <strong>how you use it</strong>, not the tool itself</li>
+  <li>明確的提示工程和工作流程設計能帶來數量級的生產力提升</li>
+  <li>Clear prompt engineering and workflow design can bring order-of-magnitude productivity gains</li>
+  <li>將複雜任務分解為專門化階段是有效利用 AI 的關鍵</li>
+  <li>Breaking complex tasks into specialized phases is key to effective AI utilization</li>
+</ul>
+
+  </div>
+</body>
+</html>

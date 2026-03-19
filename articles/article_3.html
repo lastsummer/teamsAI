@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mcp2cli - 節省 90% Token 的 CLI 工具 - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body h3 {
+    color: #e2e8f0;
+    margin: 1.2rem 0 0.6rem;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body pre {
+    background: #12141e;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+  .article-body pre code {
+    background: none;
+    padding: 0;
+    color: #e2e8f0;
+  }
+  .article-body a {
+    color: #667eea;
+    text-decoration: none;
+  }
+  .article-body a:hover { text-decoration: underline; }
+  .zh {
+    color: #9f7aea;
+    font-size: 0.9em;
+  }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>mcp2cli - 節省 90% Token 使用量的 CLI 工具</h1>
+    <div class="article-meta">原文來源：<a href="https://www.reddit.com/r/Python/comments/1rsaa6i/i_wrote_a_cli_that_easily_saves_over_90_of_token/" target="_blank">Reddit - r/Python</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+    <h2>核心摘要</h2>
+    <p>mcp2cli 是一款 runtime CLI generator<span class="zh">（運行時 CLI 生成器）</span>，解決 Large Language Models<span class="zh">（大型語言模型）</span> 連接 MCP servers<span class="zh">（MCP 伺服器）</span> 或 OpenAPI servers<span class="zh">（OpenAPI 伺服器）</span> 時的 token<span class="zh">（令牌）</span> 浪費問題。</p>
+    
+    <p>傳統方式在每次對話中都會將所有 tool schemas<span class="zh">（工具模式定義）</span> 注入到 system prompt<span class="zh">（系統提示詞）</span> 中，導致即使不使用這些工具，也會消耗大量 tokens。例如，6 個 MCP servers 包含 84 個 tools，在對話開始前就會燒掉約 15,500 個 tokens。</p>
+
+    <h2>核心功能</h2>
+    <ul>
+      <li><strong>運行時生成</strong>：無需 codegen<span class="zh">（程式碼生成）</span> 或 compilation<span class="zh">（編譯）</span>，直接從 MCP server URL 或 OpenAPI spec<span class="zh">（規格）</span> 生成完整功能的 CLI</li>
+      <li><strong>按需發現</strong>：LLM 可透過 <code>--list</code> 和 <code>--help</code> 指令發現並呼叫工具，而非在每次對話中注入完整 JSON schemas<span class="zh">（JSON 模式定義）</span></li>
+      <li><strong>大幅節省 tokens</strong>：將 15,500 tokens 的 system prompt 縮減為 67 tokens，並在需要時才載入工具細節，整體對話中可節省 92–99% 的 token 使用量</li>
+      <li><strong>支援雙協定</strong>：同時支援 MCP 和 OpenAPI 協定，使用相同介面</li>
+      <li><strong>OAuth 支援</strong>：內建 authorization code + PKCE<span class="zh">（帶證明密鑰的授權碼）</span> 和 client credentials flows<span class="zh">（客戶端憑證流程）</span>，自動處理 token caching<span class="zh">（令牌快取）</span> 和 refresh<span class="zh">（更新）</span></li>
+    </ul>
+
+    <h2>使用範例</h2>
+    
+    <h3>安裝</h3>
+    <pre><code>pip install mcp2cli</code></pre>
+    
+    <h3>連接 MCP Server</h3>
+    <pre><code># 列出可用工具
+mcp2cli --mcp https://mcp.example.com/sse --list
+
+# 呼叫搜尋工具
+mcp2cli --mcp https://mcp.example.com/sse search --query "test"</code></pre>
+    
+    <h3>連接 OpenAPI Spec</h3>
+    <pre><code># 列出 API 端點
+mcp2cli --spec https://petstore3.swagger.io/api/v3/openapi.json --list
+
+# 建立寵物資料
+mcp2cli --spec ./openapi.json create-pet --name "Fido" --tag "dog"</code></pre>
+
+    <h3>使用 stdio 的 MCP Server</h3>
+    <pre><code>mcp2cli --mcp-stdio "npx @modelcontextprotocol/server-filesystem /tmp" \
+  read-file --path /tmp/hello.txt</code></pre>
+
+    <h2>效能比較</h2>
+    
+    <h3>vs. Native MCP Tool Injection</h3>
+    <p>原生 MCP 在每次對話中注入完整 JSON schemas（每個工具約 121 tokens）。以 30 個工具進行 15 輪對話為例，光是 schemas 就消耗約 54,500 tokens。mcp2cli 只需約 2,300 tokens（減少 96%），因為只在 LLM 實際需要時才載入工具細節。</p>
+    
+    <h3>vs. Anthropic's Tool Search</h3>
+    <p>Tool Search 是 Anthropic 專屬的 API feature<span class="zh">（功能）</span>，透過 search index<span class="zh">（搜尋索引）</span> 延遲載入工具（約 500 tokens）。mcp2cli 則：</p>
+    <ul>
+      <li><strong>Provider-agnostic<span class="zh">（供應商無關）</span></strong>：適用於任何能執行 shell commands<span class="zh">（命令列指令）</span> 的 LLM</li>
+      <li><strong>更精簡</strong>：<code>--list</code> 每個工具約 16 tokens，遠低於 Tool Search 載入的 121 tokens</li>
+    </ul>
+    
+    <h3>vs. Codegen Tools (如 openapi-generator)</h3>
+    <p>傳統 codegen tools 會產生 static client code<span class="zh">（靜態客戶端程式碼）</span>，當 spec 改變時需要重新生成。mcp2cli 無需 codegen，在 runtime<span class="zh">（執行時期）</span> 直接讀取 spec。雖然它是 generic CLI<span class="zh">（通用命令列介面）</span> 而非 typed SDK<span class="zh">（型別化軟體開發套件）</span>，但這正是 LLM tool use<span class="zh">（工具使用）</span> 的最佳選擇。</p>
+
+    <h2>對程式設計師的意義</h2>
+    <p>如果你正在開發 LLM-powered agents<span class="zh">（大型語言模型驅動的代理）</span> 或需要連接外部 APIs 的工作流程，這個工具可以大幅降低 context window<span class="zh">（上下文視窗）</span> 被 tool schemas 塞滿的問題。</p>
+    
+    <p><strong>適用場景：</strong></p>
+    <ul>
+      <li>連接 Claude、GPT、Gemini 或 local models<span class="zh">（本地模型）</span> 到 MCP servers 或 REST APIs</li>
+      <li>需要快速為任何 OpenAPI 或 MCP endpoint<span class="zh">（端點）</span> 建立 CLI，無需撰寫 client code<span class="zh">（客戶端程式碼）</span></li>
+      <li>在 production environments<span class="zh">（正式環境）</span> 中建構成本敏感的 AI 工作流程</li>
+    </ul>
+
+    <p><strong>關鍵優勢：</strong></p>
+    <ul>
+      <li><strong>零等待時間</strong>：指向 URL 即可立即使用，spec 更新後下次呼叫自動生效</li>
+      <li><strong>Spec caching<span class="zh">（規格快取）</span></strong>：抓取的 specs 會在本地快取，並有可配置的 TTL<span class="zh">（存活時間）</span></li>
+      <li><strong>安全處理</strong>：支援 <code>env:</code> 和 <code>file:</code> 前綴處理敏感值，避免出現在 process listings<span class="zh">（程序清單）</span> 中</li>
+    </ul>
+
+    <p>GitHub 專案：<a href="https://github.com/knowsuchagency/mcp2cli" target="_blank">knowsuchagency/mcp2cli</a></p>
+  </div>
+</body>
+</html>

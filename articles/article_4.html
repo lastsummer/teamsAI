@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Copilot Instructions Files 完整指南 - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body h3 {
+    color: #e2e8f0;
+    margin: 1.2rem 0 0.6rem;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body pre {
+    background: #12141e;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+  .article-body pre code {
+    background: none;
+    padding: 0;
+    color: #e2e8f0;
+  }
+  .article-body a {
+    color: #667eea;
+    text-decoration: none;
+  }
+  .article-body a:hover { text-decoration: underline; }
+  .zh {
+    color: #9f7aea;
+    font-size: 0.9em;
+  }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>GitHub Copilot Instructions Files 完整指南</h1>
+    <div class="article-meta">原文來源：<a href="https://medium.com/@automagically/github-copilot-instructions-files-aefecc86754e?source=rss------ai-5" target="_blank">Medium - Max Yermakhanov</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+    <h2>核心摘要</h2>
+    <p>GitHub Copilot 提供多種 instructions files<span class="zh">（指令檔案）</span>，讓開發者能透過 Markdown 檔案客製化 AI 助理的行為和回應。這些檔案為提供 context<span class="zh">（上下文）</span> 和 instructions<span class="zh">（指令）</span> 建立了專門且可預測的位置，能夠針對不同範圍（組織、專案、資料夾）調整 Copilot 的回應方式。</p>
+
+    <h2>主要檔案類型</h2>
+
+    <h3>1. copilot-instructions.md</h3>
+    <p><code>copilot-instructions.md</code> 包含適用於所有 GitHub Copilot requests<span class="zh">（請求）</span> 的指令和偏好設定，不僅限於 AI agents<span class="zh">（AI 代理）</span>。</p>
+    
+    <p><strong>作用範圍：</strong></p>
+    <ul>
+      <li><strong>Organization-wide<span class="zh">（組織層級）</span></strong>：透過組織設定配置，適用於組織成員的所有 Copilot 請求</li>
+      <li><strong>Repository-wide<span class="zh">（專案層級）</span></strong>：將檔案放在 <code>.github/copilot-instructions.md</code>，適用於該專案內的所有請求</li>
+      <li><strong>Path-specific<span class="zh">（路徑特定）</span></strong>：使用 <code>NAME.copilot-instructions.md</code> 檔案存放在 <code>.github/instructions/</code> 資料夾中，可透過 <code>applyTo</code> 和 <code>excludeAgent</code> 關鍵字指定適用範圍</li>
+    </ul>
+
+    <p><strong>範例應用：</strong></p>
+    <ul>
+      <li>建立 <code>backend.copilot-instructions.md</code>，包含後端開發特定指令</li>
+      <li>設定 <code>applyTo: "**/*.ts,**/*.tsx"</code> 讓指令只適用於 TypeScript 檔案</li>
+      <li>當 path-specific instructions<span class="zh">（路徑特定指令）</span> 生效時，會同時使用 repository-wide<span class="zh">（專案層級）</span> 和 path-specific 指令</li>
+    </ul>
+
+    <p>當 Copilot Chat 使用 repository custom instructions<span class="zh">（專案自訂指令）</span> 時，指令檔案會作為 reference<span class="zh">（參考資料）</span> 加入回應中。你可以在 Chat panel<span class="zh">（對話面板）</span> 頂部展開 references 清單，查看是否使用了 <code>.github/copilot-instructions.md</code>。</p>
+
+    <h3>2. AGENTS.md</h3>
+    <p>可在專案內任意位置建立一或多個 <code>AGENTS.md</code> 檔案。當 Copilot 工作時，directory tree<span class="zh">（目錄樹）</span> 中最接近的 <code>AGENTS.md</code> 檔案會優先於其他 agent instructions files<span class="zh">（代理指令檔案）</span>。</p>
+    
+    <p>你也可以使用存放在專案根目錄的單一 <code>CLAUDE.md</code> 或 <code>GEMINI.md</code> 檔案作為替代方案。</p>
+
+    <p>詳細文件可參考：<a href="https://agents.md/" target="_blank">agents.md</a></p>
+
+    <h3>3. *.agent.md</h3>
+    <p>Custom agents<span class="zh">（自訂代理）</span> 讓 GitHub Copilot 能透過簡單的 file-based configuration<span class="zh">（檔案式配置）</span> 進行「專業化」調整，使用者和組織能輕鬆特製自己的 Copilot coding agent<span class="zh">（編碼代理）</span>。</p>
+
+    <h3>4. prompts/*.md</h3>
+    <p>Prompt files<span class="zh">（提示詞檔案）</span>（通常稱為 slash commands<span class="zh">（斜線指令）</span>）讓你能將常用提示詞封裝為獨立的 Markdown 檔案，可直接從對話中觸發。每個檔案包含 task-specific context<span class="zh">（任務特定上下文）</span> 以及執行任務的指令。</p>
+    
+    <p><strong>與 custom instructions 的差異：</strong></p>
+    <ul>
+      <li>Custom instructions 會自動套用</li>
+      <li>Prompt files 需在 chat session<span class="zh">（對話會話）</span> 中手動呼叫</li>
+    </ul>
+
+    <p><strong>適用場景：</strong></p>
+    <ul>
+      <li>標準化頻繁任務，如建立新元件、執行和修復測試、準備 pull requests<span class="zh">（拉取請求）</span></li>
+      <li>調整 custom agent<span class="zh">（自訂代理）</span> 的行為，例如生成簡潔的 implementation plan<span class="zh">（實作計畫）</span> 或建立 mock API call mockups<span class="zh">（模擬 API 呼叫原型）</span></li>
+    </ul>
+
+    <p>Prompt files 存放在 repository 的 <code>.github/prompts</code> 目錄中，每個檔案應以 <code>.md</code> 副檔名命名。</p>
+
+    <h3>5. SKILLS.md</h3>
+    <p>Agent Skills<span class="zh">（代理技能）</span> 是自包含的目錄，將 instructions<span class="zh">（指令）</span> 和 supporting resources<span class="zh">（支援資源）</span> 打包在一起，用於擴展 AI agent 針對專門任務的能力。</p>
+    
+    <p><strong>Skills 的獨特之處：</strong></p>
+    <ul>
+      <li>能夠打包 supporting assets<span class="zh">（支援素材）</span>，如 scripts<span class="zh">（腳本）</span>、code samples<span class="zh">（程式碼範例）</span> 或 reference data<span class="zh">（參考資料）</span></li>
+      <li>agents 可在執行任務時運用這些資源</li>
+      <li>適合需要更多 context<span class="zh">（上下文）</span> 或資源的 complex, multi-step tasks<span class="zh">（複雜多步驟任務）</span></li>
+    </ul>
+
+    <p>遵循 <a href="https://agentskills.io/specification" target="_blank">Agent Skills specification</a>，每個技能都包含一個 <code>SKILL.md</code> 檔案，內含 agents 按需載入的詳細指引。透過將相關指令和素材組織在一起，Skills 讓 agents 能以更強大且高效的方式執行專門功能。</p>
+
+    <h2>如何選擇</h2>
+    <ul>
+      <li><strong>Prompt files</strong>：用於輕量、單一任務的提示詞</li>
+      <li><strong>Custom agents</strong>：當你需要具備 persistent persona<span class="zh">（持續性人格）</span>、自有 tool restrictions<span class="zh">（工具限制）</span> 和 handoffs<span class="zh">（交接）</span> 的代理時使用</li>
+      <li><strong>Agent skills</strong>：當你需要具備 scripts<span class="zh">（腳本）</span> 和 resources<span class="zh">（資源）</span> 的 portable, multi-file capability<span class="zh">（可攜式多檔案能力）</span> 時使用</li>
+    </ul>
+
+    <h2>補充資源</h2>
+    <ul>
+      <li><strong>GitHub Copilot Plugins</strong>：雖非 Markdown 檔案，但是透過整合外部 services<span class="zh">（服務）</span> 和 APIs 來擴展 Copilot 功能的強大方式</li>
+      <li><strong>GitHub Copilot Hooks</strong>：在 Copilot 中回應特定 events<span class="zh">（事件）</span> 或 conditions<span class="zh">（條件）</span> 觸發 custom actions<span class="zh">（自訂動作）</span> 或 workflows<span class="zh">（工作流程）</span></li>
+      <li><strong>GitHub Agentic Workflows</strong>：協調多個 agents、skills 和 prompts 共同完成需要 coordination<span class="zh">（協調）</span> 和 handoffs<span class="zh">（交接）</span> 的複雜任務</li>
+    </ul>
+
+    <h2>對程式設計師的意義</h2>
+    <p>這篇文章完整解析了 GitHub Copilot 的各種客製化機制，幫助開發者：</p>
+    <ul>
+      <li><strong>提升效率</strong>：透過 prompt files 標準化常見任務，減少重複輸入</li>
+      <li><strong>精準控制</strong>：使用不同層級的 instructions 檔案，針對組織、專案、資料夾設定合適的 AI 行為</li>
+      <li><strong>團隊協作</strong>：將 coding guidelines<span class="zh">（編碼準則）</span>、best practices<span class="zh">（最佳實踐）</span> 編碼為 instructions 檔案，確保團隊一致性</li>
+      <li><strong>進階應用</strong>：結合 Skills、Agents、Hooks 建構複雜的 AI-powered workflows<span class="zh">（AI 驅動工作流程）</span></li>
+    </ul>
+
+    <p>想查看更多範例，可參考 <a href="https://github.com/github/awesome-copilot" target="_blank">Awesome Copilot repository</a>，其中包含豐富的 instructions、agents、skills 範例。</p>
+  </div>
+</body>
+</html>

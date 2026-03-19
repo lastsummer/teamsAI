@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anthropic's Code Execution With MCP Cuts Agent Token Usage by 98.7% - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117; color: #e2e8f0;
+    max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; line-height: 1.8;
+  }
+  .back-link { display: inline-block; margin-bottom: 1.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem; }
+  .back-link:hover { text-decoration: underline; }
+  .article-header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #2d3748; }
+  .article-header h1 { font-size: 1.5rem; font-weight: 700; color: #e2e8f0; line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-meta { font-size: 0.85rem; color: #4a5568; }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-body h2 { color: #e2e8f0; margin: 1.5rem 0 0.8rem; font-weight: 600; font-size: 1.15rem; }
+  .article-body p { margin-bottom: 1rem; color: #cbd5e0; }
+  .article-body ul { margin: 0.8rem 0 1rem 1.5rem; color: #cbd5e0; }
+  .article-body li { margin-bottom: 0.4rem; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice { background: #1a1d27; border: 1px solid #2d3748; border-left: 3px solid #9f7aea; border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #718096; }
+  .stat { background: #1a1d27; border: 1px solid #44337a; border-radius: 8px; padding: 1rem; margin: 1rem 0; text-align: center; }
+  .stat .number { font-size: 2rem; font-weight: 700; color: #9f7aea; }
+  .stat .label { font-size: 0.85rem; color: #718096; margin-top: 0.2rem; }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-19.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>Anthropic's Code Execution With MCP Cuts Agent Token Usage by 98.7%</h1>
+    <div class="article-meta">原文來源：<a href="https://brightbean.xyz/blog/code-execution-mcp-efficient-ai-agents/" target="_blank">https://brightbean.xyz/blog/code-execution-mcp-efficient-ai-agents/</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+    <h2>核心摘要</h2>
+    <p>Anthropic 推出一種將 MCP 工具視為程式碼 API<span class="zh">（code API）</span>而非直接函式呼叫的模式，將 token<span class="zh">（令牌）</span>消耗從 150,000 降至 2,000。Agent 在沙盒環境<span class="zh">（sandboxed environment）</span>中寫入並執行程式碼，在本地處理資料而不將其暴露於模型的上下文窗口<span class="zh">（context window）</span>中。</p>
+
+    <div class="stat">
+      <div class="number">98.7%</div>
+      <div class="label">Token 消耗降低（150,000 → 2,000 tokens）</div>
+    </div>
+
+    <h2>三大效率機制</h2>
+    <ul>
+      <li><strong>按需工具探索<span class="zh">（on-demand tool discovery）</span></strong>：不需要在 context 中預載全部工具定義，避免上下文膨脹</li>
+      <li><strong>本地資料處理<span class="zh">（local data processing）</span></strong>：中間資料在沙盒內過濾，防止大型資料集進入模型 context</li>
+      <li><strong>原生控制流<span class="zh">（native control flow）</span></strong>：用標準程式設計結構（迴圈、條件判斷）取代多次模型呼叫</li>
+    </ul>
+
+    <h2>隱私與合規優勢</h2>
+    <ul>
+      <li>敏感資料保留在沙盒環境內，不進入模型處理流程</li>
+      <li>直接解決 GDPR<span class="zh">（歐盟一般資料保護規則）</span>和 HIPAA<span class="zh">（美國醫療隱私法規）</span>合規需求</li>
+    </ul>
+
+    <h2>技術需求與取捨</h2>
+    <ul>
+      <li>需要沙盒基礎設施：安全沙盒、資源限制、執行監控</li>
+      <li>依賴 LLM 的程式碼生成<span class="zh">（code generation）</span>能力</li>
+      <li>成本和延遲的大幅改善值得這些架構投入</li>
+    </ul>
+
+    <h2>對程式設計師的意義</h2>
+    <p>對於建立多工具 AI agent 的開發者，這個方法從根本上重構了效率經濟學。從 context 密集的工具定義轉移到程式碼式 API，讓處理數百個整合服務成為可能，而不會造成性能下降。98.7% 的 token 降低直接轉化為生產環境的成本節省，同時本地資料處理模式解決了之前阻礙在受監管行業中部署 agent 的企業合規限制。</p>
+  </div>
+</body>
+</html>

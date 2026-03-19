@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP Has No Security Layer. We Built One — MCPS - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117; color: #e2e8f0;
+    max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; line-height: 1.8;
+  }
+  .back-link { display: inline-block; margin-bottom: 1.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem; }
+  .back-link:hover { text-decoration: underline; }
+  .article-header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #2d3748; }
+  .article-header h1 { font-size: 1.5rem; font-weight: 700; color: #e2e8f0; line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-meta { font-size: 0.85rem; color: #4a5568; }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-body h2 { color: #e2e8f0; margin: 1.5rem 0 0.8rem; font-weight: 600; font-size: 1.15rem; }
+  .article-body p { margin-bottom: 1rem; color: #cbd5e0; }
+  .article-body ul { margin: 0.8rem 0 1rem 1.5rem; color: #cbd5e0; }
+  .article-body li { margin-bottom: 0.4rem; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice { background: #1a1d27; border: 1px solid #2d3748; border-left: 3px solid #9f7aea; border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #718096; }
+  .warning { background: #1a1d27; border: 1px solid #744210; border-left: 3px solid #ed8936; border-radius: 8px; padding: 0.8rem 1rem; margin: 1rem 0; font-size: 0.9rem; color: #fbd38d; }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-19.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>MCP Has No Security Layer. We Built One — MCPS.</h1>
+    <div class="article-meta">原文來源：<a href="https://dev.to/razashariff/mcp-has-no-security-layer-we-built-one-mcps-5al2" target="_blank">https://dev.to/razashariff/mcp-has-no-security-layer-we-built-one-mcps-5al2</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+    <h2>核心摘要</h2>
+    <p>MCP（Model Context Protocol）<span class="zh">（模型上下文協議）</span>已被 OpenAI、Google、Microsoft、AWS 採用，但它缺乏內建的安全層。38% 的 MCP 伺服器缺少身份驗證，60 天內已有 30 個 CVE<span class="zh">（已知漏洞）</span>被提報。MCPS 是一個托管安全代理<span class="zh">（managed security proxy）</span>，通過單一 URL 提供訊息簽名、威脅偵測和稽核日誌。</p>
+
+    <div class="warning">⚠️ TLS 和 OAuth 不夠：「TLS 保護傳輸層...OAuth 驗證身份但不驗證訊息內容」，工具投毒<span class="zh">（tool poisoning）</span>和訊息篡改<span class="zh">（message tampering）</span>依然可行。</div>
+
+    <h2>主要安全威脅</h2>
+    <ul>
+      <li><strong>工具投毒（Tool poisoning）</strong>：攻擊者篡改工具定義，注入惡意指令</li>
+      <li><strong>Prompt 注入（Prompt injection）</strong>：透過工具回應插入惡意提示詞</li>
+      <li><strong>重放攻擊（Replay attacks）</strong>：重複使用已攔截的合法請求</li>
+      <li><strong>供應鏈攻擊（Supply chain attacks）</strong>：通過第三方 MCP 伺服器入侵</li>
+    </ul>
+
+    <h2>MCPS 解決方案</h2>
+    <ul>
+      <li>涵蓋 OWASP MCP 十大風險中的 6 項，另有 4 項部分覆蓋</li>
+      <li>使用 ECDSA P-256<span class="zh">（橢圓曲線數位簽章演算法）</span>對每條訊息進行加密簽名</li>
+      <li>金鑰透過 GCP Cloud KMS<span class="zh">（Google 雲端金鑰管理服務）</span>管理並自動輪換</li>
+      <li>執行期間掃描 SQL injection、命令注入<span class="zh">（command injection）</span>、路徑穿越<span class="zh">（path traversal）</span></li>
+      <li>免費方案：5 個 agent、每月 1,000 個請求、7 天稽核紀錄保留</li>
+    </ul>
+
+    <h2>對程式設計師的意義</h2>
+    <p>任何在生產環境部署 MCP agent 的開發者都需要了解這個安全盲點。MCPS 的代理架構不需要修改現有 MCP 伺服器或客戶端程式碼，只需更換連線 URL 即可啟用完整的訊息完整性驗證<span class="zh">（message integrity verification）</span>和執行期威脅偵測。在處理敏感操作的 AI 系統中，這是不可忽視的安全基礎設施。</p>
+  </div>
+</body>
+</html>

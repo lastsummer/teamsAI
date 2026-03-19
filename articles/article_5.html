@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Coding 的終局:當 AI 重新定義軟體開發 - 雙語導讀</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.8;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #0f1117;
+            color: #e6edf3;
+        }
+        .header {
+            border-bottom: 2px solid #30363d;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #58a6ff;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .meta {
+            color: #8b949e;
+            font-size: 0.95em;
+        }
+        .back-link {
+            display: inline-block;
+            color: #58a6ff;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        h2 {
+            color: #58a6ff;
+            font-size: 1.5em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 10px;
+        }
+        h3 {
+            color: #79c0ff;
+            font-size: 1.2em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        .zh {
+            color: #9f7aea;
+            font-weight: 500;
+        }
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 30px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .highlight {
+            background: #1c2128;
+            border-left: 3px solid #58a6ff;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .tool-tier {
+            background: #1c2128;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .insight {
+            background: #2d1b00;
+            border-left: 3px solid #f0883e;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <a href="../daily_report.html" class="back-link">← 返回日報</a>
+    
+    <div class="header">
+        <h1>What's the End Game for Vibe Coding?</h1>
+        <div class="meta">
+            來源: Medium - Jessica Lin (jess-writes-about-tech) | 
+            類型: Comprehensive Technical Analysis<br>
+            雙語導讀 - 為程式設計師整理的核心摘要
+        </div>
+    </div>
+
+    <h2>一、核心摘要 <span class="zh">(Core Summary)</span></h2>
+    
+    <p>
+        <strong>Vibe Coding</strong><span class="zh">(氛圍編程)</span> 這個詞由 Andrej Karpathy 在 2025 年 2 月提出,描述「透過對話和直覺與 AI 協作編程」的新範式。僅僅一年後,他將其改稱為 <strong>Agentic Engineering</strong><span class="zh">(代理工程)</span>,標誌著這個領域的快速演變。
+    </p>
+
+    <div class="highlight">
+        <strong>三大預測定義未來走向:</strong>
+        <ul>
+            <li><strong>Dario Amodei (Anthropic CEO)</strong>: AI 將在 6-12 個月內完成「大部分,甚至全部」工程工作</li>
+            <li><strong>Marc Andreessen (a16z)</strong>: 困難點從「如何建構」轉移到「建構什麼」</li>
+            <li><strong>Andrej Karpathy</strong>: 大多數軟體將變成 disposable<span class="zh">(即用即棄)</span>,按需生成</li>
+        </ul>
+    </div>
+
+    <p>
+        本文作者 Jessica Lin 進行了 14 款工具的深度比較,給出了實務導向的建議:「Vibe coding 會成為幾乎所有事情的合法第一步,但只有極少數情況是最後一步」<span class="zh">(legitimate first step for almost everything, but the last step for very little)</span>。
+    </p>
+
+    <h2>二、工具分級與推薦 <span class="zh">(Tool Rankings)</span></h2>
+
+    <h3>Tier 1: 專業級組合 ($40/月)</h3>
+    <div class="tool-tier">
+        <p><strong>Cursor + Claude Code</strong></p>
+        <ul>
+            <li><strong>Cursor</strong> ($20/月): IDE<span class="zh">(整合開發環境)</span> 級別的程式碼編輯器,具備強大的 context window<span class="zh">(上下文視窗)</span></li>
+            <li><strong>Claude Code</strong> ($20/月): Anthropic 的代理工具,可執行終端命令、編輯檔案、運行測試</li>
+            <li><strong>為何同時需要兩者</strong>: Cursor 適合快速迭代和自動補全,Claude Code 適合複雜的多步驟任務</li>
+        </ul>
+    </div>
+
+    <h3>14 款工具完整比較</h3>
+    <p>文章詳細評測了以下工具,包含定價、優缺點和最佳使用場景:</p>
+    <ol>
+        <li><strong>Lovable</strong>: 快速原型製作,適合初創項目</li>
+        <li><strong>Replit Agent</strong>: 雲端開發環境,適合教學和協作</li>
+        <li><strong>V0 by Vercel</strong>: UI 快速生成,但較封閉</li>
+        <li><strong>GitHub Copilot</strong>: 程式碼補全經典,但代理能力較弱</li>
+        <li><strong>Windsurf</strong>: 新興 AI IDE,持續改進中</li>
+        <li><strong>Bolt.new</strong>: 快速原型工具,適合展示用</li>
+        <li><strong>Cline</strong>: VS Code 擴充,開源免費</li>
+        <li><strong>Aider</strong>: 終端機工具,適合進階使用者</li>
+        <li><strong>Zed AI</strong>: 追求速度的輕量編輯器</li>
+        <li><strong>Cursor Composer</strong>: Cursor 內建功能</li>
+        <li><strong>GitHub Copilot Workspace</strong>: 企業級協作</li>
+        <li><strong>Devin</strong>: 全自動代理,但價格高昂 ($500/月)</li>
+        <li><strong>Factory</strong>: 企業級 Droids,需客製化</li>
+        <li><strong>OpenHands</strong>: 開源替代方案</li>
+    </ol>
+
+    <h2>三、現實檢查 <span class="zh">(Reality Check)</span></h2>
+
+    <div class="insight">
+        <p><strong>重要數據:</strong></p>
+        <ul>
+            <li><strong>CodeRabbit 研究</strong>: AI 生成的程式碼有 <strong>1.7 倍更多 bug</strong></li>
+            <li><strong>AI 取代的是打字,不是思考</strong><span class="zh">(AI replaces typing, not thinking)</span></li>
+            <li><strong>真正價值在於</strong>: 加速學習曲線、快速驗證想法、處理重複性任務</li>
+        </ul>
+    </div>
+
+    <h3>五大常見錯誤</h3>
+    <ol>
+        <li><strong>盲目信任 AI 輸出</strong>: 必須理解並驗證每一行程式碼</li>
+        <li><strong>跳過測試</strong>: AI 生成的程式碼尤其需要完整測試覆蓋</li>
+        <li><strong>忽略安全性</strong>: AI 可能產生有漏洞的程式碼</li>
+        <li><strong>過度依賴</strong>: 失去對底層技術的理解</li>
+        <li><strong>選錯工具</strong>: 不同工具適合不同場景,需要理性評估</li>
+    </ol>
+
+    <h2>四、決策框架 <span class="zh">(Decision Framework)</span></h2>
+
+    <h3>何時使用 Vibe Coding?</h3>
+    <div class="highlight">
+        <p><strong>適合場景:</strong></p>
+        <ul>
+            <li>快速原型驗證 (rapid prototyping<span class="zh">快速原型製作</span>)</li>
+            <li>學習新技術棧</li>
+            <li>自動化重複性任務</li>
+            <li>生成 boilerplate code<span class="zh">(樣板程式碼)</span></li>
+        </ul>
+        
+        <p><strong>不適合場景:</strong></p>
+        <ul>
+            <li>關鍵生產系統 (mission-critical systems<span class="zh">任務關鍵系統</span>)</li>
+            <li>需要精細效能優化的場景</li>
+            <li>高安全性要求的應用</li>
+            <li>需要獨特創新解決方案</li>
+        </ul>
+    </div>
+
+    <h3>投資建議</h3>
+    <ul>
+        <li><strong>初學者</strong>: 從免費工具開始 (Cline, OpenHands, GitHub Copilot 免費版)</li>
+        <li><strong>專業開發者</strong>: Cursor + Claude Code ($40/月) 組合效益最高</li>
+        <li><strong>企業團隊</strong>: 評估 GitHub Copilot Workspace 或 Factory</li>
+    </ul>
+
+    <h2>五、技術術語對照 <span class="zh">(Technical Terms)</span></h2>
+
+    <div class="highlight">
+        <ul>
+            <li><strong>Vibe Coding</strong><span class="zh">(氛圍編程)</span>: 透過自然語言對話與 AI 進行編程</li>
+            <li><strong>Agentic Engineering</strong><span class="zh">(代理工程)</span>: AI 代理自主執行複雜工程任務</li>
+            <li><strong>Context Window</strong><span class="zh">(上下文視窗)</span>: AI 一次能處理的程式碼和文字量</li>
+            <li><strong>Autocomplete</strong><span class="zh">(自動補全)</span>: AI 預測並建議下一段程式碼</li>
+            <li><strong>Refactoring</strong><span class="zh">(重構)</span>: 改善程式碼結構而不改變功能</li>
+            <li><strong>Deployment</strong><span class="zh">(部署)</span>: 將應用程式發布到生產環境</li>
+            <li><strong>Boilerplate Code</strong><span class="zh">(樣板程式碼)</span>: 重複性的基礎程式碼框架</li>
+            <li><strong>Multi-step Tasks</strong><span class="zh">(多步驟任務)</span>: 需要多個操作才能完成的複雜任務</li>
+        </ul>
+    </div>
+
+    <h2>六、對程式設計師的意義 <span class="zh">(What This Means for Programmers)</span></h2>
+
+    <div class="insight">
+        <h3>關鍵洞察</h3>
+        <p>
+            <strong>價值轉移正在發生</strong>: 從編寫程式碼的能力,轉向 <strong>product judgment</strong><span class="zh">(產品判斷力)</span>、<strong>system design</strong><span class="zh">(系統設計)</span> 和 <strong>critical thinking</strong><span class="zh">(批判性思考)</span>。
+        </p>
+        
+        <p>
+            作者引用的核心觀點:「AI 能產生大量輸出。產量不再是瓶頸。<strong>判斷力才是</strong><span class="zh">(Volume is no longer the bottleneck. Judgment is)</span>」。你仍需要知道哪些想法值得追求,哪些功能屬於 version 1 而非 version 3。這種辨別力不來自 AI,而來自多年經驗和對用戶真實需求的深刻好奇。
+        </p>
+
+        <h3>未來技能組合</h3>
+        <ul>
+            <li><strong>必要技能</strong>: 理解系統架構、資料庫設計、API 設計、安全性原則</li>
+            <li><strong>新興技能</strong>: Prompt engineering<span class="zh">(提示工程)</span>、AI tool evaluation<span class="zh">(AI 工具評估)</span>、Code review for AI output<span class="zh">(AI 產出的程式碼審查)</span></li>
+            <li><strong>永恆技能</strong>: 問題解決、用戶同理心、團隊協作</li>
+        </ul>
+    </div>
+
+    <h2>七、延伸資源</h2>
+    <ul>
+        <li><a href="https://jess-writes-about-tech.medium.com/whats-the-end-game-for-vibe-coding-f943d61a2f54" target="_blank">原文連結</a></li>
+        <li>作者: Jessica Lin - 專注於 AI 工具和軟體開發趨勢</li>
+        <li>發布平台: Medium</li>
+        <li>文章長度: 約 14,000 字 (本導讀為核心摘要)</li>
+    </ul>
+
+    <p style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #30363d; color: #8b949e; font-size: 0.9em;">
+        本雙語導讀採用「核心摘要」方式編寫,聚焦於對程式設計師最有價值的洞察和實用建議,而非逐字翻譯。技術術語提供中英對照以幫助理解。
+    </p>
+</body>
+</html>

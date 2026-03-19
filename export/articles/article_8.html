@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevNet Content Search MCP Server 的推出</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; line-height: 1.7; }
+    .hero { background: linear-gradient(135deg, #1a1e2e 0%, #161c30 50%, #0f1e40 100%); padding: 48px 24px; text-align: center; border-bottom: 1px solid #2d3748; }
+    .hero .badge { display: inline-block; background: rgba(237,137,54,0.15); color: #f6ad55; border: 1px solid rgba(237,137,54,0.3); border-radius: 999px; padding: 4px 14px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; }
+    .hero h1 { font-size: clamp(20px, 4vw, 32px); font-weight: 700; color: #fff; max-width: 800px; margin: 0 auto 16px; }
+    .hero .meta { color: #718096; font-size: 14px; }
+    .hero .meta a { color: #f6ad55; text-decoration: none; }
+    .container { max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+    .lang-toggle { display: flex; gap: 8px; margin-bottom: 32px; }
+    .lang-btn { padding: 6px 16px; border-radius: 6px; border: 1px solid #2d3748; background: transparent; color: #a0aec0; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+    .lang-btn.active { background: #7b341e; border-color: #7b341e; color: #fff; }
+    .section { margin-bottom: 40px; }
+    .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #f6ad55; font-weight: 600; margin-bottom: 12px; }
+    p { color: #a0aec0; margin-bottom: 12px; font-size: 15px; }
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .feature-card { background: #1a202c; border: 1px solid #2d3748; border-radius: 8px; padding: 16px; }
+    .feature-card .icon { font-size: 24px; margin-bottom: 8px; }
+    .feature-card h3 { font-size: 14px; color: #e2e8f0; margin-bottom: 6px; }
+    .feature-card p { font-size: 13px; color: #718096; margin: 0; }
+    .problem-solution { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .ps-box { background: #1a202c; border: 1px solid #2d3748; border-radius: 8px; padding: 16px; }
+    .ps-box.problem { border-left: 3px solid #fc8181; }
+    .ps-box.solution { border-left: 3px solid #68d391; }
+    .ps-box .label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+    .ps-box.problem .label { color: #fc8181; }
+    .ps-box.solution .label { color: #68d391; }
+    .ps-box p { font-size: 13px; color: #718096; margin: 0; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; color: #f6ad55; text-decoration: none; font-size: 14px; margin-bottom: 24px; }
+    .lang-section { display: none; }
+    .lang-section.active { display: block; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .tag { background: rgba(237,137,54,0.1); color: #f6ad55; border: 1px solid rgba(237,137,54,0.2); padding: 3px 10px; border-radius: 999px; font-size: 11px; }
+    ul { margin: 8px 0 12px 20px; }
+    li { color: #a0aec0; font-size: 14px; margin-bottom: 6px; }
+    @media (max-width: 600px) { .problem-solution { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="badge">MCP · Cisco · DevNet</div>
+    <h1>DevNet Content Search MCP Server 的推出<br><span style="font-size:0.65em;color:#a0aec0">Launch of the DevNet Content Search MCP Server</span></h1>
+    <div class="meta">
+      2026-03-12 &nbsp;|&nbsp; Neelesh Pateriya &nbsp;|&nbsp; <a href="https://blogs.cisco.com/developer/devnet-content-search-mcp-server" target="_blank">blogs.cisco.com &rarr;</a>
+      <div class="tags" style="justify-content:center;margin-top:10px">
+        <span class="tag">#MCP</span><span class="tag">#Cisco</span><span class="tag">#開發工具</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <a class="back-link" href="../daily_report.html">&#8592; 返回日報</a>
+
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="showLang('zh')">繁體中文</button>
+      <button class="lang-btn" onclick="showLang('en')">English</button>
+    </div>
+
+    <!-- Chinese Version -->
+    <div id="lang-zh" class="lang-section active">
+      <div class="section">
+        <div class="section-label">摘要</div>
+        <p>Cisco 推出 DevNet Content Search MCP 伺服器，透過 Model Context Protocol 標準，將 Cisco API 文件的語義搜尋能力直接整合進開發者的 IDE。</p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">問題與解方</div>
+        <div class="problem-solution">
+          <div class="ps-box problem">
+            <div class="label">問題</div>
+            <p>IDE 中的 AI 助手無法存取最新 Cisco API 文件，導致產生過時或不準確的程式碼。</p>
+          </div>
+          <div class="ps-box solution">
+            <div class="label">解方</div>
+            <p>MCP 伺服器讓 IDE 中的 AI 助手能即時搜尋 Cisco 官方 API 文件，無需切換應用程式。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">三大工具</div>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="icon">🔍</div>
+            <h3>Meraki API 文件搜尋</h3>
+            <p>自然語言語義搜尋，精準查詢 Meraki API 文件。</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">🎯</div>
+            <h3>Meraki Operation ID 查詢</h3>
+            <p>透過 OpenAPI Operation ID 取得精確端點細節。</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">🏢</div>
+            <h3>Catalyst Center API 搜尋</h3>
+            <p>企業網路管理 API 的文件搜尋功能。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">主要優勢</div>
+        <ul>
+          <li>回應包含 API 路徑、方法、Operation ID 與文件 URL，確保程式碼生成準確</li>
+          <li>在 VS Code 或 Cursor 中一鍵安裝，無需額外設定</li>
+          <li>即時存取最新 Cisco API 規格，消除 AI 使用過時知識的問題</li>
+          <li>避免在 IDE 與瀏覽器間來回切換</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <div class="section-label">未來規劃</div>
+        <p>計畫擴展至更多 Cisco 產品 API、Learning Labs、程式碼範例，並將參考工作流程演進為內建最佳實踐的「開發者技能」。</p>
+      </div>
+    </div>
+
+    <!-- English Version -->
+    <div id="lang-en" class="lang-section">
+      <div class="section">
+        <div class="section-label">Summary</div>
+        <p>Cisco releases the DevNet Content Search MCP server, integrating semantic search for Cisco API documentation directly into developer IDEs through the Model Context Protocol standard.</p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Problem & Solution</div>
+        <div class="problem-solution">
+          <div class="ps-box problem">
+            <div class="label">Problem</div>
+            <p>AI assistants in IDEs lack access to current Cisco API documentation, "falling back to outdated or generic knowledge" when generating code.</p>
+          </div>
+          <div class="ps-box solution">
+            <div class="label">Solution</div>
+            <p>The MCP server enables IDE AI assistants to search live Cisco API docs in real time without switching applications.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Three Primary Tools</div>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="icon">🔍</div>
+            <h3>Meraki API Docs Search</h3>
+            <p>Natural language semantic search for Meraki API documentation.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">🎯</div>
+            <h3>Meraki Operation ID Lookup</h3>
+            <p>Precise endpoint details via OpenAPI Operation IDs.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">🏢</div>
+            <h3>Catalyst Center API Search</h3>
+            <p>Enterprise network management API documentation search.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Key Benefits</div>
+        <ul>
+          <li>Structured responses include API paths, methods, operation IDs, and doc URLs for reliable code generation</li>
+          <li>One-click installation in VS Code or Cursor, no configuration needed</li>
+          <li>Real-time access to current Cisco API specs, eliminating outdated AI knowledge</li>
+          <li>Eliminates context-switching between IDE and browser documentation</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Future Direction</div>
+        <p>Plans include expanding to additional Cisco product APIs, Learning Labs, code samples, and evolving reference workflows into validated "developer skills" with built-in best practices.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showLang(lang) {
+      document.querySelectorAll('.lang-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('lang-' + lang).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

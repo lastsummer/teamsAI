@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Build an MCP Client in Python in 10 Min - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117; color: #e2e8f0;
+    max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; line-height: 1.8;
+  }
+  .back-link { display: inline-block; margin-bottom: 1.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem; }
+  .back-link:hover { text-decoration: underline; }
+  .article-header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #2d3748; }
+  .article-header h1 { font-size: 1.5rem; font-weight: 700; color: #e2e8f0; line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-meta { font-size: 0.85rem; color: #4a5568; }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-body h2 { color: #e2e8f0; margin: 1.5rem 0 0.8rem; font-weight: 600; font-size: 1.15rem; }
+  .article-body p { margin-bottom: 1rem; color: #cbd5e0; }
+  .article-body ul { margin: 0.8rem 0 1rem 1.5rem; color: #cbd5e0; }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code { background: #2d3748; color: #f6ad55; font-family: 'Fira Code', monospace; font-size: 0.85em; padding: 0.1rem 0.4rem; border-radius: 4px; }
+  .article-body pre { background: #12141e; border: 1px solid #2d3748; border-radius: 8px; padding: 1rem; overflow-x: auto; margin: 1rem 0; }
+  .article-body pre code { background: none; padding: 0; color: #e2e8f0; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice { background: #1a1d27; border: 1px solid #2d3748; border-left: 3px solid #9f7aea; border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #718096; }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-19.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>How to Build an MCP Client in Python in 10 Min</h1>
+    <div class="article-meta">原文來源：<a href="https://dev.to/nebulagg/how-to-build-an-mcp-client-in-python-in-10-min-4k94" target="_blank">https://dev.to/nebulagg/how-to-build-an-mcp-client-in-python-in-10-min-4k94</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+    <h2>核心摘要</h2>
+    <p>本文示範如何用 Python 建立 MCP client<span class="zh">（MCP 客戶端）</span>，以程式化方式連接 MCP 伺服器，不依賴 Claude Desktop。透過 FastMCP<span class="zh">（快速 MCP 框架）</span>建立伺服器，使用 <code>ClientSession</code><span class="zh">（客戶端會話）</span>進行工具探索和執行，並涵蓋 async/await<span class="zh">（非同步等待）</span>模式。</p>
+
+    <h2>核心實作步驟</h2>
+    <ul>
+      <li><strong>建立 MCP 伺服器</strong>：用 FastMCP 透過 stdio transport<span class="zh">（標準輸入輸出傳輸）</span>暴露工具</li>
+      <li><strong>StdioServerParameters</strong>：將伺服器作為子進程<span class="zh">（subprocess）</span>啟動，透過 stdin/stdout 通信</li>
+      <li><strong><code>session.initialize()</code></strong>：執行 MCP 協議握手<span class="zh">（handshake）</span>，必須在工具呼叫前執行</li>
+      <li><strong><code>session.list_tools()</code></strong>：探索可用工具，包含名稱、描述和 schema<span class="zh">（結構定義）</span></li>
+      <li><strong><code>session.call_tool()</code></strong>：以參數呼叫特定工具並取得回應</li>
+    </ul>
+
+    <h2>程式碼模式</h2>
+    <pre><code>async with ClientSession(read, write) as session:
+    await session.initialize()
+    tools = await session.list_tools()
+    result = await session.call_tool("tool_name", {"arg": "value"})</code></pre>
+
+    <h2>進階實作建議</h2>
+    <ul>
+      <li>生產環境應支援 HTTP transport<span class="zh">（HTTP 傳輸）</span>而非僅限 stdio</li>
+      <li>整合 LLM API<span class="zh">（大型語言模型 API）</span>讓 agent 自主選擇和呼叫工具</li>
+      <li>加入 JSON-RPC<span class="zh">（JSON 遠端程序呼叫）</span>錯誤處理和 retry<span class="zh">（重試）</span>邏輯</li>
+    </ul>
+
+    <h2>對程式設計師的意義</h2>
+    <p>建立自主 agent 或 Python 應用的開發者需要程式化的 MCP 工具存取，而不只是依賴 IDE 整合。這個模式啟用了執行期工具探索<span class="zh">（runtime tool discovery）</span>、動態 agent 決策，以及與語言模型的整合——這是生產 AI 系統管理多個工具來源的關鍵能力。AsyncIO<span class="zh">（非同步輸入輸出函式庫）</span>的使用模式也是現代 Python AI 開發的重要參考。</p>
+  </div>
+</body>
+</html>

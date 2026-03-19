@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cortex: An AI Obsidian Vault Agent Powered by Claude Code - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117; color: #e2e8f0;
+    max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; line-height: 1.8;
+  }
+  .back-link { display: inline-block; margin-bottom: 1.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem; }
+  .back-link:hover { text-decoration: underline; }
+  .article-header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #2d3748; }
+  .article-header h1 { font-size: 1.5rem; font-weight: 700; color: #e2e8f0; line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-meta { font-size: 0.85rem; color: #4a5568; }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-body h2 { color: #e2e8f0; margin: 1.5rem 0 0.8rem; font-weight: 600; font-size: 1.15rem; }
+  .article-body p { margin-bottom: 1rem; color: #cbd5e0; }
+  .article-body ul { margin: 0.8rem 0 1rem 1.5rem; color: #cbd5e0; }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code { background: #2d3748; color: #f6ad55; font-family: 'Fira Code', monospace; font-size: 0.85em; padding: 0.1rem 0.4rem; border-radius: 4px; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice { background: #1a1d27; border: 1px solid #2d3748; border-left: 3px solid #9f7aea; border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #718096; }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-19.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>[Plugin] Cortex: An AI Obsidian Vault Agent Powered by Claude Code</h1>
+    <div class="article-meta">原文來源：<a href="https://forum.obsidian.md/t/plugin-cortex-an-ai-obsidian-vault-agent-powered-by-claude-code/112430" target="_blank">https://forum.obsidian.md/t/plugin-cortex-an-ai-obsidian-vault-agent-powered-by-claude-code/112430</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+    <h2>核心摘要</h2>
+    <p>Cortex 是一個 Obsidian<span class="zh">（知識管理筆記工具）</span>外掛程式，將 Claude Code 整合為 vault<span class="zh">（筆記庫）</span>內的 AI agent。透過側邊面板進行對話，Claude 可以自主管理筆記，無需另外的 API 金鑰，直接利用現有的 Claude Pro/Max 訂閱。</p>
+
+    <h2>核心功能</h2>
+    <ul>
+      <li>持久對話面板<span class="zh">（persistent chat panel）</span>：在 Obsidian 內直接與 Claude 對話</li>
+      <li>完整 vault 存取權限：讀取、寫入、建立、移動筆記</li>
+      <li>Session 持久化<span class="zh">（session persistence）</span>：對話記錄儲存於 <code>.obsidian/plugins/cortex/.claude/sessions/</code></li>
+      <li>可設定上下文系統<span class="zh">（configurable context system）</span>：Session 開始時自動注入資料夾和檔案樹</li>
+      <li>跨 session 記憶<span class="zh">（cross-session memory）</span>：透過自主管理上下文檔案實現</li>
+      <li>無需 API 金鑰：透過 CLI<span class="zh">（命令列介面）</span>使用現有 Claude 訂閱</li>
+    </ul>
+
+    <h2>安裝方式</h2>
+    <ul>
+      <li>目前處於 Beta 階段，透過 BRAT<span class="zh">（Beta 審查員和測試員社群外掛工具）</span>安裝</li>
+      <li>需要已安裝 Claude Code CLI 並登入</li>
+    </ul>
+
+    <h2>對程式設計師的意義</h2>
+    <p>這個外掛程式展示了將 Claude Code 嵌入現有工具的實際模式。對於使用 Obsidian 管理技術筆記、文件或知識庫的開發者，Cortex 提供了一個不需要額外 API 費用的 AI 助理，可以直接理解並操作整個 vault。這也是 Claude Code 作為通用 agent 框架，被嵌入第三方應用的具體範例。</p>
+  </div>
+</body>
+</html>

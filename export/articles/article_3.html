@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我撰寫了一個 CLI，在連接到 MCP 或 OpenAPI Servers 時可輕鬆節省超過 90% 的 token 使用量 - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h1, .article-body h2, .article-body h3 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+  }
+  .article-body h1 { font-size: 1.3rem; }
+  .article-body h2 { font-size: 1.15rem; }
+  .article-body h3 { font-size: 1rem; }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body pre {
+    background: #12141e;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+  .article-body pre code {
+    background: none;
+    padding: 0;
+    color: #e2e8f0;
+  }
+  .zh {
+    color: #9f7aea;
+    font-size: 0.9em;
+  }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+  .placeholder {
+    background: #1a1d27;
+    border: 1px dashed #2d3748;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    color: #4a5568;
+    margin: 2rem 0;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>我撰寫了一個 CLI，在連接到 MCP 或 OpenAPI Servers 時可輕鬆節省超過 90% 的 token 使用量</h1>
+    <div class="article-meta">原文來源：<a href="https://www.reddit.com/r/Python/comments/1rsaa6i/i_wrote_a_cli_that_easily_saves_over_90_of_token/" target="_blank">https://www.reddit.com/r/Python/comments/1rsaa6i/i_wrote_a_cli_that_easily_saves_over_90_of_token/</a></div>
+  </div>
+  <div class="notice">📌 以下為核心摘要與關鍵要點整理，完整內容請閱讀<a href="https://www.reddit.com/r/Python/comments/1rsaa6i/i_wrote_a_cli_that_easily_saves_over_90_of_token/" target="_blank" style="color: #667eea;">原文連結</a></div>
+  <div class="article-body">
+
+<h2>🔧 專案介紹 | Project Overview</h2>
+
+<p><strong>專案名稱：</strong><code>mcp2cli</code></p>
+
+<p><strong>中文說明：</strong><br>
+<code>mcp2cli</code> 是一個創新的命令列工具，能在執行時根據 MCP 伺服器 URL 或 OpenAPI 規格動態生成功能完整的 CLI，無需程式碼生成或編譯。它透過按需發現機制，避免在每次對話中將完整的工具結構塞入系統提示，將 token 使用量降低約 92-99%。</p>
+
+<p><strong>English Description:</strong><br>
+<code>mcp2cli</code> is an innovative CLI tool that generates a fully functional command-line interface at runtime from MCP server URLs or OpenAPI specs—no codegen, no compilation required. Using on-demand discovery, it avoids stuffing full tool schemas into the system prompt on every turn, reducing token usage by approximately 92-99%.</p>
+
+<h2>⚡ 核心功能 | Key Features</h2>
+
+<ul>
+  <li><strong>零程式碼生成</strong> | Zero codegen<br>
+  指向一個 URL，CLI 立即可用；新端點在下次調用時自動出現 | Point to a URL and the CLI exists immediately; new endpoints appear on next invocation</li>
+  
+  <li><strong>雙協定支援</strong> | Dual protocol support<br>
+  同時支援 MCP 和 OpenAPI，使用相同介面 | Supports both MCP and OpenAPI with the same interface</li>
+  
+  <li><strong>OAuth 支援</strong> | OAuth support<br>
+  支援授權碼 + PKCE 和客戶端憑證流程，自動快取和刷新 token | Authorization code + PKCE and client credentials flows, with automatic token caching and refresh</li>
+  
+  <li><strong>規格快取</strong> | Spec caching<br>
+  抓取的規格在本地快取，可設定 TTL | Fetched specs are cached locally with configurable TTL</li>
+  
+  <li><strong>機密處理</strong> | Secrets handling<br>
+  支援 <code>env:</code> 和 <code>file:</code> 前綴，避免敏感值出現在進程列表中 | <code>env:</code> and <code>file:</code> prefixes keep sensitive values out of process listings</li>
+</ul>
+
+<h2>📊 效能比較 | Performance Comparison</h2>
+
+<p><strong>相比原生 MCP 工具注入：</strong></p>
+<ul>
+  <li>原生 MCP 每次對話注入完整 JSON schemas（~121 tokens/工具）</li>
+  <li>30 個工具 × 15 輪對話 = ~54,500 tokens</li>
+  <li><code>mcp2cli</code> 只在需要時載入 = ~2,300 tokens 總計（<strong>減少 96%</strong>）</li>
+</ul>
+
+<p><strong>vs. Native MCP tool injection:</strong></p>
+<ul>
+  <li>Native MCP injects full JSON schemas every turn (~121 tokens/tool)</li>
+  <li>30 tools × 15 turns = ~54,500 tokens</li>
+  <li><code>mcp2cli</code> loads only on-demand = ~2,300 tokens total (<strong>96% reduction</strong>)</li>
+</ul>
+
+<h2>🎯 使用範例 | Usage Examples</h2>
+
+<pre><code># 安裝 | Install
+pip install mcp2cli
+
+# MCP 伺服器 | MCP server
+mcp2cli --mcp https://mcp.example.com/sse --list
+mcp2cli --mcp https://mcp.example.com/sse search --query "test"
+
+# OpenAPI 規格 | OpenAPI spec
+mcp2cli --spec https://petstore3.swagger.io/api/v3/openapi.json --list
+mcp2cli --spec ./openapi.json create-pet --name "Fido" --tag "dog"
+</code></pre>
+
+<h2>💡 為什麼重要 | Why This Matters</h2>
+
+<p><strong>對 LLM 應用開發者：</strong></p>
+<ul>
+  <li>大幅降低上下文視窗消耗，節省 API 成本</li>
+  <li>Dramatically reduces context window consumption, saving API costs</li>
+  <li>適用於任何能執行 shell 命令的 LLM（不限於特定供應商）</li>
+  <li>Works with any LLM that can run shell commands (not limited to specific providers)</li>
+  <li>簡化 AI Agent 與外部 API 的整合</li>
+  <li>Simplifies AI agent integration with external APIs</li>
+</ul>
+
+<p><em>🔗 專案連結：<a href="https://github.com/knowsuchagency/mcp2cli" target="_blank">GitHub - mcp2cli</a></em></p>
+
+  </div>
+</body>
+</html>

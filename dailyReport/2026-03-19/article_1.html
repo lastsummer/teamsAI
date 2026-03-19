@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP Observability is the New APM - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-19.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>MCP Observability is the New APM</h1>
+    <div class="article-meta">原文來源：<a href="https://dev.to/irparent/mcp-observability-is-the-new-apm-1236" target="_blank">https://dev.to/irparent/mcp-observability-is-the-new-apm-1236</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+    <h2>核心摘要</h2>
+    <p>AI agent<span class="zh">（AI 代理）</span>的可觀測性正在成為必要基礎設施，就如同 APM<span class="zh">（應用性能監控）</span>從奢侈品演變為 Web 開發標配一樣。傳統 APM 工具無法監控 AI agent，因為它們只監控 HTTP 層，而非語義正確性<span class="zh">（semantic correctness）</span>、安全性或成本效益。MCP 原生可觀測性<span class="zh">（MCP-native observability）</span>在協議層實現監控，無需 SDK 整合。</p>
+
+    <h2>關鍵要點</h2>
+    <ul>
+      <li>Agent 的非確定性執行<span class="zh">（non-deterministic execution）</span>使 HTTP 監控完全失效，需要語義層的可見性</li>
+      <li>MCP 協議允許可觀測性伺服器作為對等進程<span class="zh">（peer process）</span>運行，無需侵入 SDK 依賴</li>
+      <li>Agent 輸出需要評估正確性、安全性和成本——這些傳統 APM 根本無法衡量</li>
+      <li>協議標準化將可觀測性從框架特定轉移為框架無關的解決方案</li>
+      <li>兩年內，在沒有可觀測性的情況下部署 agent 將被視為專業失職</li>
+    </ul>
+
+    <h2>為何現在是切入時機</h2>
+    <p>市場正在圍繞 MCP 原生 agent 可觀測性形成一個獨特類別，類似 Datadog<span class="zh">（基礎設施監控龍頭）</span>當年佔領基礎設施監控市場。市場時機偏向於打造預設 MCP 可觀測性工具的開發者，而非資金最雄厚的公司。</p>
+
+    <h2>對程式設計師的意義</h2>
+    <p>部署 AI agent 的開發者需要了解，HTTP 層監控對 agent 可靠性毫無幫助。通過 MCP 協議進行可觀測性——無需程式碼插樁<span class="zh">（code instrumentation）</span>——代表了與微服務時代 APM 普及相同的基礎設施轉型。現在投資 agent 可觀測性的團隊將建立未來可靠性、成本控制和安全驗證所需的數據集，這是被動除錯無法提供的能力。</p>
+  </div>
+</body>
+</html>
