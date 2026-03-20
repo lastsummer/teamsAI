@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP Server 教學：逐步建立你的第一個 Model Context Protocol Server - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body h3 {
+    color: #e2e8f0;
+    margin: 1.2rem 0 0.6rem;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body pre {
+    background: #12141e;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+  .article-body pre code {
+    background: none;
+    padding: 0;
+    color: #e2e8f0;
+  }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-20.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>MCP Server 教學：逐步建立你的第一個 Model Context Protocol Server</h1>
+    <div class="article-meta">原文來源：<a href="https://dev.to/_d7eb1c1703182e3ce1782/mcp-server-tutorial-build-your-first-model-context-protocol-server-step-by-step-1ih" target="_blank">dev.to</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+
+    <h2>核心摘要</h2>
+    <p>這是一篇完整的 MCP Server 實作教學，使用 TypeScript<span class="zh">（TypeScript）</span>與官方 Anthropic SDK<span class="zh">（Anthropic 軟體開發套件）</span>，從零開始建立你的第一個 Model Context Protocol Server<span class="zh">（模型上下文協議伺服器）</span>。</p>
+    <p>MCP 是 Anthropic 建立的開放標準，定義 AI 助手與外部系統的通訊方式，作用如同通用連接器<span class="zh">（universal connector）</span>，讓 AI 客戶端無需自訂整合程式碼即可使用外部工具。</p>
+
+    <h2>三個核心原語（Primitives）</h2>
+    <ul>
+      <li><strong>Tools（工具）</strong>：AI 模型可主動呼叫的函式，用於執行操作，由模型控制</li>
+      <li><strong>Resources（資源）</strong>：透過 URI<span class="zh">（統一資源識別碼）</span>存取的唯讀資料，由應用程式控制</li>
+      <li><strong>Prompts（提示）</strong>：可重複使用的模板，引導 AI 行為，由使用者控制</li>
+    </ul>
+
+    <h2>建立步驟</h2>
+    <ol>
+      <li><strong>專案初始化</strong>：建立 Node.js<span class="zh">（Node.js）</span>專案，安裝 <code>@modelcontextprotocol/sdk</code> 與 Zod<span class="zh">（用於輸入驗證的 schema 庫）</span></li>
+      <li><strong>建立 Tools</strong>：使用 <code>server.tool()</code> 註冊可呼叫工具，提供足夠精確的描述讓 AI 模型能正確選用。範例：UUID 產生、JSON 格式化、Token 計數、JSON Schema 驗證</li>
+      <li><strong>加入 Resources</strong>：透過 URI 端點暴露靜態或動態資料，例如伺服器狀態資源、文件模板系統</li>
+      <li><strong>實作 Prompts</strong>：建立結構化引導模板，例如包含特定審查標準的程式碼審查 prompt</li>
+      <li><strong>設定傳輸層</strong>：選擇 stdio<span class="zh">（標準輸入輸出，適合本地開發）</span>或 SSE<span class="zh">（Server-Sent Events，適合 HTTP 遠端存取）</span></li>
+    </ol>
+
+    <h2>生產環境最佳實踐</h2>
+    <ul>
+      <li>工具描述要具體、精準，這直接影響 AI 的選用決策</li>
+      <li>使用嚴格 schema<span class="zh">（結構描述）</span>驗證所有輸入</li>
+      <li>日誌寫到 stderr<span class="zh">（標準錯誤輸出）</span>，因為 stdout<span class="zh">（標準輸出）</span>保留給協議訊息</li>
+      <li>為外部呼叫實作 timeout<span class="zh">（逾時處理）</span></li>
+      <li>遵守最小權限原則<span class="zh">（principle of least privilege）</span></li>
+    </ul>
+
+    <h2>連接 Claude Desktop</h2>
+    <pre><code>// Claude Desktop 的 MCP 設定（macOS）
+// ~/Library/Application Support/Claude/claude_desktop_config.json
+{
+  "mcpServers": {
+    "my-server": {
+      "command": "node",
+      "args": ["/path/to/your/server.js"]
+    }
+  }
+}</code></pre>
+
+    <h2>測試與除錯</h2>
+    <p>官方提供 MCP Inspector<span class="zh">（MCP 視覺化偵錯工具）</span>：</p>
+    <pre><code>npx @modelcontextprotocol/inspector</code></pre>
+
+    <h2>對程式設計師的意義</h2>
+    <p>這篇文章是 MCP Server 開發的完整入門路徑，適合想把自己的工具或 API 接入 Claude、Kiro 等 AI 客戶端的開發者。掌握這三個原語（Tools/Resources/Prompts）之後，就能系統性地將現有服務封裝成 MCP Server，解鎖與各種 AI 工具的互通性。</p>
+  </div>
+</body>
+</html>

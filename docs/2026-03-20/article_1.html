@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP Server of You：為 Kiro IDE 建立個人知識力量 - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body h3 {
+    color: #e2e8f0;
+    margin: 1.2rem 0 0.6rem;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body pre {
+    background: #12141e;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+  .article-body pre code {
+    background: none;
+    padding: 0;
+    color: #e2e8f0;
+  }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  th { background: #2d3748; color: #e2e8f0; padding: 0.5rem 0.8rem; text-align: left; font-size: 0.85rem; }
+  td { padding: 0.5rem 0.8rem; border-bottom: 1px solid #2d3748; color: #a0aec0; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-20.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>MCP Server of You：為 Kiro IDE 建立個人知識力量</h1>
+    <div class="article-meta">原文來源：<a href="https://dev.to/mikeartee/the-mcp-server-of-you-building-a-personal-knowledge-power-for-kiro-ide-159j" target="_blank">dev.to</a> · 作者：Michael Rewiri-Thorsen · 2026-03-20</div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+
+    <h2>核心摘要</h2>
+    <p>作者開發了 <strong>kiro-recall</strong>，一個能把個人知識庫自動注入 Kiro IDE 工作階段的 MCP Server<span class="zh">（模型上下文協議伺服器）</span>。核心概念是「第二大腦」<span class="zh">（second brain）</span>：在你輸入第一個 prompt 之前，系統已主動將你的筆記載入模型上下文，解決工程師因知識積累而導致的認知過載問題。</p>
+    <p>知識庫以 Obsidian vault<span class="zh">（Obsidian 知識庫）</span>形式存放於本地端，採用 Zettelkasten 方法論<span class="zh">（卡片盒筆記法）</span>，純 Markdown 檔案，無雲端依賴。</p>
+
+    <h2>架構設計：七層目錄 + 四個 Hook</h2>
+    <p>Vault 採七層目錄結構，最關鍵的是 <code>06-permanent/</code>（每次工作階段都會載入的永久筆記）與 <code>00-inbox/</code>（當下捕捉的暫存筆記）。</p>
+    <p>系統透過四個 Hook<span class="zh">（鉤子/觸發器）</span>驅動：</p>
+    <table>
+      <tr><th>Hook</th><th>觸發時機</th><th>功能</th></tr>
+      <tr><td>Session Start</td><td>每次工作階段開始</td><td>自動讀取並注入 Vault 上下文</td></tr>
+      <tr><td>/recall</td><td>使用者手動觸發</td><td>將當前靈感/發現存入 inbox</td></tr>
+      <tr><td>Vault Scaffold</td><td>初次設定</td><td>建立七層目錄結構</td></tr>
+      <tr><td>/promote</td><td>使用者手動觸發</td><td>將 inbox 筆記升格為永久原子筆記</td></tr>
+    </table>
+
+    <h2>關鍵要點</h2>
+    <ul>
+      <li><strong>四階段相關性偵測</strong><span class="zh">（relevance detection）</span>：依工作區資料夾名稱→開啟檔案路徑→全部永久筆記→空 Vault 引導，自動決定載入哪些筆記</li>
+      <li><strong>Hook 實作方式</strong>：<code>.kiro.hook</code> JSON 檔，包含觸發類型與 agent 指令，底層用 MCP tool call<span class="zh">（MCP 工具呼叫）</span>讀取 Markdown 檔案</li>
+      <li><strong>/promote 流程</strong>：將 inbox 筆記重新格式化為原子筆記<span class="zh">（atomic notes）</span>，包含「想法」「重要性」「相關連結」「來源元資料」四個區塊，原始檔案自動刪除</li>
+      <li><strong>無編譯程式碼</strong>：整個架構不需要任何 compiled code<span class="zh">（已編譯程式碼）</span>，每個 Hook 本質上只是一個包含 prompt 的 JSON 檔</li>
+    </ul>
+
+    <h2>安裝方式</h2>
+    <pre><code># 透過 Kiro IDE 的「Add Power from GitHub」安裝
+# https://github.com/mikeartee/kiro-recall
+
+# 在 mcp.json 設定 vault 路徑後，重新啟動 Kiro 即可</code></pre>
+
+    <h2>對程式設計師的意義</h2>
+    <p>這篇文章展示了一個高度實用的 MCP Server 落地案例：用最小化架構（純 JSON + Markdown）打造個人知識與 AI 工作流程的深度整合。對於使用 Kiro IDE 或有意打造自訂 MCP Hook 的開發者，kiro-recall 是一個值得參考的完整實作範例。作者正在尋找 Windows/Mac 使用者測試，是參與早期回饋的好機會。</p>
+  </div>
+</body>
+</html>

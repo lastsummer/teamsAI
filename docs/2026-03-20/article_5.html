@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tonic Textual MCP Server：PII 遮蔽與 AI Agents 的結合 - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body pre {
+    background: #12141e;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+  .article-body pre code {
+    background: none;
+    padding: 0;
+    color: #e2e8f0;
+  }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-20.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>Tonic Textual MCP Server：PII 遮蔽與 AI Agents 的結合</h1>
+    <div class="article-meta">原文來源：<a href="https://securityboulevard.com/2026/03/announcing-the-tonic-textual-mcp-server-pii-redaction-meets-ai-agents/" target="_blank">securityboulevard.com</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+
+    <h2>核心摘要</h2>
+    <p>Tonic 發布了開源 MCP Server，將其 Textual 平台的 PII 去識別化<span class="zh">（Personally Identifiable Information redaction，個人識別資訊遮蔽）</span>功能整合進 AI agent 工作流程。開發者可透過 21 個 MCP 工具，在 agent 流程中自動偵測、轉換、遮蔽敏感個資，支援多種格式與語言。</p>
+
+    <h2>21 個 MCP 工具涵蓋範圍</h2>
+    <ul>
+      <li><strong>文字處理</strong>：純文字、JSON、XML、HTML，支援 JSONPath<span class="zh">（JSON 路徑表達式）</span>精細控制遮蔽範圍</li>
+      <li><strong>檔案處理</strong>：PDF、Word 文件、試算表、圖片，保留原始格式；大檔案採後台處理，避免 agent 阻塞<span class="zh">（blocking）</span></li>
+      <li><strong>批次操作</strong>：<code>deidentify_folder</code> 工具一次處理整個目錄，自動偵測檔案類型並平行處理</li>
+      <li><strong>資料集管理</strong>：建立資料集、上傳掃描、下載結果，全程透過 agent 指令完成</li>
+    </ul>
+
+    <h2>高度可設定的遮蔽選項</h2>
+    <ul>
+      <li>支援 35+ 種實體類型<span class="zh">（entity types）</span>的個別設定</li>
+      <li>多種合成模式<span class="zh">（synthesis modes）</span>，包含長度感知<span class="zh">（length-aware）</span>選項</li>
+      <li>跨文件的確定性替換映射<span class="zh">（deterministic replacement mapping）</span>，同一實體在不同文件中替換結果一致</li>
+      <li>支援自訂實體模型<span class="zh">（custom entity models）</span>與允許/封鎖清單</li>
+    </ul>
+
+    <h2>安裝與設定</h2>
+    <pre><code># 安裝
+npm install -g @tonicai/textual-mcp
+
+# 設定 API Key
+export TONIC_TEXTUAL_API_KEY=your-key
+
+# Claude Desktop 設定
+# 在 MCP 設定檔中新增 textual server 條目</code></pre>
+
+    <h2>典型使用場景</h2>
+    <ul>
+      <li>準備 AI 訓練資料集（去除個資後才能安全使用）</li>
+      <li>建立合規的 RAG pipeline<span class="zh">（檢索增強生成管線）</span></li>
+      <li>自動化文件審查工作流程</li>
+      <li>處理資料匯出時的隱私保護</li>
+    </ul>
+
+    <h2>技術架構</h2>
+    <p>採用 HTTP streaming transport<span class="zh">（HTTP 串流傳輸）</span>，預設並發 API 呼叫上限 50 次，透過 MCP task API<span class="zh">（MCP 任務 API）</span>實作後台任務處理，並內建暫時性故障的自動重試邏輯<span class="zh">（retry logic）</span>。</p>
+
+    <h2>對程式設計師的意義</h2>
+    <p>這是目前少數將資料隱私合規<span class="zh">（data privacy compliance）</span>與 AI agent 工作流程直接整合的開源工具。對於需要處理真實用戶資料的 RAG 系統或 AI 應用開發者，這個 MCP Server 提供了一條合規路徑，而不需要自行實作複雜的 PII 偵測邏輯。</p>
+  </div>
+</body>
+</html>

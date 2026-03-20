@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP 2026 年度路線圖 - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body h3 {
+    color: #e2e8f0;
+    margin: 1.2rem 0 0.6rem;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+  .priority-card {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #667eea;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.8rem;
+  }
+  .priority-card h3 { margin-top: 0; color: #9f7aea; font-size: 0.95rem; }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-20.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>MCP 2026 年度路線圖</h1>
+    <div class="article-meta">原文來源：<a href="https://blog.modelcontextprotocol.io/posts/2026-mcp-roadmap/" target="_blank">blog.modelcontextprotocol.io</a> · 作者：David Soria Parra（Lead Maintainer）· 2026-03-09</div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。這是 MCP 官方發布的年度路線圖，所有使用或計劃採用 MCP 的開發者都應了解。</div>
+  <div class="article-body">
+
+    <h2>核心摘要</h2>
+    <p>Model Context Protocol<span class="zh">（模型上下文協議）</span>自 2025 年 11 月發布正式規範以來，已從最初的本地工具連接器演進為企業級 agent 工作流程的基礎設施。本路線圖由首席維護者 David Soria Parra 發布，揭示 2026 年四大優先開發方向，並從「版本里程碑」模式轉向「優先領域框架」<span class="zh">（priority-area framework）</span>。</p>
+
+    <h2>治理結構變化</h2>
+    <p>MCP 開發不再以版本號為主軸，改由 Working Groups<span class="zh">（工作組）</span>主導，各組自行制定交付時程。SEP（Spec Enhancement Proposals<span class="zh">，規範增強提案</span>）是提交變更的正式管道，但只有與優先領域對齊的 SEP 才能快速推進。</p>
+
+    <h2>四大優先領域</h2>
+
+    <div class="priority-card">
+      <h3>1. Transport Evolution and Scalability（傳輸層演進與擴展性）</h3>
+      <p>現有 Streamable HTTP transport<span class="zh">（可串流 HTTP 傳輸）</span>無法支援生產環境的水平擴展——有狀態工作階段<span class="zh">（stateful sessions）</span>與負載平衡器<span class="zh">（load balancers）</span>衝突。解決方向：設計無狀態伺服器<span class="zh">（stateless server）</span>模式，以及透過 <code>.well-known</code> 端點實現能力探索<span class="zh">（capability discovery）</span>，無需建立連線即可知曉伺服器功能。</p>
+    </div>
+
+    <div class="priority-card">
+      <h3>2. Agent Communication（代理通訊）</h3>
+      <p>Tasks primitive<span class="zh">（任務原語）</span>已實驗性發布，生產使用後暴露出兩個問題需完善：暫時性故障的重試機制<span class="zh">（retry mechanics）</span>，以及任務結果的過期策略<span class="zh">（result retention expiry policies）</span>。這體現了 MCP 的迭代哲學：先發布實驗功能，收集生產數據，再精煉設計。</p>
+    </div>
+
+    <div class="priority-card">
+      <h3>3. Governance Maturation（治理成熟化）</h3>
+      <p>目前每個 SEP 都需要 Core Maintainers<span class="zh">（核心維護者）</span>全面審查，成為瓶頸。計劃建立貢獻者晉升路徑<span class="zh">（contributor advancement pathway）</span>，並授權 Working Groups 在其領域內自行批准 SEP，Core Maintainers 保留戰略監督。</p>
+    </div>
+
+    <div class="priority-card">
+      <h3>4. Enterprise Readiness（企業就緒性）</h3>
+      <p>企業部署 MCP 時面臨四個一致性挑戰：稽核軌跡<span class="zh">（audit trail）</span>、SSO 整合認證<span class="zh">（SSO-integrated authentication）</span>、閘道行為規範<span class="zh">（gateway behavior specifications）</span>、設定可攜性<span class="zh">（configuration portability）</span>。此優先領域有意保持開放，邀請企業實踐者共同塑造方向，主要以協議擴展<span class="zh">（protocol extensions）</span>形式實現，不修改核心規範。</p>
+    </div>
+
+    <h2>暫不納入本期的方向</h2>
+    <ul>
+      <li>Triggers and event-driven updates<span class="zh">（觸發器與事件驅動更新）</span></li>
+      <li>Streamed and reference-based result types<span class="zh">（串流與引用型結果類型）</span></li>
+      <li>Enhanced security and authorization<span class="zh">（增強安全與授權機制）</span></li>
+      <li>Extensions ecosystem maturation<span class="zh">（擴展生態系成熟化）</span></li>
+    </ul>
+    <p>目前正在審查中的活躍提案：SEP-1932（DPoP）和 SEP-1933（Workload Identity Federation<span class="zh">，工作負載身份聯合</span>）。</p>
+
+    <h2>對程式設計師的意義</h2>
+    <p>這是 MCP 生態系最重要的戰略文件。如果你正在或計劃建立 MCP Server，需要特別注意：</p>
+    <ul>
+      <li><strong>傳輸層</strong>將往無狀態方向設計，提前規劃架構可避免未來重構</li>
+      <li><strong>企業功能</strong>如 SSO、稽核即將標準化，商業產品可提前預留介面</li>
+      <li>提交 SEP 或貢獻代碼，務必先確認與上述四大優先領域的對齊程度</li>
+    </ul>
+  </div>
+</body>
+</html>

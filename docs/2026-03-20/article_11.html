@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>檔案智能中樞：搭載 MCP 的 AI 驅動企業盡職調查 - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body pre {
+    background: #12141e;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+  .article-body pre code { background: none; padding: 0; color: #e2e8f0; }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+  .highlight-box {
+    background: #1a1d27;
+    border: 1px solid #44337a;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    color: #e2e8f0;
+    font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-20.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>檔案智能中樞：搭載 MCP 的 AI 驅動企業盡職調查</h1>
+    <div class="article-meta">原文來源：<a href="https://dev.to/grantleydev/filed-intelligence-hub-ai-powered-corporate-due-diligence-with-mcp-24j4" target="_blank">dev.to</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+
+    <h2>核心摘要</h2>
+    <p>這是 Notion MCP Challenge<span class="zh">（Notion MCP 挑戰賽）</span>的參賽作品，展示如何將兩個 MCP Server 協同工作，自動化企業盡職調查<span class="zh">（corporate due diligence）</span>流程。系統整合 Filed MCP Server（政府資料來源）與 Notion MCP Server（結構化輸出），讓一個 prompt 就能觸發完整的企業情報調查並自動整理成 Notion 工作區。</p>
+
+    <div class="highlight-box">
+      實測成果：以 $0.91 API 成本、37 次自主 AI 回合，調查三家國防承包商（Lockheed Martin、Anduril Industries、Palantir），發現 13 項可行動情報，包括 Anduril Industries 在美國 5 州以未登記外國公司身份運營 4-5 年。
+    </div>
+
+    <h2>系統架構：兩個 MCP Server 協同</h2>
+    <p><strong>Filed MCP Server</strong>（6 個工具，查詢政府資料）：</p>
+    <ul>
+      <li><code>filed_search_entities</code> — 跨 9 個美國州搜尋商業實體</li>
+      <li><code>filed_get_entity</code> — 取得詳細實體資訊</li>
+      <li><code>filed_company_intel</code> — 編排統一情報報告</li>
+      <li><code>filed_search_sec</code> — 查詢 SEC EDGAR 申報資料</li>
+      <li><code>filed_search_contracts</code> — 查詢 USASpending.gov 聯邦合約</li>
+      <li><code>filed_search_lobbying</code> — 存取參議院 LDA 遊說資料庫</li>
+    </ul>
+    <p><strong>Notion MCP Server</strong>：將調查結果結構化為持久資料庫，包含類型化屬性<span class="zh">（typed properties）</span>與關聯關係<span class="zh">（relationships）</span>。</p>
+
+    <h2>核心問題與解法</h2>
+    <p>傳統合規研究需要手動跨多個分散的政府來源搜尋：州商業登記、SEC 申報、聯邦合約、遊說揭露。這個 MCP 架構把「跨資料源自動搜尋 + 結構化輸出」整合進單一 agent 對話流程。</p>
+
+    <h2>安裝</h2>
+    <pre><code>npx filed-mcp-server
+# Free tier: 100 次/月免費查詢，API key 申請：filed.dev/developers</code></pre>
+
+    <h2>對程式設計師的意義</h2>
+    <p>這個案例展示了 MCP 多伺服器協同<span class="zh">（multi-server orchestration）</span>的強大潛力：不同的 MCP Server 各自負責不同資料源，AI agent 在中間協調，產生遠超單一 API 能力的複合結果。對於想建立企業資料整合工具或自動化研究流程的開發者，這是一個可直接參考的架構模式。</p>
+  </div>
+</body>
+</html>
