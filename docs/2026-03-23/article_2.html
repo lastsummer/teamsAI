@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I Built a Self-Healing Production Server Using Claude Code - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; line-height: 1.8; }
+  .back-link { display: inline-block; margin-bottom: 1.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem; }
+  .back-link:hover { text-decoration: underline; }
+  .article-header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #2d3748; }
+  .article-header h1 { font-size: 1.5rem; font-weight: 700; color: #e2e8f0; line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-meta { font-size: 0.85rem; color: #4a5568; }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 { color: #e2e8f0; margin: 1.5rem 0 0.8rem; font-weight: 600; font-size: 1.15rem; }
+  .article-body h3 { color: #e2e8f0; margin: 1.2rem 0 0.6rem; font-weight: 600; font-size: 1rem; }
+  .article-body p { margin-bottom: 1rem; color: #cbd5e0; }
+  .article-body ul, .article-body ol { margin: 0.8rem 0 1rem 1.5rem; color: #cbd5e0; }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code { background: #2d3748; color: #f6ad55; font-family: 'Fira Code', monospace; font-size: 0.85em; padding: 0.1rem 0.4rem; border-radius: 4px; }
+  .article-body pre { background: #12141e; border: 1px solid #2d3748; border-radius: 8px; padding: 1rem; overflow-x: auto; margin: 1rem 0; }
+  .article-body pre code { background: none; padding: 0; color: #e2e8f0; }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice { background: #1a1d27; border: 1px solid #2d3748; border-left: 3px solid #9f7aea; border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #718096; }
+  .highlight-box { background: #1a1d27; border: 1px solid #2d3748; border-radius: 8px; padding: 1rem 1.2rem; margin: 1rem 0; }
+  .highlight-box .label { font-size: 0.75rem; color: #f6ad55; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-23.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>I Built a Self-Healing Production Server Using Claude Code — No API Key, No Extra Cost</h1>
+    <div class="article-meta">原文來源：<a href="https://dev.to/gumagonza1/i-built-a-self-healing-production-server-using-claude-code-no-api-key-no-extra-cost-1eoo" target="_blank">dev.to</a> · 作者：Gumaro González</div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+
+    <h2>核心摘要</h2>
+    <p>作者 Gumaro González 利用 Claude Code 建立了一個名為 PMO（Project Management Operations Agent<span class="zh">（專案管理作業代理）</span>）的自主代理，部署於 Google Cloud Platform<span class="zh">（GCP）</span> 上的 Windows Server 2022，負責監控並自動修復六個 production services<span class="zh">（生產服務）</span>。</p>
+
+    <p>最關鍵的發現：<code>claude -p</code>（non-interactive flag<span class="zh">（非互動模式旗標）</span>）直接使用現有的 Max 訂閱憑證執行，<strong>不需要獨立的 API Key，也不產生額外費用</strong>。</p>
+
+    <h2>系統架構（三層設計）</h2>
+    <div class="highlight-box">
+      <div class="label">Architecture</div>
+      <ol>
+        <li><strong>Admin Interface</strong><span class="zh">（管理員介面）</span>：透過 Telegram 以 <code>!pmo</code> 前綴發送指令</li>
+        <li><strong>Message Queue</strong><span class="zh">（訊息佇列）</span>：使用 SQLite WAL DB 儲存任務佇列</li>
+        <li><strong>PMO Agent</strong>：每 10 秒輪詢一次，配備 24 個 MCP tools<span class="zh">（MCP 工具）</span>，分六大類別</li>
+      </ol>
+    </div>
+
+    <h2>兩種運作模式</h2>
+    <ul>
+      <li><strong>直接指令模式</strong>：管理員透過 Telegram 下達命令，PMO 即時執行</li>
+      <li><strong>自主修復模式</strong>（Autonomous autocorrection<span class="zh">（自主自動更正）</span>）：偵測到重複錯誤時自動觸發 → diagnose<span class="zh">（診斷）</span> → analyze<span class="zh">（分析）</span> → fix<span class="zh">（修復）</span> → verify<span class="zh">（驗證）</span> → report<span class="zh">（回報）</span> 的完整閉環</li>
+    </ul>
+
+    <h2>安全設計</h2>
+    <ul>
+      <li><strong>Path traversal blocking</strong><span class="zh">（路徑穿越防護）</span>：防止惡意路徑操作</li>
+      <li><strong>Single concurrent execution</strong><span class="zh">（單一並發執行）</span>：搭配 5 分鐘冷卻時間，避免重複觸發</li>
+      <li><strong>System prompt constraints</strong><span class="zh">（系統提示約束）</span>：限制 Claude 的操作範圍</li>
+      <li><strong>CLI budget cap</strong><span class="zh">（CLI 預算上限）</span>：每次執行最高 $2</li>
+    </ul>
+
+    <h2>實際成效（2026/03/21 起）</h2>
+    <div class="highlight-box">
+      <div class="label">Results</div>
+      <ul>
+        <li>執行次數：9 次</li>
+        <li>成功率：100%</li>
+        <li>平均解決時間：~5 分鐘</li>
+        <li>資料庫大小：84 KB</li>
+      </ul>
+    </div>
+
+    <h2>費用比較</h2>
+    <ul>
+      <li>原始 API 模式：~$42/月（以每日 30 次執行計）</li>
+      <li>Max 訂閱方案：$100/月，但同時涵蓋互動式開發與其他自動化任務，<strong>實際 CP 值更高</strong></li>
+    </ul>
+
+    <h2>對程式設計師的意義</h2>
+    <p>這篇文章展示了一個重要的架構模式：用 <code>claude -p</code> 搭配 MCP tools 建立自主 agent loop<span class="zh">（代理循環）</span>，不需要額外的 API 費用。這對於已有 Claude Max 訂閱的開發者來說，意味著可以免費將 Claude Code 嵌入 CI/CD pipeline<span class="zh">（持續整合/部署流程）</span> 或 自動化監控系統中。SQLite + Telegram 的輕量架構也值得借鑑，適合個人或小團隊的 self-healing infrastructure<span class="zh">（自我修復基礎設施）</span> 實踐。</p>
+  </div>
+</body>
+</html>

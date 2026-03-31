@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code CVE 安全漏洞：你應該改變審查 AI 程式碼的方式 - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body h3 {
+    color: #e2e8f0;
+    margin: 1.2rem 0 0.6rem;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body pre {
+    background: #12141e;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+  .article-body pre code {
+    background: none;
+    padding: 0;
+    color: #e2e8f0;
+  }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+  .warning {
+    background: #2d1515;
+    border: 1px solid #742020;
+    border-left: 3px solid #e53e3e;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    color: #fc8181;
+  }
+  .cvss {
+    display: inline-block;
+    background: #742020;
+    color: #fc8181;
+    font-weight: 700;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85em;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-24.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>The Claude Code CVE That Should Change How You Review AI-Generated Code<span class="zh">（Claude Code CVE 安全漏洞：應改變你審查 AI 生成程式碼的方式）</span></h1>
+    <div class="article-meta">作者：Toni Antunovic｜原文來源：<a href="https://dev.to/toniantunovic/the-claude-code-cve-that-should-change-how-you-review-ai-generated-code-4gd4" target="_blank">dev.to</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+
+    <h2>核心摘要</h2>
+    <p>本文揭露了兩個影響 Claude Code 的重大安全漏洞<span class="zh">（CVE, Common Vulnerabilities and Exposures）</span>，並附上統計數據顯示 AI 生成程式碼的安全隱患有多嚴重——87% 的 PR 至少引入一個安全漏洞。文章呼籲開發者重新思考審查 AI 生成程式碼的方式。</p>
+
+    <h2>兩大 CVE 詳情</h2>
+
+    <h3>CVE-2025-59536 <span class="cvss">CVSS 8.7 高危</span></h3>
+    <div class="warning">⚠️ 遠端程式碼執行漏洞（Remote Code Execution），在 clone 含惡意程式碼的 repo 並啟動 Claude Code 後立即觸發</div>
+    <ul>
+      <li><strong>攻擊向量</strong>：惡意的 <code>.claude/settings.json</code> 檔案</li>
+      <li><strong>機制</strong>：Pre-execution hooks<span class="zh">（前置執行鉤子）</span> 在信任提示<span class="zh">（trust prompts）</span> 出現前就已執行</li>
+      <li><strong>修補版本</strong>：1.0.111 及 2.0.65</li>
+    </ul>
+
+    <h3>CVE-2026-21852 <span class="cvss">CVSS 5.3 中危</span></h3>
+    <div class="warning">⚠️ API 流量被靜默重定向至攻擊者控制的伺服器</div>
+    <ul>
+      <li><strong>攻擊向量</strong>：利用 <code>ANTHROPIC_BASE_URL</code> 設定</li>
+      <li><strong>影響</strong>：完整的 authorization headers<span class="zh">（授權標頭）</span> 在信任對話框出現前即已傳送</li>
+      <li><strong>特別危險場景</strong>：共享的 Workspaces<span class="zh">（工作區）</span> 環境</li>
+    </ul>
+
+    <h2>驚人統計數據</h2>
+    <p>DryRun Security 報告揭示：在 38 次掃描中，AI agents 共生成了 143 個安全問題，其中：</p>
+    <ul>
+      <li><strong>87%</strong> 的 PR 至少引入一個安全漏洞<span class="zh">（security vulnerability）</span></li>
+      <li>常見問題包括：broken access control<span class="zh">（存取控制破壞）</span>、未驗證的 JWT handling<span class="zh">（JWT 處理）</span>、未認證的 endpoints<span class="zh">（端點）</span></li>
+    </ul>
+
+    <h2>立即行動建議</h2>
+    <ol>
+      <li>立即更新 Claude Code 到已修補版本</li>
+      <li>若你的團隊曾存取不受信任的 repo，立即輪換<span class="zh">（rotate）</span> Anthropic API keys</li>
+      <li><strong>將 <code>.claude/settings.json</code> 視為可執行程式碼</strong>，納入安全審查流程</li>
+      <li>在每個 PR 階段實施持續安全掃描<span class="zh">（continuous security scanning）</span>，而非僅在最終審查時</li>
+      <li>部署本地優先的安全閘門<span class="zh">（local-first security gates）</span>，在程式碼推送到遠端前先掃描</li>
+    </ol>
+
+    <h2>對程式設計師的意義</h2>
+    <p>這兩個 CVE 揭示了一個根本性問題：<strong>AI 工具的設定檔本身就是攻擊面</strong><span class="zh">（attack surface）</span>。當你 clone 一個 repo，其中的 <code>.claude/settings.json</code> 可以在你意識到之前就執行任意程式碼。</p>
+    <ul>
+      <li><strong>不要盲目信任 clone 的 repo</strong>：在啟動任何 AI coding tool 前，先檢查設定檔</li>
+      <li><strong>安全審查前移</strong>：不能等到 code review 才做安全審查，要在每個 PR 都自動掃描</li>
+      <li><strong>87% 有漏洞</strong>這個數字是警鐘：AI 生成的程式碼不是「更安全的程式碼」，只是「更快產生的程式碼」</li>
+      <li><strong>API key 管理</strong>：在 CI/CD 和共享環境中，特別留意環境變數的安全性</li>
+    </ul>
+
+  </div>
+</body>
+</html>

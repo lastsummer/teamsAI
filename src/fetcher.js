@@ -20,19 +20,18 @@ async function fetchAll(config, options = {}) {
     console.log(`\n頻道：${channel.name}`);
     try {
       let since;
+      let until;
       if (options.since) {
         since = options.since;
+        until = options.until;
       } else {
-        const lastFetch = getLastFetchTime(channel.channelId);
-        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
-        const lastFetchDate = lastFetch ? new Date(lastFetch) : null;
-        since = (!lastFetchDate || lastFetchDate < twoDaysAgo)
-          ? oneDayAgo.toISOString()
-          : lastFetch;
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        since = todayStart.toISOString();
+        until = new Date().toISOString();
       }
       console.log(`  抓取自：${since}`);
-      if (options.until) console.log(`  抓取至：${options.until}`);
+      console.log(`  抓取至：${until || '不限'}`);
 
       const fetchStart = new Date().toISOString();
       let messages = await getChannelMessages(
@@ -42,13 +41,14 @@ async function fetchAll(config, options = {}) {
         since
       );
 
-      if (options.until) {
-        const untilDate = new Date(options.until);
+      if (until) {
+        const untilDate = new Date(until);
         messages = messages.filter(m => new Date(m.createdDateTime) < untilDate);
       }
 
       saveMessages(archiveDir, channel.name, messages, options.fileDate);
       if (!options.since) setLastFetchTime(channel.channelId, fetchStart);
+
 
       if (messages.length === 0) {
         console.log('  沒有新訊息');

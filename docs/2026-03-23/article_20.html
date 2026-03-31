@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master Claude Code and Figma MCP for Design in 50 Min - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; line-height: 1.8; }
+  .back-link { display: inline-block; margin-bottom: 1.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem; }
+  .back-link:hover { text-decoration: underline; }
+  .article-header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #2d3748; }
+  .article-header h1 { font-size: 1.5rem; font-weight: 700; color: #e2e8f0; line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-meta { font-size: 0.85rem; color: #4a5568; }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 { color: #e2e8f0; margin: 1.5rem 0 0.8rem; font-weight: 600; font-size: 1.15rem; }
+  .article-body h3 { color: #e2e8f0; margin: 1.2rem 0 0.6rem; font-weight: 600; font-size: 1rem; }
+  .article-body p { margin-bottom: 1rem; color: #cbd5e0; }
+  .article-body ul, .article-body ol { margin: 0.8rem 0 1rem 1.5rem; color: #cbd5e0; }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code { background: #2d3748; color: #f6ad55; font-family: 'Fira Code', monospace; font-size: 0.85em; padding: 0.1rem 0.4rem; border-radius: 4px; }
+  .article-body pre { background: #12141e; border: 1px solid #2d3748; border-radius: 8px; padding: 1rem; overflow-x: auto; margin: 1rem 0; }
+  .article-body pre code { background: none; padding: 0; color: #e2e8f0; }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice { background: #1a1d27; border: 1px solid #2d3748; border-left: 3px solid #9f7aea; border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #718096; }
+  .steps-box { background: #1a1d27; border: 1px solid #2d3748; border-radius: 8px; padding: 1rem 1.2rem; margin: 1rem 0; }
+  .steps-box .label { font-size: 0.75rem; color: #68d391; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-23.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>Master Claude Code and Figma MCP for Design in 50 Minutes | Felix Lee</h1>
+    <div class="article-meta">原文來源：<a href="https://creatoreconomy.so/p/master-claude-code-figma-mcp-for-design-felix-lee" target="_blank">creatoreconomy.so</a> · 主講：Felix Lee</div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+
+    <h2>核心摘要</h2>
+    <p>Felix Lee 曾訓練數千名設計師學習使用 Claude Code 和 Figma MCP<span class="zh">（Model Context Protocol）</span>。本集 podcast/文章展示如何將 Figma 設計稿直接轉換成可運作的網站，以及反向將網站匯回 Figma 可編輯圖層——消除傳統設計與開發之間的 handoff<span class="zh">（交接）</span>流程。</p>
+
+    <h2>關鍵操作：設定 Figma MCP</h2>
+    <div class="steps-box">
+      <div class="label">三步驟設定</div>
+      <ol>
+        <li><strong>安裝</strong>：在 Claude Code 中執行
+          <pre><code>claude mcp add --transport http figma https://mcp.figma.com/mcp</code></pre>
+        </li>
+        <li><strong>驗證</strong>：輸入 <code>/mcp</code>，選擇 Figma，完成 OAuth 驗證</li>
+        <li><strong>使用</strong>：複製 Figma frame 連結，貼上並輸入 <code>Build this design</code></li>
+      </ol>
+    </div>
+
+    <h2>展示的三大應用場景</h2>
+    <ul>
+      <li><strong>Figma → 網站</strong>：Live demo 15 分鐘內將設計稿轉成可運作的網頁</li>
+      <li><strong>FigJam flowchart → 遊戲</strong>：將流程圖直接轉換成功能性遊戲</li>
+      <li><strong>3D 動態世界地圖</strong>：一次嘗試生成 3D animated world map<span class="zh">（3D 動態世界地圖）</span></li>
+    </ul>
+
+    <h2>進階技巧</h2>
+    <ul>
+      <li><strong>UX reviewer feedback</strong><span class="zh">（使用者體驗審查反饋）</span>：讓 Claude 扮演 UX 評審角色提供改善建議</li>
+      <li><strong>Code → Figma export</strong>：將生成的程式碼反向匯回 Figma 作為可編輯的設計稿</li>
+      <li><strong>Landing page analysis</strong><span class="zh">（登陸頁面分析）</span>：用 Claude 分析現有網站的設計品質</li>
+    </ul>
+
+    <h2>為何重要</h2>
+    <p>Figma MCP 消除了設計與開發之間的傳統壁壘。設計師可以自行 ship<span class="zh">（交付產品）</span>，不再依賴工程師實作；工程師則可以直接從設計稿生成 pixel-perfect<span class="zh">（像素精確）</span>程式碼，省去手動還原設計的時間。</p>
+
+    <h2>對程式設計師的意義</h2>
+    <p>Figma MCP 的三行設定指令值得現在就試試。不論你是否有設計背景，「複製 Figma 連結 → Build this design」的工作流程能大幅加速 UI 實作。特別是接外包或獨立開發者，掌握這個工具可以讓你一個人完成從設計到實作的完整流程。影片在 YouTube 上有 demo，可以直接觀看效果再決定是否採用。</p>
+  </div>
+</body>
+</html>

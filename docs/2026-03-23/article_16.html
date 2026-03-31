@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Secretly Hoards 140+ Config Files - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; line-height: 1.8; }
+  .back-link { display: inline-block; margin-bottom: 1.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem; }
+  .back-link:hover { text-decoration: underline; }
+  .article-header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #2d3748; }
+  .article-header h1 { font-size: 1.5rem; font-weight: 700; color: #e2e8f0; line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-meta { font-size: 0.85rem; color: #4a5568; }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 { color: #e2e8f0; margin: 1.5rem 0 0.8rem; font-weight: 600; font-size: 1.15rem; }
+  .article-body h3 { color: #e2e8f0; margin: 1.2rem 0 0.6rem; font-weight: 600; font-size: 1rem; }
+  .article-body p { margin-bottom: 1rem; color: #cbd5e0; }
+  .article-body ul, .article-body ol { margin: 0.8rem 0 1rem 1.5rem; color: #cbd5e0; }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code { background: #2d3748; color: #f6ad55; font-family: 'Fira Code', monospace; font-size: 0.85em; padding: 0.1rem 0.4rem; border-radius: 4px; }
+  .article-body pre { background: #12141e; border: 1px solid #2d3748; border-radius: 8px; padding: 1rem; overflow-x: auto; margin: 1rem 0; }
+  .article-body pre code { background: none; padding: 0; color: #e2e8f0; }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice { background: #1a1d27; border: 1px solid #2d3748; border-left: 3px solid #9f7aea; border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #718096; }
+  .warning-box { background: #1a1d27; border: 1px solid #744210; border-left: 3px solid #f6ad55; border-radius: 8px; padding: 1rem 1.2rem; margin: 1rem 0; }
+  .warning-box .label { font-size: 0.75rem; color: #f6ad55; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-23.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>Claude Code Secretly Hoards 140+ Config Files — Here's How to Take Control</h1>
+    <div class="article-meta">原文來源：<a href="https://dev.to/ithiria894/claude-code-secretly-hoards-140-config-files-behind-your-back-heres-how-to-take-control-2dlb" target="_blank">dev.to</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+
+    <h2>核心問題</h2>
+    <p>Claude Code 在使用者不知情的情況下，於 <code>~/.claude/</code> 目錄下累積了 140 個以上的設定檔，包含 memories<span class="zh">（記憶）</span>、skills<span class="zh">（技能）</span>、MCP server configs<span class="zh">（MCP 伺服器設定）</span>、hooks<span class="zh">（鉤子）</span>、plans<span class="zh">（計畫）</span>和 sessions<span class="zh">（工作階段）</span>，散落在以 scope<span class="zh">（範圍）</span>為基礎的目錄中。</p>
+
+    <div class="warning-box">
+      <div class="label">⚠️ 效能影響</div>
+      <p>Claude Code 每次啟動時會從目前 scope 及所有 parent scopes<span class="zh">（父範圍）</span>載入所有設定，導致 context window<span class="zh">（上下文視窗）</span>被無關設定佔用，降低 LLM 準確度。例如：放在 global scope<span class="zh">（全域範圍）</span>的 Python skill 會在每個 React 前端專案中也被載入。</p>
+    </div>
+
+    <h2>具體問題清單</h2>
+    <ul>
+      <li><strong>Scope contamination</strong><span class="zh">（範圍污染）</span>：Python 技能出現在 React 專案中</li>
+      <li><strong>Duplicate MCP entries</strong><span class="zh">（重複的 MCP 項目）</span>：同一伺服器被初始化多次</li>
+      <li><strong>Stale memories</strong><span class="zh">（過期的記憶）</span>：已封存專案的設定仍消耗 tokens</li>
+    </ul>
+
+    <h2>解決方案：Claude Code Organizer</h2>
+    <p>作者開發了一個開源管理工具，一行指令啟動：</p>
+    <pre><code>npx @mcpware/claude-code-organizer</code></pre>
+    <p>在 <code>http://localhost:3847</code> 提供視覺化儀表板，採用三欄介面：</p>
+    <ul>
+      <li><strong>Scope tree</strong><span class="zh">（範圍樹）</span>：展示 Global → Workspace → Project 層級</li>
+      <li><strong>Content area</strong><span class="zh">（內容區）</span>：分類顯示所有設定項目</li>
+      <li><strong>Detail panel</strong><span class="zh">（詳細面板）</span>：檢視單一設定內容</li>
+    </ul>
+
+    <h2>八大管理類別</h2>
+    <p>Memories、Skills、MCP Servers、Plans、Sessions、Config Files、Hooks、Plugins——支援跨 scope 拖曳移動、批次操作、即時搜尋，以及一鍵在 VS Code 中開啟。</p>
+
+    <h2>技術架構</h2>
+    <ul>
+      <li><strong>Scanner</strong>：檔案系統遍歷與解析</li>
+      <li><strong>Mover</strong>：跨 scope 移轉（含驗證）</li>
+      <li><strong>Server</strong>：REST API + 純 JS 前端</li>
+      <li><strong>MCP Server mode</strong>：讓 Claude 能以程式化方式管理自身設定</li>
+    </ul>
+
+    <h2>對程式設計師的意義</h2>
+    <p>如果你長期使用 Claude Code 並在多個專案中設定過 memories、MCP servers 或 skills，這個工具能幫你清理累積的設定廢棄物，讓每次 session 啟動時 context window 更乾淨。特別是有多個專案共用同一台機器的開發者，建議定期用此工具審查 global scope 中的設定，避免 scope contamination 悄悄降低回應品質。</p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,2103 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teams AI 日報 - 2026-03-25</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; padding: 2rem 1rem; }
+  .header { text-align: center; margin-bottom: 1.5rem; }
+  .header h1 { font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .header .meta { color: #718096; font-size: 0.9rem; margin-top: 0.4rem; }
+  .count-badge { display: inline-block; background: #2d3748; color: #9f7aea; font-size: 0.8rem; padding: 0.2rem 0.8rem; border-radius: 999px; }
+  .filter-bar { max-width: 900px; margin: 0 auto 1.5rem; }
+  .filter-bar-title { font-size: 0.8rem; color: #4a5568; margin-bottom: 0.6rem; }
+  .filter-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .filter-tag { background: #1a1d27; border: 1px solid #2d3748; color: #a0aec0; font-size: 0.75rem; padding: 0.3rem 0.8rem; border-radius: 999px; cursor: pointer; transition: all 0.15s; user-select: none; }
+  .filter-tag:hover { border-color: #667eea; color: #e2e8f0; }
+  .filter-tag.active { background: #667eea; border-color: #667eea; color: #fff; font-weight: 600; }
+  .filter-tag.clear-btn { border-color: #4a5568; color: #718096; }
+  .filter-tag.clear-btn:hover { border-color: #e53e3e; color: #fc8181; }
+  .tag-count { display: inline-block; background: rgba(255,255,255,0.1); font-size: 0.7rem; padding: 0 0.35rem; border-radius: 999px; margin-left: 0.2rem; vertical-align: middle; }
+  .filter-tag.active .tag-count { background: rgba(255,255,255,0.25); }
+  .no-results { text-align: center; color: #4a5568; padding: 3rem; display: none; }
+  .grid { max-width: 900px; margin: 0 auto; display: grid; gap: 1.2rem; }
+  .card { background: #1a1d27; border: 1px solid #2d3748; border-radius: 12px; padding: 1.4rem; transition: border-color 0.2s, transform 0.2s; }
+  .card:hover { border-color: #667eea; transform: translateY(-2px); }
+  .card.hidden { display: none; }
+  .card-title { font-size: 1.05rem; font-weight: 600; color: #e2e8f0; margin-bottom: 0.6rem; line-height: 1.5; }
+  .card-summary { color: #a0aec0; font-size: 0.9rem; line-height: 1.7; margin-bottom: 0.8rem; }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.8rem; }
+  .tag { background: #2d3748; color: #9f7aea; font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 999px; font-weight: 500; cursor: pointer; transition: background 0.15s; }
+  .tag:hover { background: #667eea; color: #fff; }
+  .card-footer { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #4a5568; }
+  .read-more { color: #667eea; text-decoration: none; font-weight: 500; }
+  .read-more:hover { text-decoration: underline; }
+  .featured-section { max-width: 900px; margin: 0 auto 2rem; }
+  .featured-title { font-size: 1rem; font-weight: 600; color: #f6ad55; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+  .featured-title::before { content: '⭐'; font-size: 1rem; }
+  .featured-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .featured-item { background: #1a1d27; border: 1px solid #44337a; border-left: 3px solid #f6ad55; border-radius: 8px; padding: 0.8rem 1rem; display: flex; align-items: flex-start; gap: 0.8rem; transition: border-color 0.2s; }
+  .featured-item:hover { border-color: #667eea; border-left-color: #f6ad55; }
+  .featured-rank { font-size: 0.75rem; color: #f6ad55; font-weight: 700; min-width: 1.5rem; padding-top: 0.1rem; }
+  .featured-content { flex: 1; }
+  .featured-item-title { font-size: 0.9rem; font-weight: 600; color: #e2e8f0; line-height: 1.4; margin-bottom: 0.3rem; }
+  .featured-item-title a { color: inherit; text-decoration: none; }
+  .featured-item-title a:hover { color: #667eea; }
+  .featured-item-reason { font-size: 0.8rem; color: #718096; line-height: 1.5; }
+  .featured-item-links { display: flex; gap: 1rem; margin-top: 0.4rem; font-size: 0.8rem; }
+  .card.is-important { border-color: #44337a; }
+  .card.is-important .card-title::before { content: '⭐ '; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Teams AI 日報</h1>
+  <div class="meta">2026年3月25日 &nbsp;·&nbsp; <span class="count-badge" id="visibleCount">198 則資訊</span></div>
+</div>
+<div class="featured-section">
+  <div class="featured-title">程式設計師必讀</div>
+  <div class="featured-list">
+    <div class="featured-item">
+      <span class="featured-rank">#1</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://dev.to/0x711/the-litellm-supply-chain-attack-how-mcp-servers-got-compromised-and-how-to-check-if-youre-affected-4fh" target="_blank">litellm 供應鏈攻擊：MCP servers 如何被入侵以及如何檢查你是否受到影響</a></div>
+        <div class="featured-item-reason">MCP 生態系快速發展，影響 AI 整合架構</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://dev.to/0x711/the-litellm-supply-chain-attack-how-mcp-servers-got-compromised-and-how-to-check-if-youre-affected-4fh" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#2</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://www.techtimes.com/articles/315386/20260324/openai-shutting-down-sora-ai-video-generation-app-it-because-rumored-chatgpt-video.htm" target="_blank">OpenAI 正在關閉 Sora AI 影片生成應用程式——這是因為傳聞中的 ChatGPT 影片嗎？</a></div>
+        <div class="featured-item-reason">直接影響開發工作流程的工具更新</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://www.techtimes.com/articles/315386/20260324/openai-shutting-down-sora-ai-video-generation-app-it-because-rumored-chatgpt-video.htm" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#3</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://dev.to/universe7creator/the-complete-guide-to-model-context-protocol-mcp-building-ai-native-applications-in-2026-10c5" target="_blank">完整指南 Model Context Protocol (MCP)：在 2026 年建構 AI-Native 應用程式</a></div>
+        <div class="featured-item-reason">Claude 工具鏈更新，必追蹤</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://dev.to/universe7creator/the-complete-guide-to-model-context-protocol-mcp-building-ai-native-applications-in-2026-10c5" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#4</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://medium.com/@enikebraimoh/mcp-the-missing-universal-connector-for-every-ai-tool-you-use-b5d8be9278db?source=rss------ai-5" target="_blank">MCP 每個 AI 工具所缺少的通用連接器</a></div>
+        <div class="featured-item-reason">MCP 生態系快速發展，影響 AI 整合架構</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://medium.com/@enikebraimoh/mcp-the-missing-universal-connector-for-every-ai-tool-you-use-b5d8be9278db?source=rss------ai-5" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#5</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://dev.to/gursharansingh/how-mcp-works-the-complete-request-flow-2kfm" target="_blank">MCP 如何運作：完整的請求流程</a></div>
+        <div class="featured-item-reason">MCP 生態系快速發展，影響 AI 整合架構</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://dev.to/gursharansingh/how-mcp-works-the-complete-request-flow-2kfm" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#6</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://chatforest.com/reviews/cloud-storage-mcp-servers/" target="_blank">雲端儲存 MCP Servers — S3、Google Cloud Storage、Azure Blob、MinIO 及其他</a></div>
+        <div class="featured-item-reason">MCP 生態系快速發展，影響 AI 整合架構</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://chatforest.com/reviews/cloud-storage-mcp-servers/" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#7</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://chatforest.com/reviews/ci-cd-pipeline-mcp-servers/" target="_blank">CI/CD Pipeline MCP Servers — Jenkins、CircleCI、GitHub Actions、Argo CD、Buildkite 等工具</a></div>
+        <div class="featured-item-reason">MCP 生態系快速發展，影響 AI 整合架構</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://chatforest.com/reviews/ci-cd-pipeline-mcp-servers/" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#8</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://chatforest.com/reviews/cicd-mcp-servers/" target="_blank">CI/CD MCP 伺服器 — GitHub Actions、Jenkins、GitLab CI、CircleCI 及其他</a></div>
+        <div class="featured-item-reason">MCP 生態系快速發展，影響 AI 整合架構</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://chatforest.com/reviews/cicd-mcp-servers/" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#9</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://medium.com/@chetaspatil7/the-ais-broken-vibe-and-how-mcp-servers-fix-it-85e418deec6a?source=rss------productivity-5" target="_blank">AI 的「破碎氛圍」— 以及 MCP Servers 如何修復它</a></div>
+        <div class="featured-item-reason">MCP 生態系快速發展，影響 AI 整合架構</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://medium.com/@chetaspatil7/the-ais-broken-vibe-and-how-mcp-servers-fix-it-85e418deec6a?source=rss------productivity-5" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#10</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://medium.com/@cenrunzhe/claude-code-auto-mode-and-the-new-question-when-should-ai-agents-run-unsupervised-0d9333517d8a?source=rss------data_science-5" target="_blank">Claude Code Auto Mode 和新問題：AI 代理何時應該無人監督地運行？</a></div>
+        <div class="featured-item-reason">Claude 工具鏈更新，必追蹤</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://medium.com/@cenrunzhe/claude-code-auto-mode-and-the-new-question-when-should-ai-agents-run-unsupervised-0d9333517d8a?source=rss------data_science-5" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#11</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://dev.to/mistaike_ai/we-stopped-bolting-security-onto-mcp-we-built-it-in-i0n" target="_blank">我們停止了將安全性附加到 MCP 上。我們將其內建了。</a></div>
+        <div class="featured-item-reason">MCP 生態系快速發展，影響 AI 整合架構</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://dev.to/mistaike_ai/we-stopped-bolting-security-onto-mcp-we-built-it-in-i0n" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#12</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://python.plainenglish.io/anthropic-didnt-announce-this-feature-in-claude-code-but-it-changes-everything-abff40afe8b2?source=rss------ai-5" target="_blank">Anthropic 沒有宣佈 Claude Code 的這項功能 — 但它改變了一切</a></div>
+        <div class="featured-item-reason">Claude 工具鏈更新，必追蹤</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://python.plainenglish.io/anthropic-didnt-announce-this-feature-in-claude-code-but-it-changes-everything-abff40afe8b2?source=rss------ai-5" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#13</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://chatforest.com/reviews/chaos-engineering-mcp-servers/" target="_blank">混沌工程 MCP 伺服器 — LitmusChaos、Chaos Mesh、Gremlin、Steadybit、Harness 和 AWS FIS</a></div>
+        <div class="featured-item-reason">MCP 生態系快速發展，影響 AI 整合架構</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://chatforest.com/reviews/chaos-engineering-mcp-servers/" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#14</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://chatforest.com/reviews/cdn-edge-computing-mcp-servers/" target="_blank">CDN &amp; Edge Computing MCP Servers — Cloudflare、Fastly、Akamai、Gcore 及其他</a></div>
+        <div class="featured-item-reason">MCP 生態系快速發展，影響 AI 整合架構</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://chatforest.com/reviews/cdn-edge-computing-mcp-servers/" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#15</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://dev.to/diven_rastdus_c5af27d68f3/mcp-the-universal-standard-for-ai-agent-tools-in-2026-bem" target="_blank">MCP：2026年AI代理工具的通用標準</a></div>
+        <div class="featured-item-reason">MCP 生態系快速發展，影響 AI 整合架構</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://dev.to/diven_rastdus_c5af27d68f3/mcp-the-universal-standard-for-ai-agent-tools-in-2026-bem" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#16</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://dev.to/grove_chatforest/calendar-scheduling-mcp-servers-google-calendar-outlook-apple-calcom-and-35-servers-2cnm" target="_blank">日曆與排程 MCP 伺服器 — Google Calendar、Outlook、Apple、Cal.com 以及 35+ 伺服器</a></div>
+        <div class="featured-item-reason">MCP 生態系快速發展，影響 AI 整合架構</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://dev.to/grove_chatforest/calendar-scheduling-mcp-servers-google-calendar-outlook-apple-calcom-and-35-servers-2cnm" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#17</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://dev.to/grove_chatforest/browserbase-mcp-server-cloud-browser-automation-with-ai-native-targeting-1knp" target="_blank">Browserbase MCP Server — 雲端瀏覽器自動化與 AI 原生目標定位</a></div>
+        <div class="featured-item-reason">MCP 生態系快速發展，影響 AI 整合架構</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://dev.to/grove_chatforest/browserbase-mcp-server-cloud-browser-automation-with-ai-native-targeting-1knp" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#18</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://medium.com/@CariocaBotafogo/is-claude-code-worth-it-if-you-already-use-chatgpt-and-github-copilot-e864fa06f2a0?source=rss------ai-5" target="_blank">Claude Code 值得使用嗎？如果你已經在使用 ChatGPT 和 GitHub Copilot？</a></div>
+        <div class="featured-item-reason">Claude 工具鏈更新，必追蹤</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://medium.com/@CariocaBotafogo/is-claude-code-worth-it-if-you-already-use-chatgpt-and-github-copilot-e864fa06f2a0?source=rss------ai-5" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#19</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://siliconangle.com/2026/03/24/anthropic-unchains-claude-code-auto-mode-allowing-choose-permissions/" target="_blank">Anthropic 解放 Claude Code 自動模式，允許其自主選擇權限</a></div>
+        <div class="featured-item-reason">Claude 工具鏈更新，必追蹤</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://siliconangle.com/2026/03/24/anthropic-unchains-claude-code-auto-mode-allowing-choose-permissions/" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="featured-item">
+      <span class="featured-rank">#20</span>
+      <div class="featured-content">
+        <div class="featured-item-title"><a href="https://arxiv.org/abs/2603.20405" target="_blank">Putnam 2025 問題在 Rocq 中使用 Opus 4.6 和 Rocq-MCP</a></div>
+        <div class="featured-item-reason">Claude 工具鏈更新，必追蹤</div>
+        <div class="featured-item-links">
+          <a class="read-more" href="https://arxiv.org/abs/2603.20405" target="_blank">閱讀原文 →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="filter-bar">
+  <div class="filter-bar-title">依標籤篩選</div>
+  <div class="filter-tags" id="filterTags">
+    <span class="filter-tag clear-btn" onclick="clearFilter()">全部顯示</span>
+    <span class="filter-tag" onclick="filterByTag(this, '#Anthropic')">#Anthropic <span class="tag-count">98</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#開發工具')">#開發工具 <span class="tag-count">75</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#MCP')">#MCP <span class="tag-count">58</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#安全')">#安全 <span class="tag-count">49</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#職場衝擊')">#職場衝擊 <span class="tag-count">37</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#AIAgent')">#AIAgent <span class="tag-count">23</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#GitHubCopilot')">#GitHubCopilot <span class="tag-count">22</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#OpenAI')">#OpenAI <span class="tag-count">18</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#VibeCoding')">#VibeCoding <span class="tag-count">16</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#Google')">#Google <span class="tag-count">15</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#開源')">#開源 <span class="tag-count">14</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#多模態')">#多模態 <span class="tag-count">11</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#記憶體')">#記憶體 <span class="tag-count">8</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#LLM')">#LLM <span class="tag-count">7</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#AI編碼工具')">#AI編碼工具 <span class="tag-count">6</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#法規政策')">#法規政策 <span class="tag-count">4</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#機器人')">#機器人 <span class="tag-count">3</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#產業動態')">#產業動態 <span class="tag-count">2</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#研究')">#研究 <span class="tag-count">1</span></span>
+    <span class="filter-tag" onclick="filterByTag(this, '#推理模型')">#推理模型 <span class="tag-count">1</span></span>
+  </div>
+</div>
+<div class="no-results" id="noResults">沒有符合「<span id="noResultsTag"></span>」的資訊</div>
+<div class="grid" id="grid">
+  <div class="card is-important" data-tags="#MCP,#LLM,#安全">
+    <div class="card-title">litellm 供應鏈攻擊：MCP servers 如何被入侵以及如何檢查你是否受到影響</div>
+    <div class="card-summary">2026-03-24，Litellm 在 PyPI 發佈 1.82.7/1.82.8，含惡意程式，維護者帳號疑似被入侵。攻擊點為啟動時執行的 .pth 檔，觸發 fork bomb；透過 MCP 自動下載與執行，未鎖版或哈希驗證。入侵者蒐集憑證、外洩資料，並可能橫向滲透 Kubernetes。 vi</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#LLM')">#LLM</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span></div>
+    <div class="card-footer">
+      <span>10:34</span>
+      <a class="read-more" href="https://dev.to/0x711/the-litellm-supply-chain-attack-how-mcp-servers-got-compromised-and-how-to-check-if-youre-affected-4fh" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#OpenAI,#開發工具,#產業動態,#多模態">
+    <div class="card-title">OpenAI 正在關閉 Sora AI 影片生成應用程式——這是因為傳聞中的 ChatGPT 影片嗎？</div>
+    <div class="card-summary">OpenAI 將關閉 Sora AI 影像生成應用，運作逾兩年卻未說明原因。外界曾謠傳 ChatGPT 可能獲得 Sora 的影像生成功能；Sora 團隊表示將公布時程、API 資訊與用戶作品保留細節。此決策與迪士尼投資及公司轉向核心商務/生產力應用被視為背景。 via Tech Times :: </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span><span class="tag" onclick="filterByTag(null,'#產業動態')">#產業動態</span><span class="tag" onclick="filterByTag(null,'#多模態')">#多模態</span></div>
+    <div class="card-footer">
+      <span>10:34</span>
+      <a class="read-more" href="https://www.techtimes.com/articles/315386/20260324/openai-shutting-down-sora-ai-video-generation-app-it-because-rumored-chatgpt-video.htm" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#Anthropic,#MCP,#安全,#開發工具">
+    <div class="card-title">完整指南 Model Context Protocol (MCP)：在 2026 年建構 AI-Native 應用程式</div>
+    <div class="card-summary">本指南解說 Model Context Protocol（MCP），由 Anthropic 推出並成為開放標準，讓 AI 助手透過統一介面連接外部資料與工具，宛如 AI 的 USB-C。核心原則：解耦、標準化、可組合、安全與可擴充；架構分為 Hosts、Clients、Servers，並涵蓋實作與實</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>10:23</span>
+      <a class="read-more" href="https://dev.to/universe7creator/the-complete-guide-to-model-context-protocol-mcp-building-ai-native-applications-in-2026-10c5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#MCP,#開發工具">
+    <div class="card-title">MCP 每個 AI 工具所缺少的通用連接器</div>
+    <div class="card-summary">MCP 被描述為「每個 AI 工具的缺失通用連接器」，旨在統一並連結各種 AI 工具。文中指出，背後正悄悄發生一場革命，正在改變我們與科技互動的方式，使工具間的整合與協作更加順暢。 via AI on Medium March 25, 2026 at 10:05AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>10:20</span>
+      <a class="read-more" href="https://medium.com/@enikebraimoh/mcp-the-missing-universal-connector-for-every-ai-tool-you-use-b5d8be9278db?source=rss------ai-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#MCP,#開發工具">
+    <div class="card-title">MCP 如何運作：完整的請求流程</div>
+    <div class="card-summary">本文說明 MCP 的端到端流程：AI 與外部系統以結構化對話互動，採用 JSON-RPC 2.0，分為初始化、協商、就緒三階段。含工具發現與呼叫、動態通知，以及 runtime 能力宣告的協調層設計，非單純 API。 via DEV Community March 25, 2026 at 10:03</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>10:20</span>
+      <a class="read-more" href="https://dev.to/gursharansingh/how-mcp-works-the-complete-request-flow-2kfm" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#Google,#MCP">
+    <div class="card-title">雲端儲存 MCP Servers — S3、Google Cloud Storage、Azure Blob、MinIO 及其他</div>
+    <div class="card-summary">本文比較 AWS S3、GCS、Azure Blob、MinIO、Cloudflare R2、Backblaze B2 的 MCP 伺服器。結論：GCS 官方最佳、MinIO 功能最豐富、AWS 缺乏通用 S3。建議依平台選擇官方或社群伺服器，評分 3.5/5。 via DEV Community:</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Google')">#Google</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span></div>
+    <div class="card-footer">
+      <span>10:20</span>
+      <a class="read-more" href="https://chatforest.com/reviews/cloud-storage-mcp-servers/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#MCP,#開發工具">
+    <div class="card-title">CI/CD Pipeline MCP Servers — Jenkins、CircleCI、GitHub Actions、Argo CD、Buildkite 等工具</div>
+    <div class="card-summary">本篇概覽 MCP 伺服器在各大 CI/CD 平台的情形：Jenkins、CircleCI、GitHub Actions、Argo CD、Buildkite、Azure DevOps 等皆有 MCP 支援。官方插件與工具完善，整體評價 4/5；重點聚焦診斷、GitOps 與成本效益。 via DEV </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>10:19</span>
+      <a class="read-more" href="https://chatforest.com/reviews/ci-cd-pipeline-mcp-servers/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#MCP,#開發工具">
+    <div class="card-title">CI/CD MCP 伺服器 — GitHub Actions、Jenkins、GitLab CI、CircleCI 及其他</div>
+    <div class="card-summary">本次 CI/CD MCP 伺服器評測涵蓋 GitHub Actions、Jenkins、GitLab CI、CircleCI、Azure DevOps、Argo CD 等平台，審閱超過 15 台伺服器，跨六平台。優點：官方支援廣、工具豐富、跨平台整合；缺點：碎片化、多數伺服器僅與自家平台相容。總評 </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>10:19</span>
+      <a class="read-more" href="https://chatforest.com/reviews/cicd-mcp-servers/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#MCP,#開發工具">
+    <div class="card-title">AI 的「破碎氛圍」— 以及 MCP Servers 如何修復它</div>
+    <div class="card-summary">本文解釋 AI 的「Broken Vibe」問題與 MCP 伺服器的修正方式。透過模型上下文協定，讓 AI 編碼助手從自信的猜測者，轉變為能實際閱讀手冊與資料的工具，提升穩定性與效能。 via Productivity on Medium March 25, 2026 at 09:56AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>10:13</span>
+      <a class="read-more" href="https://medium.com/@chetaspatil7/the-ais-broken-vibe-and-how-mcp-servers-fix-it-85e418deec6a?source=rss------productivity-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#Anthropic,#AIAgent,#職場衝擊">
+    <div class="card-title">Claude Code Auto Mode 和新問題：AI 代理何時應該無人監督地運行？</div>
+    <div class="card-summary">本文討論 Claude 的自動模式與新議題：AI 代理究竟該在何時以無監督方式運作？重點不是它們能否自行工作，而是何時與在何種情境下應讓它們無監督地運作。 via Data Science on Medium March 25, 2026 at 09:53AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>10:08</span>
+      <a class="read-more" href="https://medium.com/@cenrunzhe/claude-code-auto-mode-and-the-new-question-when-should-ai-agents-run-unsupervised-0d9333517d8a?source=rss------data_science-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#安全">
+    <div class="card-title">「試圖懲罰 Anthropic」？美國法官質疑政府的風險指定</div>
+    <div class="card-summary">美地區法官 Rita F. Lin 質疑特朗普政府將 Anthropic 列為「國家安全供應鏈風險」是否合法，因 Anthropic 的 Claude 拒絕為致命自動武器定制模型。法院正審視此風險指定的法律依據。 via Law.com March 25, 2026 at 09:52AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span></div>
+    <div class="card-footer">
+      <span>10:08</span>
+      <a class="read-more" href="https://www.law.com/therecorder/2026/03/24/trying-to-punish-anthropic-us-judge-questions-governments-risk-designation/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#MCP,#安全,#開發工具">
+    <div class="card-title">我們停止了將安全性附加到 MCP 上。我們將其內建了。</div>
+    <div class="card-summary">mistaike.ai 推出托管型 MCP 平台，內建資料洩漏防護、0-day CVE 防護與內容安全，開箱即用且免費享 CVE 防護。可透過 gateway 使用現有 MCP 工具並受保護，六層隔離與實時審計，價格起 £10/月。 via DEV Community March 25, 2026 </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>09:49</span>
+      <a class="read-more" href="https://dev.to/mistaike_ai/we-stopped-bolting-security-onto-mcp-we-built-it-in-i0n" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#Anthropic">
+    <div class="card-title">Anthropic 沒有宣佈 Claude Code 的這項功能 — 但它改變了一切</div>
+    <div class="card-summary">本文指出 Anthropic 未在 Claude Code 公布此功能，卻被認為能徹底改變局勢。文章邀讀者連結原文以瞭解詳情與潛在影響。 via AI on Medium March 25, 2026 at 09:33AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>09:49</span>
+      <a class="read-more" href="https://python.plainenglish.io/anthropic-didnt-announce-this-feature-in-claude-code-but-it-changes-everything-abff40afe8b2?source=rss------ai-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#MCP,#安全,#開發工具">
+    <div class="card-title">混沌工程 MCP 伺服器 — LitmusChaos、Chaos Mesh、Gremlin、Steadybit、Harness 和 AWS FIS</div>
+    <div class="card-summary">本文評估超過 15 款 Chaos Engineering MCP 伺服器，覆蓋 CNCF 平台、商業工具與雲端服務。LitmusChaos 官方 MCP 最完整（17 工具），Chaos Mesh 具深度故障注入（33 工具、7 類型），整體評分 3.5/5，缺乏跨平台抽象與完善安全控管。 via</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>09:49</span>
+      <a class="read-more" href="https://chatforest.com/reviews/chaos-engineering-mcp-servers/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#MCP,#安全,#開發工具">
+    <div class="card-title">CDN &amp; Edge Computing MCP Servers — Cloudflare、Fastly、Akamai、Gcore 及其他</div>
+    <div class="card-summary">本評測涵蓋 十多個 MCP 伺服器 於 五大 平台。 Cloudflare 主導，具 3,500+ 星級 與 Code Mode 映射 2,500 個 API 端點。 Fastly 提供 Official Go 版 MCP 與 安全 CLI。 Akamai ALECS 提供 191 工具。 Gcor</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>09:49</span>
+      <a class="read-more" href="https://chatforest.com/reviews/cdn-edge-computing-mcp-servers/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">「企圖公司謀殺」— 法官呼籲 Anthropic 和 Department of War 就供應鏈風險爭議進行協商</div>
+    <div class="card-summary">加州聯邦法院審理 Anthropic 與美國國防部（作戰部）之爭，政府將 Anthropic 標為供應鏈風險並禁止政府承包商使用 Claude。Anthropic 指控政府報復與程序違法；法院聚焦是否越界與是否構成懲罰性行為，預計本週發布判決。 via Fortune | FORTUNE March</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>09:43</span>
+      <a class="read-more" href="https://fortune.com/2026/03/24/anthropic-hegseth-trump-risk-ai-court-ruling/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#MCP,#AIAgent,#安全,#開發工具">
+    <div class="card-title">MCP：2026年AI代理工具的通用標準</div>
+    <div class="card-summary">MCP（Model Context Protocol）是 AI 代理工具的通用標準，將工具伺服器與客戶端解耦，類比 USB。以工具、資源、提示三元為核心，強調描述品質、幂等性與結構化錯誤；支援 stdio、HTTP(SSE)、串流 HTTP 等傳輸，並重視安全與權限控管，促成可重用的工具生態。 vi</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>09:38</span>
+      <a class="read-more" href="https://dev.to/diven_rastdus_c5af27d68f3/mcp-the-universal-standard-for-ai-agent-tools-in-2026-bem" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#Google,#MCP">
+    <div class="card-title">日曆與排程 MCP 伺服器 — Google Calendar、Outlook、Apple、Cal.com 以及 35+ 伺服器</div>
+    <div class="card-summary">本評估涵蓋超過 35 個日曆與排程 MCP 伺服器，分七大子類別。核心亮點為 Google Calendar、Microsoft 官方伺服器、Apple Calendar 與 CalDAV 的廣泛覆蓋，及互相空閒時段偵測功能。缺點是缺少官方 Google/Apple 伺服器；評分 4/5。 via </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Google')">#Google</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span></div>
+    <div class="card-footer">
+      <span>09:19</span>
+      <a class="read-more" href="https://dev.to/grove_chatforest/calendar-scheduling-mcp-servers-google-calendar-outlook-apple-calcom-and-35-servers-2cnm" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#MCP,#LLM,#開發工具">
+    <div class="card-title">Browserbase MCP Server — 雲端瀏覽器自動化與 AI 原生目標定位</div>
+    <div class="card-summary">Browserbase MCP Server 是雲端瀏覽器自動化，採 Stagehand 的自然語言定位，讓使用者可說「點擊登入」等動作。提供 8 種工具、雲端會話管理與反偽裝，評分 3.5/5。缺點：每步需 LLM 推論、功能較少、嚴重 bugs、須三組 API 金鑰與月費。相比，Playwrig</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#LLM')">#LLM</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>09:19</span>
+      <a class="read-more" href="https://dev.to/grove_chatforest/browserbase-mcp-server-cloud-browser-automation-with-ai-native-targeting-1knp" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#VibeCoding">
+    <div class="card-title">嗶哈編碼真正的問題不在於代碼 Vibe Coding</div>
+    <div class="card-summary">本文談及 Vibe coding，認為它是現代軟體開發中的重大變革，能以自然語言描述想法並交給 AI 執行。文章亦指出，真正的問題並非程式碼本身，而是與此新模式相關的其他挑戰。 via Software Development on Medium March 25, 2026 at 09:02AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#VibeCoding')">#VibeCoding</span></div>
+    <div class="card-footer">
+      <span>09:19</span>
+      <a class="read-more" href="https://medium.com/@microDesignn/the-real-problem-with-vibe-coding-is-not-the-code-cee73151625c?source=rss------software_development-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#Anthropic,#OpenAI,#GitHubCopilot">
+    <div class="card-title">Claude Code 值得使用嗎？如果你已經在使用 ChatGPT 和 GitHub Copilot？</div>
+    <div class="card-summary">本文探討在已使用 ChatGPT 與 GitHub Copilot 的情況下，Claude Code 是否值得投入。文中提供執行摘要，並引導讀者至 Medium 繼續閱讀全文。 via AI on Medium March 25, 2026 at 09:00AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span></div>
+    <div class="card-footer">
+      <span>09:13</span>
+      <a class="read-more" href="https://medium.com/@CariocaBotafogo/is-claude-code-worth-it-if-you-already-use-chatgpt-and-github-copilot-e864fa06f2a0?source=rss------ai-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#Anthropic,#安全,#開發工具">
+    <div class="card-title">Anthropic 解放 Claude Code 自動模式，允許其自主選擇權限</div>
+    <div class="card-summary">Anthropic 推出 Claude Code 的自動模式，讓它自行決定可用工具與權限，並加上安全審核以防注入。此功能仍在研究預覽，尚非完美且透明度不足；短期於 Enterprise/API 推出，建議於沙箱測試。 via SiliconANGLE March 25, 2026 at 08:42A</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>08:58</span>
+      <a class="read-more" href="https://siliconangle.com/2026/03/24/anthropic-unchains-claude-code-auto-mode-allowing-choose-permissions/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card is-important" data-tags="#Anthropic,#MCP,#開發工具">
+    <div class="card-title">Putnam 2025 問題在 Rocq 中使用 Opus 4.6 和 Rocq-MCP</div>
+    <div class="card-summary">本 報告 使用 Claude Opus 4.6 搭配 Rocq 與 Model Context Protocol MCP 工具，於 完整 隔離 的 VM 內 自主 證明 2025 Putnam 賽事 的 10 題（共 12 題）。 採用 編譯先行、互動回退 策略，部署 141 子代理，耗時 17.7</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>08:54</span>
+      <a class="read-more" href="https://arxiv.org/abs/2603.20405" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">Claude Code 最適合用哪種程式語言？</div>
+    <div class="card-summary">Claude Code 在 13 種語言中測試迷你 Git，比較速度、成本與程式碼量。結論：Ruby、Python、JavaScript 最快、最便宜、最穩定；動態語言通常優於靜態語言，靜態型別在大規模時或更有優勢。 via Hacker News March 25, 2026 at 08:35AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>08:48</span>
+      <a class="read-more" href="https://dev.to/mame/which-programming-language-is-best-for-claude-code-508a" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#MCP">
+    <div class="card-title">我用 Rails 建立了一個 Claude Code Channel，用來透過具有語音和個性的 3D 虛擬人物遠端與 sessions 通訊。</div>
+    <div class="card-summary">以 Rails 建立 Claude Code Channel，透過 3D 具語音與個性的角色遠端互動。起初在 primeta.ai 針對 OpenClaw，後改用 Claude Code Channels。採用 Rails 8 與 SQLite，偏向預設，並學習 MCP 整合。 via r/rail</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span></div>
+    <div class="card-footer">
+      <span>08:43</span>
+      <a class="read-more" href="https://www.reddit.com/r/rails/comments/1s2v59r/i_built_a_claude_code_channel_with_rails_to/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">我建立了一個 OS 級別的沙箱，讓 Claude Code 可以在完全 shell 存取權限下執行，而不會觸及我的真實檔案系統。</div>
+    <div class="card-summary">OS 級沙箱 cbox 讓 Claude Code 在完整 shell 存取下運作，但不觸碰實體檔案系統。變更會被完整捕捉，代理退出後可審閱 diff 並選擇保留（cherry-pick）。支援 Linux 原生命名空間與 macOS Docker，GitHub： via r/ClaudeAI Ma</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>08:40</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2v9g4/i_built_an_oslevel_sandbox_so_claude_code_can_run/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#職場衝擊">
+    <div class="card-title">Claude Code 設定</div>
+    <div class="card-summary">作者在詢問 Claude Code 的 CLI 與 MacOS 應用是否有實質差異；因以網頁前端工作為主，想知道以不同形態使用是否會有遺漏或妥協。 via r/ClaudeAI March 25, 2026 at 08:22AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>08:40</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2v11e/claude_code_setup/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#開發工具">
+    <div class="card-title">有沒有人注意到 Claude Code 最近一直在每個實作計畫裡偷偷加入 Anthropic API？</div>
+    <div class="card-summary">使用者表示 Claude Code 近來在每次實作規畫中不斷建議加入 Anthropic API/Claude API；但 Claude Code 已在執行任務，無需再呼叫外部 API。疑似系統提示變更在推動 API 採用，約一週前開始，想知是否也有人遇到。 via r/ClaudeAI March</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>08:40</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2uhrz/anyone_else_notice_claude_code_keeps_sneaking_the/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">Claude Code 沒有取代我——它讓我十年的經驗更快地發佈</div>
+    <div class="card-summary">資深 DevOps/SRE 專業人士表示，Claude Code 未取代他，卻讓多年經驗更快落地。它承接搭建與整合，讓他專注決策，最終打造出日常即用的終端應用，AI 從構想到實作大幅縮短時間。 via r/ClaudeAI March 25, 2026 at 08:22AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>08:39</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2uhlm/claude_code_didnt_replace_me_it_made_my_decade_of/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#職場衝擊">
+    <div class="card-title">用於在專案中啟動和管理 Claude Code 工作階段的儀表板</div>
+    <div class="card-summary">這是一個命令列儀表板，用於跨專案啟動與管理 Claude Code 會話。安裝為 npm i -g cldctrl，會自動讀取 ~/.claude 資料並偵測專案。功能包含啟動/續航、查看活躍、以 GitHub issue 為情境啟動、成本與配額、檔案與提交瀏覽。 via r/ClaudeAI Ma</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>08:39</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2ubb8/dashboard_for_launching_and_managing_claude_code/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">導覽 Claude Code：最基本的設定</div>
+    <div class="card-summary">Claude Code 無單一配置與可靠拒絕規則，需先設定檔案層級、最小設定檔 settings.json，以及 CLAUDE.md，讓代理具基本上下文，避免每次會話都從零開始。 via HackerNoon - ai March 25, 2026 at 08:22AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>08:39</span>
+      <a class="read-more" href="https://hackernoon.com/navigating-claude-code-the-bare-minimum-setup?source=rss" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#開發工具">
+    <div class="card-title">備份與災害復原 MCP Servers — Commvault、Veeam、Velero 與巨大的差距</div>
+    <div class="card-summary">本報告評估 MCP 伺服器在備援與災難復原的現況。Commvault 提供官方 MCP 伺服器（Python、20+ 工具、OAuth、DocuSign），Veeam 為社群版，Velero 提供只讀檢視。最大缺口在於缺乏 Rubrik、Cohesity 等官方 MCP，整體採用仍在起步，評分 3.</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>08:14</span>
+      <a class="read-more" href="https://chatforest.com/reviews/backup-disaster-recovery-mcp-servers/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot,#多模態">
+    <div class="card-title">OneNote：Copilot Notebooks 中的多模式擷取 (iPhone)</div>
+    <div class="card-summary">OneNote 的 Copilot Notebooks iPhone 功能提供多模態捕捉，讓使用者在同一會話中轉錄語音、拍照與打字筆記。Copilot 會建立結構化頁面，整合洞見與內容，並儲存至使用者選擇的 Notebook，適用離線會議、白板與個人筆記。預覽於 2026-03，正式 GA 於 20</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span><span class="tag" onclick="filterByTag(null,'#多模態')">#多模態</span></div>
+    <div class="card-footer">
+      <span>08:14</span>
+      <a class="read-more" href="https://www.microsoft.com/en-us/microsoft-365/roadmap" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#AI編碼工具,#職場衝擊">
+    <div class="card-title">Claude Code 對比 Cursor 2026年對比：我每天使用兩者6個月。以下是實際上哪個交付速度更快的結果。</div>
+    <div class="card-summary">本篇比較 Claude Code 與 Cursor 在 2026 年的表現。作者在六個月內每日使用兩者，實測並評估哪一方出貨更快。作者為在日本鄉村工作的 AI 導演兼自由創作者 S，並邀請讀者在 Medium 繼續閱讀。 via Software Development on Medium Marc</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#AI編碼工具')">#AI編碼工具</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>08:08</span>
+      <a class="read-more" href="https://medium.com/@johnpascualkumar077/claude-code-vs-cursor-in-2026-i-used-both-daily-for-6-months-heres-what-actually-ships-faster-a1d09b89bc5c?source=rss------software_development-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">我訪問了 Claude Code 關於 3 個極其糟糕的工程實踐，它就是無法放棄</div>
+    <div class="card-summary">本文為對 Claude Code 的訪談整理稿，揭示它無法戒除的三種極端糟糕的工程實踐。採編輯後對話形式呈現，主角為 Anthropic 的 AI 編碼助手 Claude，內容原刊於 Medium。 via Software Development on Medium March 25, 2026 </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>08:03</span>
+      <a class="read-more" href="https://medium.com/@jerrodblavos/i-interviewed-claude-code-about-3-supremely-awful-engineering-practices-that-it-just-cant-quit-744eeba11c23?source=rss------software_development-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#MCP,#AIAgent">
+    <div class="card-title">如何協調多個 Claude Code Agents 而不至於精神崩潰</div>
+    <div class="card-summary">本文介紹如何用 claude-peers-mcp 讓同一專案的多個 Claude Code 實例互通、協調重構，解決彼此隔離與缺乏契約的問題，並提供安裝、設定、除錯要點及適用時機的實務建議。 via DEV Community March 25, 2026 at 07:44AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span></div>
+    <div class="card-footer">
+      <span>07:59</span>
+      <a class="read-more" href="https://dev.to/alanwest/how-to-coordinate-multiple-claude-code-agents-without-losing-your-mind-1i9f" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#職場衝擊">
+    <div class="card-title">Claude Code + Cowork Now 控制您的 Mac — 這對開發者意味著什麼</div>
+    <div class="card-summary">Anthropic 推出 Claude Code 與 Cowork，能在 macOS 上直接控制電腦：自動開檔、瀏覽、執行終端、啟動應用，甚至在你不在桌面時完成整個工作流程。為研究預覽，需 Claude Pro/Max，僅限 Mac。 via DEV Community March 25, 2026</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>07:53</span>
+      <a class="read-more" href="https://dev.to/damogallagher/claude-code-cowork-now-control-your-mac-what-this-means-for-developers-32pb" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP">
+    <div class="card-title">汽車與車輛 MCP 伺服器 — Tesla、OBD-II 診斷、EV 充電、VIN 解碼、車隊遠程資訊服務</div>
+    <div class="card-summary">Automotive MCP 尚在起步但具潛力；現有超過 20 台伺服器，覆蓋 6 類別，評分 3/5。Tesla 相關伺服器較完整，建議車主以三台獨立伺服器同時運作。嵌入式 OBD-II 具創新性；缺少主流品牌與自動駕駛模擬、保險/維修整合。 via DEV Community March 25,</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span></div>
+    <div class="card-footer">
+      <span>07:53</span>
+      <a class="read-more" href="https://dev.to/grove_chatforest/automotive-vehicle-mcp-servers-tesla-obd-ii-diagnostics-ev-charging-vin-decoding-fleet-3dga" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot">
+    <div class="card-title">TruBridge 和 Artesia General Hospital 將 Microsoft Dragon Copilot 整合到 EHR</div>
+    <div class="card-summary">TruBridge 與 Artesia General Hospital 將 Microsoft Dragon Copilot 整合入 EHR，讓 ambient AI 在醫病對話中自動結構化病歷，忽略閒聊；文檔時間降幅 50%–75%，並支援實時多語翻譯，提升偏鄉就醫平等。 via HIT Con</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span></div>
+    <div class="card-footer">
+      <span>07:48</span>
+      <a class="read-more" href="https://hitconsultant.net/2026/03/24/artesia-general-trubridge-microsoft-dragon-copilot-ambient-ai/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">建立了一個 Claude Code 外掛程式，在新開發者開始改變程式碼之前進行入職培訓</div>
+    <div class="card-summary">開發者打造 Claude Code 的 learning-kit 插件，把任一倉庫變成學習導覽，讓新手在開始改動前先理解架構。透過 /study 產生學習計畫，/teach 與 /quiz 完成教學與測驗，並可設定 gate、nudge 或 off。 via r/ClaudeAI March 25,</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>07:38</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2t3y2/built_a_claude_code_plugin_that_onboards_new_devs/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#開發工具">
+    <div class="card-title">軟體股倒一片 Anthropic 更新再度引爆 AI 顛覆恐慌</div>
+    <div class="card-summary">MarketWatch 指 Anthropic 推出可於本地執行任務的新工具，讓 Claude 增強自動化能力，引發市場憂慮 AI 代理可能繞過軟體授權，軟體股走低。IGV 本月首次收跌，Circle、SentinelOne、HubSpot、UiPath 跌幅居前，顯示資金面的慌動多於基本面。 vi</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>07:33</span>
+      <a class="read-more" href="https://news.cnyes.com/news/id/6396353" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#VibeCoding">
+    <div class="card-title">超越「氛圍程式設計」：BMAD 方法如何將 AI 轉變為企業工程團隊</div>
+    <div class="card-summary">本文介紹 BMAD 方法，將 AI 轉化為企業級工程團隊，超越所謂的「Vibe Coding」。僅靠隨意提示常難穩定交付軟體成果，需用系統化方法落實可擴展的工程能力。 via AI on Medium March 25, 2026 at 07:13AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#VibeCoding')">#VibeCoding</span></div>
+    <div class="card-footer">
+      <span>07:29</span>
+      <a class="read-more" href="https://medium.com/@lahsaini/beyond-vibe-coding-how-the-bmad-method-turns-ai-into-an-enterprise-engineering-team-3e4dc7b4d245?source=rss------ai-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#OpenAI,#產業動態">
+    <div class="card-title">這位風險投資家在 ChatGPT 問世前就投資 AI。現在他籌集了 2.3 億美元要加倍下注</div>
+    <div class="card-summary">投資人 Nathan Benaich 在 ChatGPT 出現前就投資 AI；如今募得 2.3 億美元的新基金，準備加碼投資 AI 初創。與過去僅募得的 2700 萬美元相比，新基金規模約為第一支基金的九倍。 via Forbes - Innovation March 25, 2026 at 06:</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span><span class="tag" onclick="filterByTag(null,'#產業動態')">#產業動態</span></div>
+    <div class="card-footer">
+      <span>07:13</span>
+      <a class="read-more" href="https://www.forbes.com/sites/rashishrivastava/2026/03/24/this-vc-invested-in-ai-pre-chatgpt-now-hes-raised-230-million-to-double-down/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#開發工具">
+    <div class="card-title">天文學與太空科學 MCP 伺服器 — NASA APIs、天體定位、衛星追蹤和研究工具</div>
+    <div class="card-summary">本報告評估 NASA API 伺服器與天文 MCP 生態：涵蓋 12+ 伺服器、廣泛 API 覆蓋與創新多代理研究，評分 3.5/5。主要缺口在於消費者級體驗與儀控整合（JWST、Stellarium、SpaceX、LIGO 尚未覆蓋）。 via DEV Community March 25, 20</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>07:09</span>
+      <a class="read-more" href="https://dev.to/grove_chatforest/astronomy-space-science-mcp-servers-nasa-apis-celestial-positioning-satellite-tracking-and-c26" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#開發工具">
+    <div class="card-title">Asana MCP Server — 企業專案管理的官方遠端伺服器</div>
+    <div class="card-summary">Asana MCP Server 是官方遠端企業級專案管理伺服器，托管於 mcp.asana.com/v2/mcp；V2 於 2026 年 2 月上線、V1 於 5 月 11 日下線。共 44 種工具覆蓋任務、專案/組合、目標、依存、團隊與協作，另有 20 種客戶端整合，評分 4/5。 via DE</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>07:09</span>
+      <a class="read-more" href="https://dev.to/grove_chatforest/asana-mcp-server-official-remote-server-for-enterprise-project-management-4f66" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#VibeCoding,#職場衝擊,#開發工具">
+    <div class="card-title">我為什麼停止 Vibe Coding 並開始與我的 AI Tools 對話</div>
+    <div class="card-summary">本文說明作者為何停止 vibe coding，改以語音與 AI 工具互動。透過保持掌控、使用語音指令，並建立自訂工作流程，他改變了與 AI 一同編碼的方式與效率。 via Productivity on Medium March 25, 2026 at 06:51AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#VibeCoding')">#VibeCoding</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>07:09</span>
+      <a class="read-more" href="https://medium.com/@koltunmateusz/why-i-stopped-vibe-coding-and-started-talking-to-my-ai-tools-0a19522fbb78?source=rss------productivity-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#開發工具">
+    <div class="card-title">MCP 不是產品 — 可重複使用的技能才是</div>
+    <div class="card-summary">本文認為 MCP 只是連接工具的框架，真正的產品是可重複使用的技能。工具易出錯且難以重複，而技能包裝目標、流程、預設、約束、輸出與失敗處理，讓任務穩定完成。工具開啟可能，技能帶來可靠。 via DEV Community March 25, 2026 at 06:32AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>06:48</span>
+      <a class="read-more" href="https://dev.to/alexshev/mcp-is-not-the-product-reusable-skills-are-27fp" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">Pentagon 試圖「削弱」Anthropic 令人擔憂，法官表示</div>
+    <div class="card-summary">聽證中，法官質疑美國國防部將 Anthropic（Claude 的開發商）列為供應鏈風險的動機，認為五角大樓試圖削弱該公司之舉令人憂慮。 via Wired March 25, 2026 at 06:28AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>06:43</span>
+      <a class="read-more" href="https://www.wired.com/story/pentagons-attempt-to-cripple-anthropic-is-troublesome-judge-says/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#AI編碼工具,#MCP,#安全,#開發工具">
+    <div class="card-title">我構建了 mcp-scan，一個適用於你的 MCP 伺服器設定的安全掃描工具</div>
+    <div class="card-summary">mcp-scan 是針對 MCP 伺服器設定檔的安全掃描工具，檢查機密與 API 金鑰、已知漏洞、可疑權限、外洩向量與工具污染。可自動偵測 Claude Desktop、Cursor、VS Code、Windsurf 等 AI 客戶端設定，僅需 npx mcp-scan。GitHub： via r/</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#AI編碼工具')">#AI編碼工具</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>06:39</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2qyp2/i_built_mcpscan_a_security_scanner_for_your_mcp/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#安全,#開源,#開發工具,#法規政策">
+    <div class="card-title">mcp-scan：用於 MCP (Model Context Protocol) 伺服器配置的開源安全掃描工具</div>
+    <div class="card-summary">mcp-scan 是開源的 MCP 伺服器配置安全掃描器，能跨 10 款 AI 工具客戶端檢測設定，執行 13 種安全檢查（機密洩漏、已知 CVE、危險權限、傳輸安全、供應鏈風險、工具中毒、授權合規、AST 洩漏等），並輸出 CLI、JSON、SARIF、HTML 與 CycloneDX SBOM，</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開源')">#開源</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span><span class="tag" onclick="filterByTag(null,'#法規政策')">#法規政策</span></div>
+    <div class="card-footer">
+      <span>06:39</span>
+      <a class="read-more" href="https://www.reddit.com/r/cybersecurity/comments/1s2r0w1/mcpscan_opensource_security_scanner_for_mcp_model/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#安全,#開發工具">
+    <div class="card-title">AI 自主決策權擴大，Anthropic 為 Claude Code 引入自動模式</div>
+    <div class="card-summary">Anthropic 為 Claude Code 推出自動模式，使 AI 可自主執行操作，並有內建安全層審核與風險攔截。現為研究預覽、面向團隊用戶，未來拓展至企業與 API；僅支援兩款模型，核心風控標準未公開，建議於沙盒測試。 via 华尔街见闻 March 25, 2026 at 06:18AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>06:34</span>
+      <a class="read-more" href="https://wallstreetcn.com/articles/3768305" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">Anthropic 的 AI 盜版和解案即將獲得最終批准</div>
+    <div class="card-summary">Anthropic 與作者的 AI 侵權訴訟近於最終批准，和解金約 15 億美元，合格作品每件 3,000 美元；申請近 10 萬件，退出率低於 0.5%。法院定於 4 月 23 日審理最終批准動議，3 月 30 日為申請截止；Anthropic 稱未使用受盜內容，並將銷毀相關複本。 via CNE</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>06:34</span>
+      <a class="read-more" href="https://www.cnet.com/tech/services-and-software/anthropics-ai-piracy-settlement-is-getting-close-to-final-approval/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot,#LLM,#職場衝擊">
+    <div class="card-title">為什麼所有人都討厭 Copilot？</div>
+    <div class="card-summary">本文回應對 Copilot 的普遍抨擊，認為它並非最佳但也不糟，實際在工作中用起來不錯。舉例顯示可用於內部查詢（如找指標、聯絡人）與協助編輯與計算，尚未遇到問題。 via r/LLM March 25, 2026 at 06:13AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span><span class="tag" onclick="filterByTag(null,'#LLM')">#LLM</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>06:28</span>
+      <a class="read-more" href="https://www.reddit.com/r/LLM/comments/1s2rn3s/why_all_the_hate_for_copilot/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">UMG 告訴法官 Anthropic AI 訓練顯然不是合理使用：「證據是壓倒性的」</div>
+    <div class="card-summary">UMG 及其他出版商請求法院就 Anthropic 是否在訓練 Claude 時公允使用歌詞作出快速判決，稱其未經許可大量擷取、複製受版權保護內容，屬侵權而非公平使用。雙方稱證據「壓倒性」，案涉巨額賠償與 AI 未來走向，強調需合法授權。 via Billboard March 25, 2026 a</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>06:09</span>
+      <a class="read-more" href="https://www.billboard.com/pro/music-publishers-anthropic-ai-claude-training-copyrights/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#OpenAI">
+    <div class="card-title">OpenAI 的 ChatGPT 正在對其電子商務策略做出重大改變</div>
+    <div class="card-summary">六個月投入電商後，OpenAI 所有的 ChatGPT 調整商務策略。先前的 Instant Checkout 已撤回，現由零售商掌控結帳路徑，可導向自家網站或由零售商控管的 OpenAI 應用。OpenAI 表示初版缺乏彈性，將專注於商品發現。 via Adweek March 25, 2026 </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span></div>
+    <div class="card-footer">
+      <span>06:09</span>
+      <a class="read-more" href="https://www.adweek.com/commerce/openais-chatgpt-is-making-a-big-change-to-its-commerce-strategy/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#MCP,#職場衝擊,#開發工具">
+    <div class="card-title">如何使用 MCP 和 Claude 建立一個 AI 員工</div>
+    <div class="card-summary">本指南教你用 MCP 與 0nMCP 打造可執行任務的 AI 從業員，能自動回覆客戶、評分線索、開發票、定時發文與產出報告。架構：觸發器→ Claude/AI→ 0nMCP→ API；設定步驟包含安裝、連結服務、建立工作流程與啟動。 via DEV Community March 25, 2026 </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>06:05</span>
+      <a class="read-more" href="https://dev.to/0n/how-to-build-an-ai-employee-using-mcp-and-claude-416f" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#職場衝擊,#開發工具">
+    <div class="card-title">MCP 與傳統 API 整合的比較：為什麼 MCP 勝出</div>
+    <div class="card-summary">MCP 使用單一協議連接外部服務，顯著降低整合時間與維護成本；傳統 API 需自行撰寫認證、錯誤與速率限制等邏輯，耗時日週。0nMCP 只要安裝與輸入金鑰，即可同時支援 54 服務，內建完整機制，並提供 945 工具與工作流，兼容多家 MCP 客戶端。 via DEV Community March</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>06:05</span>
+      <a class="read-more" href="https://dev.to/0n/mcp-vs-traditional-api-integration-why-mcp-wins-1kfp" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#AIAgent,#開發工具">
+    <div class="card-title">Apify MCP Server — 3,000+ 個爬蟲程式任您的 AI 代理程式隨意使用</div>
+    <div class="card-summary">摘要：Apify MCP Server 提供 3,000+ Actors 的動態發現市場，AI 代理可自動加入新工具並執行。 Hosted 模式推薦，支援多工具與自動輸出推斷。優點在規模與動態性，缺點為平台依賴、品質不一、費用與速率限制。評分 3.5/5。 via DEV Community Mar</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>05:59</span>
+      <a class="read-more" href="https://dev.to/grove_chatforest/apify-mcp-server-3000-scrapers-at-your-ai-agents-fingertips-3i1m" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#開發工具">
+    <div class="card-title">API 開發 MCP Servers — OpenAPI Converters、GraphQL、gRPC 及 Spec-to-Server 生成</div>
+    <div class="card-summary">摘要：MCP 伺服器普遍採用「規格轉工具」模式，覆蓋 REST/OpenAPI、GraphQL、gRPC 與測試。代表工具包括 openapi-mcp-generator、Apollo MCP Server、protoc-gen-go-mcp、mcp-graphql、Postman MCP Serv</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>05:58</span>
+      <a class="read-more" href="https://dev.to/grove_chatforest/api-development-mcp-servers-openapi-converters-graphql-grpc-and-spec-to-server-generation-2iap" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">在一場聽證會上，美國聯邦法官表示 Pentagon 對 Anthropic 的待遇「令人擔憂」，並說「看起來像是試圖削弱 Anthropic」(Maria Curi/Axios)</div>
+    <div class="card-summary">在聽證會上，美國聯邦法官批評五角大樓對 Anthropic 的待遇，稱之為令人不安，並認為這看起來像是在削弱該公司。法官的評論顯示對政府行為的嚴格審視，Anthropic 正向法院尋求救濟。 via Techmeme March 25, 2026 at 05:40AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>05:54</span>
+      <a class="read-more" href="https://www.techmeme.com/260324/p47" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#AIAgent,#開發工具">
+    <div class="card-title">API Gateway MCP Servers — Kong、APISIX、Cloudflare、Envoy 及其他平台</div>
+    <div class="card-summary">本次 MCP 伺服器評估分為兩條故事：一是 AI 代理透過工具在 Kong、APISIX、Cloudflare 配置路由與除錯；二是負責 MCP 流量路由的閘道，如 Envoy AI Gateway、AgentGateway、Traefik Hub。結論：Code Mode 最具效率，Nginx 缺</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>05:49</span>
+      <a class="read-more" href="https://chatforest.com/reviews/api-gateway-mcp-servers/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#LLM,#開源,#開發工具">
+    <div class="card-title">如何為您的 AI Workforce 建立作業系統？</div>
+    <div class="card-summary">提出以 AI OS 統整代理人力，成為指揮中心。以 Airweave 為例，Slack 知識助理在本機自托，統一搜尋 50+ 資源並附引用，LLM 回答。OS 具自然語言介面、共用知識與工具、執行觀測、權限控管與自托管，Sim 提供開源實作。 via Daily Dose of Data Scien</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#LLM')">#LLM</span><span class="tag" onclick="filterByTag(null,'#開源')">#開源</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>05:41</span>
+      <a class="read-more" href="https://blog.dailydoseofds.com/p/how-to-build-an-os-for-your-ai-workforce" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">使用 Claude Code 參賽遊戲 AI 競賽——透過 130 次自動迭代在 83 名參賽者中排名第 6</div>
+    <div class="card-summary">以 Claude Code 作為唯一開發團隊參賽 Game AI Cup，在 83 名中奪第 6 名。約 130 次迭代透過 autoevolve 進行自我對戰改進；結構性變化常勝於參數調整，出現可讀的新行為與能量成本修正。 via r/ClaudeAI March 25, 2026 at 05:2</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>05:41</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2qmzc/used_claude_code_to_compete_in_a_game_ai_contest/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#MCP,#安全,#開源,#開發工具">
+    <div class="card-title">Claude Code with --dangerously-skip-permissions 是真實的攻擊面。Lasso 發布了研究和一個值得了解的開源防禦工具。</div>
+    <div class="card-summary">Claude Code 的 --dangerously-skip-permissions 成為 攻擊面。 Lasso 研究 指出 Claude 在 讀取 檔案、抓取 網頁、透過 MCP 連接器 處理 內容 時 難以 判斷 指令 來源， 可能 執行 隱藏 指令。 對應 開源 修正 PostToolUs</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開源')">#開源</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>05:41</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2qdh0/claude_code_with_dangerouslyskippermissions_is_a/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#安全">
+    <div class="card-title">中毒的 Context Hub 文件技巧欺騙 Claude Code 在 CLAUDE.md 中寫入惡意 deps。</div>
+    <div class="card-summary">Context Hub 與 Claude Code 結合時，惡意文檔能注入虛假依賴並寫入 CLAUDE.md，污染後續會話與專案。240 次測試顯示 Haiku、Sonnet、Opus 的警告與安裝行為差異，且缺乏 SECURITY.md 與透明審查，漏洞長期留存於倉庫。 via r/ClaudeA</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span></div>
+    <div class="card-footer">
+      <span>05:41</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2q2zc/poisoned_context_hub_docs_trick_claude_code_into/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#職場衝擊,#開發工具,#記憶體">
+    <div class="card-title">[資源] CS 輟學生——在一天內為 Claude Code 建造了一個 scope 儀表板。6 天內獲得 82 顆星。</div>
+    <div class="card-summary">一位 CS 開發者 在 一天 內 為 Claude Code 建立 作用域 儀表板，解決 跨層級 載入 導致 的 上下文 污染。他 指出 現有 工具 缺乏 完整 作用域樹 與 拖放 移動；因此 推出 專案，六日 獲得 82 顆星。 功能 包括 全域/工作區/專案 三層樹、拖放、清除 過時 記憶、批次</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span><span class="tag" onclick="filterByTag(null,'#記憶體')">#記憶體</span></div>
+    <div class="card-footer">
+      <span>05:41</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2q0dr/resource_cs_dropout_built_a_scope_dashboard_for/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">美國政府對 Anthropic 的禁令看起來像是懲罰企圖，法官表示</div>
+    <div class="card-summary">法官在聽證會表示，美國政府對 Anthropic 的禁令看起來像懲罰。該 AI 公司正在尋求挑戰國防部將其列為國安風險的定性。 via Technology - WSJ.com March 25, 2026 at 05:19AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>05:41</span>
+      <a class="read-more" href="https://www.wsj.com/tech/ai/u-s-governments-ban-on-anthropic-looks-like-punishment-attempt-judge-says-2ff98fe3?mod=rss_Technology" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#VibeCoding,#安全">
+    <div class="card-title">網絡安全專業人員必須掌握 vibe coding 技術，NCSC 主任表示</div>
+    <div class="card-summary">在舊金山 RSA 大會上，NCSC 執行長 Richard Horne 指出，資安專業人員不僅有機會，亦有責任走在前端，因應風靡的 vibe-coding 所帶來的安全議題。 via TheServerSide.com March 25, 2026 at 05:16AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#VibeCoding')">#VibeCoding</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span></div>
+    <div class="card-footer">
+      <span>05:34</span>
+      <a class="read-more" href="https://www.computerweekly.com/news/366640680/Cyber-pros-must-grasp-the-vibe-coding-nettle-says-NCSC-chief" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">Anthropic 在 Claude Code 中新增權限自動模式</div>
+    <div class="card-summary">Anthropic 今日推出 Claude Code 的自動權限模式，讓 Claude 代為決定權限，並在執行前由分類器審核以防止潛在破壞。若屢次被阻擋才出現權限提示；某些風險情況仍可能被允許，建議於隔離環境使用，成本與延遲可能增加。 via SD Times March 25, 2026 at 0</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>05:34</span>
+      <a class="read-more" href="https://sdtimes.com/ai/59365/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#安全,#開發工具">
+    <div class="card-title">Anthropic 給予 Claude Code 更多控制權，但仍然對其進行管制 | TechCrunch</div>
+    <div class="card-summary">Anthropic 推出 Claude 自動模式，讓 AI 自行決定可執行動作並加裝安全審核，防範風險與提示注入。此為 Claude Code 延伸，仍屬研究預覽，將陸續對 Enterprise 與 API 用戶推出，建議於沙箱環境測試（目前支援 Sonnet 4.6 與 Opus 4.6）。 vi</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>05:34</span>
+      <a class="read-more" href="https://techcrunch.com/2026/03/24/anthropic-hands-claude-code-more-control-but-keeps-it-on-a-leash/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#VibeCoding,#安全">
+    <div class="card-title">NCSC 執行長：掌握「破壞性」的程式編碼機會，使軟體更加安全</div>
+    <div class="card-summary">英國 NCSC 首席執行官霍恩在 RSAC 演講指出，利用 AI 生成程式碼的 vibe coding 是顛覆性機遇，有望提升軟體在設計與生命週期中的安全性；但需嚴格訓練與風險控管，全球需共同推動更強的防禦。 via Blog Feed March 25, 2026 at 05:13AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#VibeCoding')">#VibeCoding</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span></div>
+    <div class="card-footer">
+      <span>05:28</span>
+      <a class="read-more" href="https://www.ncsc.gov.uk/news/ncsc-ceo-seize-disruptive-vibe-coding-opportunity-to-make-software-more-secure" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#安全,#開發工具">
+    <div class="card-title">Anthropic 讓 Claude Code 擁有更多控制權，但將其控制在範圍內</div>
+    <div class="card-summary">Anthropic 為 Claude Code 新增自動模式，讓 AI 能在較少審核下執行任務，但仍以內建安全機制受控。此舉顯示向更自動化工具的趨勢，兼顧執行速度與安全。 via TechCrunch March 25, 2026 at 05:08AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>05:23</span>
+      <a class="read-more" href="https://techcrunch.com/2026/03/24/anthropic-hands-claude-code-more-control-but-keeps-it-on-a-leash/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#安全,#開發工具">
+    <div class="card-title">Anthropic 給予 Claude Code 更多控制權，但仍將其牢牢控制</div>
+    <div class="card-summary">Anthropic 推出 Claude Code 的自動模式，讓 AI 自行判斷可安全執行的動作，並附風險審核與防範提示攻擊的機制。風險動作會被阻斷，安全動作則自動執行。仍屬研究預覽，將先於企業與 API 用戶推出，需於隔離環境測試，僅支援 Claude Sonnet 4.6 與 Opus 4.6。</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>05:20</span>
+      <a class="read-more" href="https://techcrunch.com/2026/03/24/anthropic-hands-claude-code-more-control-but-keeps-it-on-a-leash/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#OpenAI">
+    <div class="card-title">為什麼 OpenAI 突然允許在 ChatGPT 上發布色情內容——這關乎金錢</div>
+    <div class="card-summary">OpenAI 允許 ChatGPT 涵蓋情色內容，背後是看中快速增長、價值數億美元的 AI 陪伴市場，意在取得龐大市場份額。 via Quartz March 25, 2026 at 05:03AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span></div>
+    <div class="card-footer">
+      <span>05:20</span>
+      <a class="read-more" href="https://qz.com/openai-ai-companion-adult-content-chatgpt-erotica" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#VibeCoding,#安全,#開發工具">
+    <div class="card-title">Vibe coding 可能重塑 SaaS 產業並增加安全風險，英國網路機構警告</div>
+    <div class="card-summary">英國 NCSC 警告，所謂的 Vibe coding 以 AI 工具快速開發軟體，可能重塑 SaaS 並帶來新安全風險；若未自始即設計安全、驗證模型並增強自動測試，產出代碼可能不穩定且含漏洞，長期看只有難以替代的公司能存活。 via The Record from Recorded Future N</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#VibeCoding')">#VibeCoding</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>05:20</span>
+      <a class="read-more" href="https://therecord.media/vibe-coding-uk-security-risk" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#VibeCoding,#安全">
+    <div class="card-title">RSA Conference：英國 NCSC 主管敦促業界開發 Vibe Coding 防護措施</div>
+    <div class="card-summary">RSA 大會上，NCSC 總裁 Richard Horne 呼籲把握 vibe coding 機會提升軟體安全，並快速研發保護機制，使 AI 產生的程式成為正向安全力量。NCSC CTO David C 提出六項守則：安全預設、可信溯源、AI 代碼審查、確定性護欄、強化托管平台、自動化安全作業，並立</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#VibeCoding')">#VibeCoding</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span></div>
+    <div class="card-footer">
+      <span>05:20</span>
+      <a class="read-more" href="https://www.infosecurity-magazine.com/news/rsac-uk-ncsc-urges-vibe-coding/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">聯邦法官表示五角大廈似乎試圖「削弱 Anthropic」</div>
+    <div class="card-summary">舊金山 聯邦 法官 批評 五角大樓 試圖 將 Anthropic 列為 供應鏈風險， 稱 這 看似 在 削弱 該公司。 標示 可能 限制 合約 與 Claude 使用。 Anthropic 提 訟 阻止， 案件 將 測試 政府 在 契約 與 國安 層面 對 AI 供應商 的 權力 極限。 via B</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>05:20</span>
+      <a class="read-more" href="https://www.businessinsider.com/anthropic-supply-chain-risk-hearing-judge-pentagon-pubish-cripple-2026-3" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#開發工具">
+    <div class="card-title">Anthropic 與五角大廈就禁止該公司 AI 模型一事在法庭對峙</div>
+    <div class="card-summary">Anthropic 對美國國防部提起訟訟，尋求暫停政府禁用其 Claude AI 的決定。特朗普也下令停止使用其工具。雙方在北加州法院就臨時禁令進行聽證，討論供應鏈風險與可能造成的巨額損失。 via The Guardian - Artificial intelligence March 25, 2</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>05:20</span>
+      <a class="read-more" href="https://www.theguardian.com/us-news/2026/mar/24/anthropic-pentagon-lawsuit" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#VibeCoding">
+    <div class="card-title">Vibe Coding 很強大，但技術技能仍然重要</div>
+    <div class="card-summary">本文闡述 vibe coding：AI 可快速生成介面與功能，但要融入現有架構仍需技術實務。以區塊鏈專案為例，採漸進遷移而非直接複製，以確保架構與樣式的一致性。結論：AI 提速但基本功仍不可或缺。 via DEV Community March 25, 2026 at 04:57AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#VibeCoding')">#VibeCoding</span></div>
+    <div class="card-footer">
+      <span>05:13</span>
+      <a class="read-more" href="https://dev.to/aichannode/vibe-coding-is-powerful-but-technical-skills-still-matter-4pio" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#職場衝擊,#安全,#開發工具">
+    <div class="card-title">Claude Code 在 2026 年超越 AI 編程工具</div>
+    <div class="card-summary">Cosmic JS 的比較顯示，Claude Code 在 2026 年的 AI 編碼工具中領先，具自主編碼、跨檔案理解與多步任務能力，且單次自動執行便可完成工作並達到 99.9% 精度。它現為多端可用的自主編碼代理平台，並加強沙箱與安全控管。 via MikeGingerich.com March</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>04:48</span>
+      <a class="read-more" href="https://www.mikegingerich.com/blog/claude-code-tops-ai-coding-tools-in-2026/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#職場衝擊,#開發工具">
+    <div class="card-title">Vibe-Coding 革命：AI 如何重塑域名註冊</div>
+    <div class="card-summary">AI 驅動的 vibe-coding 將域名註冊從手動搜尋轉為自動化、對話式的基礎設施，讓域名直接嵌入軟體工作流程，並在日益 AI 主導的網路中成為機器驗證的信任錨點。 via CircleID March 25, 2026 at 04:28AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>04:44</span>
+      <a class="read-more" href="https://circleid.com/posts/the-vibe-coding-revolution-how-ai-is-reshaping-domain-registration" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#開發工具,#多模態">
+    <div class="card-title">農業與耕作 MCP Servers — Leaf、John Deere、FarmerChat、Weather、Satellite Imagery</div>
+    <div class="card-summary">本報告 概覽 六 大類 MCP 伺服器 超過 二十 台 覆蓋 統一 農場 資料 農業 天氣 市場 資料 小農 AI 畜牧 繁育 衛星 觀測 Leaf 是 唯一 官方 統一 API 商用 伺服器 John Deere 等 連結 缺失 官方 設備 商伺服器 疾病 農作 監控 灌溉 功能 評分 3.0/5</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span><span class="tag" onclick="filterByTag(null,'#多模態')">#多模態</span></div>
+    <div class="card-footer">
+      <span>04:44</span>
+      <a class="read-more" href="https://dev.to/grove_chatforest/agriculture-farming-mcp-servers-leaf-john-deere-farmerchat-weather-satellite-imagery-hkb" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#AIAgent,#職場衝擊">
+    <div class="card-title">Agent Orchestration MCP Servers — 多代理框架、群集協調、任務編排</div>
+    <div class="card-summary">本文梳理 MCP 伺服器與多代理協調現況，涵蓋 15+ 款元件，提工作流導向與群聚導向兩大哲學。核心專案包括 mcp-agent、fast-agent、Agent-MCP、ruflo，以及多個閘道、橋樑與協議中介。整體評價 4.0/5，顯示強大框架與產出差距並存。 via DEV Community</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>04:44</span>
+      <a class="read-more" href="https://dev.to/grove_chatforest/agent-orchestration-mcp-servers-multi-agent-frameworks-swarm-coordination-task-orchestration-4m0k" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">UMG、Concord 和 ABKCO 提出新動議，要求法官裁定 Anthropic 侵犯其著作權並駁回人工智慧「合理使用」論點：「本案的證據是壓倒性的。」</div>
+    <div class="card-summary">UMG、Concord 與 ABKCO 提出部分判決動議，請法院判定 Anthropic 侵權並駁回公平使用抗辯；以 218 項不爭事實與內部記錄為據，指稱未經授權訓練與輸出歌詞，且商業化利用影響市場。另有 BMG 提出類似訴訟。 via Music Business Worldwide March</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>04:40</span>
+      <a class="read-more" href="https://www.musicbusinessworldwide.com/infringement-on-a-massive-scale-umg-concord-and-abkco-ask-court-to-rule-against-ai-company-anthropic-ahead-of-trial/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#安全,#開發工具">
+    <div class="card-title">Claude Code 現已推出自動模式</div>
+    <div class="card-summary">Claude Code 現已 推出 自動 模式， 讓 Claude 代替 檔案 寫入 與 bash 指令 的 權限 決定。 分類器 在 每次 呼叫前 評估 風險， 安全 動作 自動 執行， 風險 降低， 但 無法 消除。 建議 在 隔離 環境 使用。 現於 Team 計畫 提供 研究預覽， 企業 與</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>04:40</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2ok85/claude_code_now_has_auto_mode/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#開發工具,#記憶體">
+    <div class="card-title">又一個 Claude Code 儀表板 - 但這個符合我對工具的想法</div>
+    <div class="card-summary">claumon 是為 Claude Code 設計的單執行檔本地監控工具。週末開發、零設定、完全本地運作，讀取 Claude Code 的會話與 OAuth 憑證，提供實時代幣/成本追蹤、會話監控、記憶體檔案瀏覽與整合建議，支援 macOS/Linux/Windows。 via r/ClaudeAI</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span><span class="tag" onclick="filterByTag(null,'#記憶體')">#記憶體</span></div>
+    <div class="card-footer">
+      <span>04:40</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2nzfh/yet_another_claude_code_dashboard_but_this_one/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#Google,#GitHubCopilot,#AI編碼工具,#AIAgent">
+    <div class="card-title">教導 AI 像你一樣寫作和說話——我為此製作了一個 Claude Code 外掛程式</div>
+    <div class="card-summary">Claude Code 插件，透過寫作提示學習並儲存使用者風格為語音輪廓，讓 Claude 寫作時能模仿你的口吻。完成校準後自動匹配，並遵循開放 Agent Skills 規範，支援 Cursor、VS Code Copilot、Gemini CLI 等整合。免費開源。GitHub： via r/C</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#Google')">#Google</span><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span><span class="tag" onclick="filterByTag(null,'#AI編碼工具')">#AI編碼工具</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span></div>
+    <div class="card-footer">
+      <span>04:40</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2nlft/teach_ai_to_write_and_talk_like_you_i_made_a/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot,#AIAgent">
+    <div class="card-title">要求 @copilot 對任何 pull request 進行變更</div>
+    <div class="card-summary">GitHub Copilot 現在可在 PR 中標註 @copilot 讓其修改，例如修復失敗測試、回覆評論、或新增單元測試等。Copilot coding agent 在雲端環境完成修改並驗證後再推送。需付費計畫，Business/Enterprise 需管理員啟用。 via Use Case: </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span></div>
+    <div class="card-footer">
+      <span>04:28</span>
+      <a class="read-more" href="https://github.blog/changelog/2026-03-24-ask-copilot-to-make-changes-to-any-pull-request/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot,#AIAgent,#開發工具">
+    <div class="card-title">透過 API 管理 Copilot 編碼代理程式儲存庫存取</div>
+    <div class="card-summary">GitHub 公布 Copilot coding agent 管理 REST API（公測版），讓組織可程式化控管代理存取。可設定對全部、無存取，或僅選定倉庫的可用性，並新增或移除允許的倉庫；亦可在 UI 設定。 via Use Case: copilot - GitHub Changelog Ma</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>04:28</span>
+      <a class="read-more" href="https://github.blog/changelog/2026-03-24-manage-copilot-coding-agent-repository-access-via-the-api/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#OpenAI">
+    <div class="card-title">OpenAI 計畫停止使用其 Sora 模型的產品，包括其消費者應用程式、開發者版本的 Sora 以及 ChatGPT 內的視頻功能（Berber Jin/Wall Street Journal）</div>
+    <div class="card-summary">OpenAI 計畫停用所有使用 Sora 模型的產品，包括消費者應用程式、面向開發者的 Sora 版本，以及 ChatGPT 內的視頻功能。該應用程式去年推出，曾允許使用者把自己置入知名電影場景等多項功能。 via Techmeme March 25, 2026 at 04:07AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span></div>
+    <div class="card-footer">
+      <span>04:24</span>
+      <a class="read-more" href="https://www.techmeme.com/260324/p42" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">我如何在 Telegram 和 WhatsApp 中獲得可靠的語音轉文字功能（並讓 Claude Code 設定它）</div>
+    <div class="card-summary">Diction 是一個 iOS 鍵盤外掛，讓 Telegram、WhatsApp 等應用可直接語音轉文字。提供本機離線、雲端 Diction One、自架伺服器三模式。藉 Claude Code 在家部署（Docker Compose），轉錄全在本機完成，輸入更高效、品質更好。 via DEV Co</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>04:24</span>
+      <a class="read-more" href="https://dev.to/omachala/how-i-got-reliable-speech-to-text-in-telegram-and-whatsapp-and-let-claude-code-set-it-up-3hje" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">Anthropic 與五角大廈進入法庭，AI 公司尋求終止污名化的供應鏈風險標籤</div>
+    <div class="card-summary">Anthropic 請求 聯邦法院 暫時 停止 Pentagon 將 其 列為 「供應鏈風險」 的 污名化 標籤， 並 撤銷 對 其 AI Claude 的 廣泛 軍事 使用 禁令。 案件 在 舊金山 聽證， 重點 為 第一 修正案 與 正當程序； DOJ 稱 這 是 商業 行為 問題。 via m</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>04:19</span>
+      <a class="read-more" href="https://www.livemint.com/companies/anthropic-and-pentagon-head-to-court-as-ai-firm-seeks-end-to-stigmatizing-supply-chain-risk-label-11774382361272.html" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot">
+    <div class="card-title">Copilot 為什麼在 Power BI 中對同一個問題給出不同的答案？</div>
+    <div class="card-summary">本文解釋為何 Copilot 在 Power BI 回答同一問題會不同：受上下文、模型結構與解讀方式影響。提供提升一致性的要點，並列出 Pragmatic Works 的學習資源與聯繫資訊，適用於在 Power BI 中使用 AI。 via Pragmatic Works March 25, 202</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span></div>
+    <div class="card-footer">
+      <span>04:19</span>
+      <a class="read-more" href="https://www.youtube.com/shorts/FjZd2nfDsto" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#職場衝擊,#多模態">
+    <div class="card-title">每個人都在談論 Remotion 搭配 Claude Code。但幾乎沒有人在談論用它搭配 Codex。</div>
+    <div class="card-summary">雖然多人談 Remotion 與 Claude Code 的搭配，但較少討論與 Codex 的整合。建議在 Codex 設置小型 Remotion 技能，使用提示 Use $remotion，建立或更新可重複使用的影片組件，讓工作流程更清晰。 via AI on Medium March 25, 2</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#多模態')">#多模態</span></div>
+    <div class="card-footer">
+      <span>04:19</span>
+      <a class="read-more" href="https://pub.towardsai.net/everyone-talks-about-remotion-with-claude-code-but-almost-no-one-talks-about-using-it-with-codex-3c7b2cb48bb1?source=rss------ai-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#職場衝擊,#安全,#法規政策">
+    <div class="card-title">Anthropic 的 Claude 現在可以控制你的 Mac，升級了打造真正能工作的 AI 代理的競爭</div>
+    <div class="card-summary">Anthropic 的 Claude 現可 直接 控制 Mac 桌面 操作， 包括 點擊、 輸入、 開啟 應用， 透過 Claude Cowork、 Claude Code 與 Dispatch 遠端 工作。 系統 優先 使用 服務 連接， 再 使用 Chrome， 最後 以 屏幕 細節。 安全 與</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#法規政策')">#法規政策</span></div>
+    <div class="card-footer">
+      <span>04:14</span>
+      <a class="read-more" href="https://venturebeat.com/technology/anthropics-claude-can-now-control-your-mac-escalating-the-fight-to-build-ai" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#OpenAI,#開發工具">
+    <div class="card-title">我在 5 天內用 Claude Code 將 OpenAI Python SDK 移植到 Rust</div>
+    <div class="card-summary">作者以 Claude Code 在五日內把 OpenAI Python SDK 轉為 Rust，打造 openai-oxide。100+ API、持久 WebSocket、零拷貝 SSE、WASM 部署、結構化輸出與跨語言綁定，實測比官方更快，並附完整基準與部署優化。 via DEV Communi</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>04:08</span>
+      <a class="read-more" href="https://dev.to/fortunto2/squeezing-every-millisecond-from-the-openai-api-in-rust-4b11" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#安全">
+    <div class="card-title">我們掃描了 GitHub 上的 900 個 MCP configs。75% 有安全問題。</div>
+    <div class="card-summary">本研究掃描 GitHub 上的 900 份 MCP 配置，結果顯示有高達 75% 存在安全問題。資訊由 Reddit 使用者 sixcommissioner 提供，並附上 Orchesis.ai 部落格與相關討論連結。 via Technical Information Security Conte</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span></div>
+    <div class="card-footer">
+      <span>04:04</span>
+      <a class="read-more" href="https://www.reddit.com/r/netsec/comments/1s2j0zl/we_scanned_900_mcp_configs_on_github_75_had/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot,#職場衝擊">
+    <div class="card-title">Ari Lamstein：即將推出的 O'Reilly 工作坊：使用 Streamlit 和 Copilot 建構資料應用程式</div>
+    <div class="card-summary">Ari Lamstein 將於 4 月 14 日於 O’Reilly 舉辦 4 小時工作坊，教用 Streamlit 與 Copilot 從 Jupyter 建構互動資料應用，含架構、使用者輸入、互動圖表與部署。適合資料科學家與 Python 使用者，現已開放報名。 via Planet Pytho</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>04:04</span>
+      <a class="read-more" href="https://arilamstein.com/blog/2026/03/24/upcoming-oreilly-workshop-building-data-apps-with-streamlit-and-copilot/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#安全,#開發工具">
+    <div class="card-title">Anthropic 在 Claude Code 中新增自動模式以減少權限提示</div>
+    <div class="card-summary">Anthropic 為 Claude Code 新增自動模式，降低在寫入檔案與執行命令時的頻繁授權請求，同時維持系統安全。模式以分類器先判定動作安全，安全動作自動執行、風險動作被阻擋，必要時再請求使用者授權。建議於受控環境使用，Claude Teams 已開放研究預覽，企業與 API 版本將陸續提供</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>04:04</span>
+      <a class="read-more" href="https://www.macobserver.com/news/anthropic-adds-auto-mode-to-claude-code-to-reduce-permission-prompts/?utm_source=macobserver&amp;amp;utm_medium=rss&amp;amp;utm_campaign=rss_everything" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#安全,#開發工具">
+    <div class="card-title">CTF 解題報告：CMC MCP — 透過 MCP Tool 進行指令注入（150pts）</div>
+    <div class="card-summary">CTF 攻略：CMC MCP—透過 MCP 工具進行命令注入，獲得 150 分。平台為 SecDojo，分類 AI / AI Security / MCP，難度中等。原文請至 Medium 連結閱讀。 via Cybersecurity on Medium March 25, 2026 at 03:</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>03:59</span>
+      <a class="read-more" href="https://medium.com/@yassineet69/ctf-writeup-cmc-mcp-command-injection-via-mcp-tool-150pts-2b0c430f5b43?source=rss------cybersecurity-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#VibeCoding">
+    <div class="card-title">使用者和 vibe coding</div>
+    <div class="card-summary">描述一位使用者想在離線系統測試 Claude 代碼、為主軟體撰寫外掛並產出 C/C++。如無法理解與驗證執行行為，風險極高。因僅一人 IT、無人可審核，詢問他人該如何因應。 via r/sysadmin March 25, 2026 at 03:43AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#VibeCoding')">#VibeCoding</span></div>
+    <div class="card-footer">
+      <span>03:58</span>
+      <a class="read-more" href="https://www.reddit.com/r/sysadmin/comments/1s2mmae/users_and_vibe_coding/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#開發工具">
+    <div class="card-title">Claude Pro 對 Claude Code 使用者實際能維持多久？經常觸及限制嗎？</div>
+    <div class="card-summary">本文尋求使用者經驗：Claude Pro 對 Claude Code 的實際可用時長與上限頻率，是否常觸及 5 小時滾動上限；Pro 是否足以日常使用，還是需升級到 Max；哪些專案或會話長度易觸發限制；以及 $20 是否值得，或改用 API 並設預算上限較划算。 via r/ArtificialI</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>03:53</span>
+      <a class="read-more" href="https://www.reddit.com/r/ArtificialInteligence/comments/1s2na5u/how_far_does_claude_pro_actually_last_for_claude/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#LLM,#開發工具">
+    <div class="card-title">繞過文件攝取：Financial Q&amp;A 的 MCP 方法</div>
+    <div class="card-summary">本研究比較 MCP 與傳統 RAG，讓大型語言模型直接存取篩選後的金融資料。經 FinDER 測試，MCP 搭 LSEG API 在金融子集多步數值題達 80.4% 準確。結論：對定量金融問答有效，對需定性或文件內容的問題非替代。 via cs updates on arXiv.org March </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#LLM')">#LLM</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>03:49</span>
+      <a class="read-more" href="https://arxiv.org/abs/2603.20316" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#OpenAI">
+    <div class="card-title">OpenAI 將 ChatGPT 變得更像 Amazon 的計畫進展並不順利</div>
+    <div class="card-summary">OpenAI 為讓 ChatGPT 更像亞馬遜的計畫似乎遇挫，官方宣布將放棄 Instant Checkout 功能，該功能原允許用戶在 ChatGPT 介面直接購物。 via TechCrunch March 25, 2026 at 03:36AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span></div>
+    <div class="card-footer">
+      <span>03:49</span>
+      <a class="read-more" href="https://techcrunch.com/2026/03/24/openais-plans-to-make-chatgpt-more-like-amazon-arent-going-so-well/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#OpenAI">
+    <div class="card-title">OpenAI 想要允許在 ChatGPT 上發佈成人內容——而成人產業正在準備迎接衝擊</div>
+    <div class="card-summary">OpenAI 計畫允許在 ChatGPT 上出現情色內容，成人娛樂產業因此預期將受重大衝擊。這個價值約 650 億美元的市場，正努力應對人工智慧帶來的變革與挑戰。 via Quartz March 25, 2026 at 03:31AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span></div>
+    <div class="card-footer">
+      <span>03:49</span>
+      <a class="read-more" href="https://qz.com/openai-chatgpt-adult-content-erotica-porn-industry-threat" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot">
+    <div class="card-title">Copilot 沒有取代開發者，但取代了思考</div>
+    <div class="card-summary">標題指出 Copilot 並未取代開發者，而是改變了他們的思考方式。外界普遍認為它會取代開發者的說法不成立，現實更安靜卻更令人擔憂，影響開發流程與決策。 via AI on Medium March 25, 2026 at 03:31AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span></div>
+    <div class="card-footer">
+      <span>03:49</span>
+      <a class="read-more" href="https://codingplainenglish.medium.com/copilot-didnt-replace-developers-but-replaced-thinking-06926bf0d860?source=rss------ai-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#OpenAI">
+    <div class="card-title">AccuWeather 現已在 ChatGPT 內提供使用</div>
+    <div class="card-summary">AccuWeather 現在可在 ChatGPT 中使用。連接後，使用者可於互動天氣模組查詢 MinuteCast、RealFeel、RealFeel Shade 等資訊，解答天氣相關問題，如適合跑步的最佳時機或週末是否下雨。此前也曾推出 Gear VR 介面。 via Engadget March</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span></div>
+    <div class="card-footer">
+      <span>03:43</span>
+      <a class="read-more" href="https://www.engadget.com/ai/accuweather-is-now-available-inside-chatgpt-192637363.html" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">我建立了一個 VSCode 延伸功能，用於逐段 Accept/Discard Claude Code 變更</div>
+    <div class="card-summary">為 Claude Code 開發的 VSCode 擴充 hunkwise，讓多檔修改可逐區塊審查與接受/放棄。它在外部寫入時顯示內嵌差異，並提供每個區塊的 ✓/↺ 與待處理檔案清單與批次操作；僅審核外部寫入，使用者編輯不觸發。 via r/ClaudeAI March 25, 2026 at 03:</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>03:40</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2mn3a/i_built_a_vscode_extension_for_perhunk/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#職場衝擊,#安全,#開源,#開發工具">
+    <div class="card-title">我為 Claude Code 打造了一個自動駕駛系統，這樣我就可以在它工作時離開</div>
+    <div class="card-summary">YesBot 是為 Claude Code 設計的自動授權工具，根據英文規則自動允許安全操作、阻止危險動作，並記錄決策與提供實時儀表板。可動態修改規則，開源 MIT 授權，GitHub： via r/ClaudeAI March 25, 2026 at 03:19AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開源')">#開源</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>03:40</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2mmha/i_built_an_autopilot_for_claude_code_so_i_can/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#安全,#記憶體">
+    <div class="card-title">Claude Code 的自動夢境功能詳解 — 以下是 AI 記憶整合運作方式的完整技術分解</div>
+    <div class="card-summary">Auto Dream 是 Claude Code 的背景記憶整合機制，模仿睡眠期整理。四階段：導向、蒐集信號、整合、修剪與索引；清理筆記、移除矛盾。觸發條件：距上次循環 24 小時且有 5 次會話，亦可手動。現僅在 /memory 顯示，受旗控；安全性：僅改記憶檔案，不影響活躍會話。 via r/C</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#記憶體')">#記憶體</span></div>
+    <div class="card-footer">
+      <span>03:40</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2mcok/claude_codes_auto_dream_feature_explained_heres/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">如何透過 Claude code 存取 Claude artifact 連結？</div>
+    <div class="card-summary">詢問如何用 Claude 代碼存取 Claude Artifact 連結。客戶提供長約 19 頁的連結，欲以 Claude 代碼實作，但該代碼無法瀏覽或抓取，尋求解決方法。 via r/ClaudeAI March 25, 2026 at 03:19AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>03:39</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2lzqu/how_to_acess_claude_artifcact_link_via_claude_code/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#開發工具">
+    <div class="card-title">如何使用 NVIDIA NIM 免費方案搭配 Claude Code？需要逐步指南</div>
+    <div class="card-summary">此篇 Reddit 帖文求助，欲取得 NVIDIA NIM 免費階層 API 與 Claude Code 的完整逐步指南。貼文作者 /u/wabixy 表示卡在流程中，找不到清晰操作指引，懇請社群提供可實作的步驟與說明，附原文連結。 via r/ClaudeAI March 25, 2026 at </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>03:39</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2ltig/how_to_use_nvidia_nim_free_tier_with_claude_code/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#AI編碼工具,#MCP,#AIAgent,#職場衝擊">
+    <div class="card-title">n8n MCP Server — 將任何工作流程轉變為 AI 可呼叫的工具</div>
+    <div class="card-summary">n8n MCP Server 將整個工作流程轉為可由 Claude/Cursor/VS Code 呼叫的 MCP 工具，同時可作為外部 MCP 伺服器工具的客戶端。核心優勢：自托管、無限執行、資料自控。雙向模式：外部 AI Agent → Trigger → Workflow → Client To</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#AI編碼工具')">#AI編碼工具</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>03:34</span>
+      <a class="read-more" href="https://dev.to/grove_chatforest/n8n-mcp-server-turn-any-workflow-into-an-ai-callable-tool-2hfn" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#職場衝擊,#安全,#開發工具">
+    <div class="card-title">Terraform MCP Server — 登錄表註冊機制智能，用於 AI 輔助基礎設施</div>
+    <div class="card-summary">Terraform MCP 伺服器提供實時 Terraform Registry 查詢，讓 AI 助手取得 provider、模組、策略與版本資訊，避免幻覺式參數。涵蓋 35+ 工具與工作區管理，安全設計不執行 plan/apply。以 Docker 快速設定，Beta 版本，評分 4/5。 via</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>03:34</span>
+      <a class="read-more" href="https://chatforest.com/reviews/terraform-mcp-server/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#安全,#開發工具">
+    <div class="card-title">Auto mode for Claude Code 自動模式</div>
+    <div class="card-summary">Claude Code 推出自動模式（Auto mode），由分類器在每次工具呼叫前評估風險，安全動作自動執行、風險動作被阻擋，必要時再請求使用者授權。比 --dangerously-skip-permissions 更安全，現為 Team 研究預覽，日後擴展至 Enterprise/API，支援 </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>03:34</span>
+      <a class="read-more" href="https://claude.com/blog/auto-mode" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Google,#多模態">
+    <div class="card-title">Google TV 的新 Gemini 功能讓粉絲持續更新運動隊伍等相關資訊</div>
+    <div class="card-summary">Google TV 的 Gemini 新功能包含 AI 視覺回應、深度探討與旁白體育概覽（sports briefs），可即時顯示比分與觀看資訊，並搭配食譜與教學影片。現已在美加推出，春季再拓展至英、澳、紐等地。 via Media &amp; Entertainment News | TechCrunch</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Google')">#Google</span><span class="tag" onclick="filterByTag(null,'#多模態')">#多模態</span></div>
+    <div class="card-footer">
+      <span>03:28</span>
+      <a class="read-more" href="https://techcrunch.com/2026/03/24/google-tv-new-gemini-features-keep-fans-updated-on-sports-teams-deep-dives-visual-answers/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Google">
+    <div class="card-title">Google Deepmind 的 Gemini 3.1 Flash-Lite 幾乎可即時生成網站</div>
+    <div class="card-summary">Google DeepMind 的 Gemini 3.1 Flash-Lite 能幾乎實時生成網站，輸入提示即現場建頁。結果不穩定、易跑偏，但若設有嚴格控管，適用於快速 UI 原型等場景。速度顯著提升、成本上升，自 3 月起於 Google AI Studio 與 Vertex AI 提供。 via</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Google')">#Google</span></div>
+    <div class="card-footer">
+      <span>03:28</span>
+      <a class="read-more" href="https://the-decoder.com/google-deepminds-gemini-3-1-flash-lite-generates-websites-almost-in-real-time/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Google">
+    <div class="card-title">Gemini for Google TV 即將登陸澳洲、紐西蘭和英國</div>
+    <div class="card-summary">Google TV 的 Gemini 將於春季拓展至澳洲、紐西蘭與英國，取代現有助理，年內再開拓更多國家。目前僅美國與加拿大及部分裝置支援，功能包含對話式搜尋、智慧家電控制、相簿編輯，並提供影像與即時體育更新。 via Thurrott.com March 25, 2026 at 03:10AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Google')">#Google</span></div>
+    <div class="card-footer">
+      <span>03:24</span>
+      <a class="read-more" href="https://www.thurrott.com/a-i/334136/gemini-for-google-tv-is-coming-soon-to-australia-new-zealand-and-great-britain" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#AIAgent,#LLM,#職場衝擊,#開發工具">
+    <div class="card-title">Firecrawl MCP Server — 適用於 AI Agents 的全棧網路爬取平台</div>
+    <div class="card-summary">Firecrawl MCP Server 是全棧網頁資料抓取平台，提供多工具組（scrape、crawl、search、extract、agent、deep_research 等）與自雲端/自托管部署。優點：自動化多源研究、LLM 結構化提取、JS 渲染與高擴充性；缺點：免費額度有限、計費複雜、近六</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span><span class="tag" onclick="filterByTag(null,'#LLM')">#LLM</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>03:24</span>
+      <a class="read-more" href="https://dev.to/grove_chatforest/firecrawl-mcp-server-the-full-stack-web-scraping-platform-for-ai-agents-hpl" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">Anthropic 的 Claude 現在可以使用你的電腦來完成任務</div>
+    <div class="card-summary">Anthropic 正測試讓 Claude 從手機接收任務，於電腦上執行（開啟應用、瀏覽器與編輯檔案等），甚至匯出 PDF 並附會議邀請。功能仍屬早期，可能出錯，且需取得新應用的使用許可，並有防護機制。 via Slashdot March 25, 2026 at 03:06AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>03:19</span>
+      <a class="read-more" href="https://slashdot.org/story/26/03/24/1649222/anthropics-claude-can-now-use-your-computer-to-finish-tasks?utm_source=rss1.0mainlinkanon&amp;amp;utm_medium=feed" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#開發工具,#法規政策">
+    <div class="card-title">GitLab MCP Servers — 內建 AI 存取 vs 100+ 工具社群生態系統</div>
+    <div class="card-summary">本分析比較 GitLab 的內建 MCP 與三家社群伺服器的工具生態。官方僅 15 工具，需 Premium/Ultimate，且無遠端托管；zereight/gitlab-mcp 提供 100+ 工具、動態自訂與多實例連接；mcpland 有政策引擎。整體評分 3.5/5，GitHub 生態更龐大</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span><span class="tag" onclick="filterByTag(null,'#法規政策')">#法規政策</span></div>
+    <div class="card-footer">
+      <span>03:19</span>
+      <a class="read-more" href="https://chatforest.com/reviews/gitlab-mcp-server/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#VibeCoding">
+    <div class="card-title">Vibe Coding 已經結束了。</div>
+    <div class="card-summary">本文宣布 Vibe Coding 已結束，並預告未來的走向與新方向。讀者可透過連結在 Medium 繼續閱讀，了解接下來的發展與下一步計畫。 via Web Development on Medium March 25, 2026 at 02:59AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#VibeCoding')">#VibeCoding</span></div>
+    <div class="card-footer">
+      <span>03:19</span>
+      <a class="read-more" href="https://michalmalewicz.medium.com/vibe-coding-is-over-5a84da799e0d?source=rss------web_development-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#安全">
+    <div class="card-title">Claude Code 為開發者提供「自動模式」，作為跳過權限的更安全替代方案</div>
+    <div class="card-summary">Claude Code 推出自動模式，為開發者提供比跳過權限更安全的選項。MacHash 是實時 Apple 新聞聚合平台，匯集 Mac、iPhone、iPad、iOS 的最新頭條與更新，讓用戶可於桌面或行動裝置追蹤並分享可信新聞。 via MacHash RSS Feed March 25, 20</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span></div>
+    <div class="card-footer">
+      <span>03:09</span>
+      <a class="read-more" href="https://machash.com/9to5mac/407251/claude-code-gives-developers-auto-mode-safer-alternative/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot,#開發工具">
+    <div class="card-title">深入探討：追蹤單一 Copilot CLI 要求的端對端流程</div>
+    <div class="card-summary">本文以 Copilot CLI 為例，展示端對端追蹤。透過 mitmproxy 捕捉 wire-level HTTP 與本機日誌，清楚呈現單次請求的完整代理迴圈：兩次 POST /chat/completions、在本機執行的工具（bash、report_intent）以及最終回覆。 via Mic</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>03:09</span>
+      <a class="read-more" href="https://medium.com/microsoftazure/under-the-hood-tracing-a-single-copilot-cli-request-end-to-end-afeb1baad5d5?source=rss----8bec1183ada9---4" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot,#MCP,#AIAgent">
+    <div class="card-title">Agentic AI 開發 Power BI Semantic Models 使用 GitHub Copilot 和 Power BI Modeling MCP…</div>
+    <div class="card-summary">本文提出 Agentic AI 方法，結合 GitHub Copilot 與 Power BI Modeling MCP Server，於語意模型開發中實作自動化。以 Fabric Part D 為 Playground，建立基線再由 AI 擴充，最終產出與人工相近且保留人類在迴圈中的參與。 via</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span></div>
+    <div class="card-footer">
+      <span>03:04</span>
+      <a class="read-more" href="https://medium.com/microsoftazure/agentic-development-for-power-bi-semantic-models-using-github-copilot-and-power-bi-modeling-mcp-0d1ec2efc6c4?source=rss----8bec1183ada9---4" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot,#開發工具">
+    <div class="card-title">使用 GitHub Copilot SDK 架構 AI 驅動的自動化</div>
+    <div class="card-summary">本指南以 GitHub Copilot SDK 為基礎，說明伺服器端 AI 自動化的架構與實作，聚焦會話生命周期、提示工程與生產環境的優雅降級，並提供影響、要點與完整資源。 via DEV Community March 25, 2026 at 02:45AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>03:04</span>
+      <a class="read-more" href="https://dev.to/diizay_silva/architecting-ai-driven-automation-with-the-github-copilot-sdk-2hj9" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#VibeCoding,#多模態">
+    <div class="card-title">Amazon 賣家正在用 Vibe Coding 取代他們的開發團隊</div>
+    <div class="card-summary">本文探討電商界的新潮流「Vibe Coding」，稱亞馬遜賣家以此取代傳統開發團隊，顯示其對電商的影響。內容以圖像與簡述呈現現況，並引導讀者前往 Medium 繼續閱讀。 via AI on Medium March 25, 2026 at 02:43AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#VibeCoding')">#VibeCoding</span><span class="tag" onclick="filterByTag(null,'#多模態')">#多模態</span></div>
+    <div class="card-footer">
+      <span>03:04</span>
+      <a class="read-more" href="https://kotrotsos.medium.com/amazon-sellers-are-replacing-their-dev-teams-with-vibe-coding-7a5395bfed09?source=rss------ai-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#安全,#開發工具">
+    <div class="card-title">Claude Code 提供開發者「自動模式」，一個跳過權限的更安全替代方案</div>
+    <div class="card-summary">Anthropic 為 Claude Code 推出「自動模式」權限，介於預設審核與完全跳過之間。任務可長時間執行、干擾較少；每次呼叫前由分類器審核，安全動作自動，風險動作被阻擋，必要時觸發授權。現為研究預覽，企業與 API 近期提供。 via 9to5Mac March 25, 2026 at 0</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>03:04</span>
+      <a class="read-more" href="https://9to5mac.com/2026/03/24/claude-code-gives-developers-auto-mode-a-safer-alternative-to-skipping-permissions/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#安全,#開發工具">
+    <div class="card-title">MCP 是什麼</div>
+    <div class="card-summary">模型情境協定（MCP）是一個開放標準，允許 AI 模型安全地連接外部工具、資料來源與其他資源，定義上下文與介面的互通方式，促進 AI 與外部元件的安全整合與互操作。 via Artificial Intelligence on Medium March 25, 2026 at 02:45AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>02:58</span>
+      <a class="read-more" href="https://medium.com/@philipnakhleh/what-is-mcp-e6c828c77628?source=rss------artificial_intelligence-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#安全,#開發工具">
+    <div class="card-title">Azure Bicep MCP</div>
+    <div class="card-summary">本文介紹 Azure Bicep MCP（Model Context Protocol）伺服器，為 AI 助手提供產出高品質 Bicep 程式碼的工具。探討如何利用 MCP 提速編寫、提升安全性，並提及原文連結與 Reddit 作者資訊。 via r/AZURE March 25, 2026 at </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>02:58</span>
+      <a class="read-more" href="https://www.reddit.com/r/AZURE/comments/1s2ln8i/the_azure_bicep_mcp/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Google,#多模態">
+    <div class="card-title">Google Gemini AI 從照片和語音為影片建立自訂化身</div>
+    <div class="card-summary">Google Gemini Avatar 允許以照片與語音樣本打造個人化虛擬分身，能出現在各類影片中，並以雲端與手機為入口。優點是降低上鏡門檻、提升創作效率；缺點在於表情與口型真實度、光影穩定性與隱私風險。 via WebProNews March 25, 2026 at 02:40AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Google')">#Google</span><span class="tag" onclick="filterByTag(null,'#多模態')">#多模態</span></div>
+    <div class="card-footer">
+      <span>02:54</span>
+      <a class="read-more" href="https://www.webpronews.com/google-gemini-ai-create-custom-avatars-for-videos-from-photos-and-voice/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Google,#安全">
+    <div class="card-title">Google 釋放 Gemini AI 掃蕩暗網以搜尋企業威脅</div>
+    <div class="card-summary">谷歌推出以 Gemini 為核心的暗網情報服務，部署 AI 代理每日掃描海量帖文，理解上下文以取代傳統關鍵字監控，目標在更有效偵測與企業相關的網路威脅。 via IT Security News March 25, 2026 at 02:39AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Google')">#Google</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span></div>
+    <div class="card-footer">
+      <span>02:54</span>
+      <a class="read-more" href="https://www.itsecuritynews.info/google-unleashes-gemini-ai-to-scour-dark-web-for-corporate-threats/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">Anthropic 宣佈推出「auto mode」功能，讓 Claude Code 能夠做出權限層級的決策，同時防止大量刪除檔案等破壞性動作 (David Gewirtz/ZDNET)</div>
+    <div class="card-summary">Anthropic 宣布推出 Claude Code 的自動模式，使模型在需要時可自行決定權限，並具備防護機制以避免破壞性行為（如大量檔案刪除），同時減少開發者的權限提示需求。 via Techmeme March 25, 2026 at 02:26AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>02:39</span>
+      <a class="read-more" href="https://www.techmeme.com/260324/p35" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#Google,#AI編碼工具,#職場衝擊,#開源">
+    <div class="card-title">我們剛發布了我們第一個 n8n verified community node CloudCLI 。您可以直接從您的工作流程中運行 Claude Code 、 Cursor CLI 、 Gemini 和 Codex</div>
+    <div class="card-summary">CloudCLI 成為首個經 n8n 驗證的社群節點，讓工作流程中直接執行 Claude Code、Cursor CLI 與 Codex。為開源雲端容器服務，支援跨裝置與觸發。附 Jira、Linear 模板，可建立環境、執行代理並同步會話，已於 n8n 集成頁上架。 via r/n8n March</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#Google')">#Google</span><span class="tag" onclick="filterByTag(null,'#AI編碼工具')">#AI編碼工具</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#開源')">#開源</span></div>
+    <div class="card-footer">
+      <span>02:36</span>
+      <a class="read-more" href="https://www.reddit.com/r/n8n/comments/1s2k7gf/we_just_published_our_first_n8n_verified/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#職場衝擊">
+    <div class="card-title">我還沒有使用過 Claude Code，但作為 CS 專業的學生，它真的好到足以讓我擔心我的未來嗎？</div>
+    <div class="card-summary">一名大二 CS 學生尚未使用 Claude Code，但擔心它日益強大是否會影響畢業後的就業前景，想知道自己是否應該繼續走 CS 路線。 via r/ClaudeAI March 25, 2026 at 02:19AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>02:36</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2lmjx/i_havent_used_claude_code_yet_but_as_a_cs_major/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#MCP,#記憶體">
+    <div class="card-title">我建立了一個 MCP 伺服器，讓 Claude 在對話間保有持久記憶——搭配混合語義搜尋</div>
+    <div class="card-summary">開發 kb-server MCP 伺服器，使 Claude 在對話間具有持久記憶，Claude.ai、Claude Code 與行動端可共用。採用混合搜尋（FTS5 關鍵字＋ multilingual-e5-small 語義嵌入）並以 Reciprocal Rank Fusion 整合，實現自動保存</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#記憶體')">#記憶體</span></div>
+    <div class="card-footer">
+      <span>02:35</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2ljbw/i_built_an_mcp_server_that_gives_claude/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#開源">
+    <div class="card-title">我打造了一個桌面應用程式來瀏覽和搜尋 Claude Code 對話記錄</div>
+    <div class="card-summary">開發的桌面應用 Claude Convo Manager，讓使用 Claude Code 的對話記錄更好用。將 ~/.claude/ 下的 JSONL 轉為本地 SQLite 索引，支援全文搜尋、查看 token 與成本、以聊天介面瀏覽，並可複製 resume 指令與在 IDE 開啟相關專案，完全本</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#開源')">#開源</span></div>
+    <div class="card-footer">
+      <span>02:35</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2l818/i_built_a_desktop_app_to_browse_and_search_claude/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#安全">
+    <div class="card-title">我建立了一個行動應用程式，可以從我的手機在 VPS 上執行 Claude Code</div>
+    <div class="card-summary">作者開發 Maude 行動應用，透過 SSH 連結 VPS 或自家電腦，於手機與 Claude Code 對話；Claude Code 自動建立 SSH、OAuth 流程與依賴安裝。30 秒完成設定，資料私密僅存於手機，並提供完成通知與免費試用，建議在安全環境如專用 VPS/Docker 容器使用。</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span></div>
+    <div class="card-footer">
+      <span>02:35</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2kklw/i_built_a_mobile_app_to_run_claude_code_on_my_vps/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#安全,#開源">
+    <div class="card-title">我建立了一個開源的 Claude Code skill，可自動修復 OWASP ZAP 報告中的漏洞</div>
+    <div class="card-summary">開源 Claude Code 技能 zap-auto-fixer 可根據 OWASP ZAP 報告自動修正程式碼漏洞（如 CORS、CSP、XSS），採用 Progressive Disclosure 降低 40% token 使用。實測將 53 個中等風險漏洞自動修復為 0，現公開 GitHub </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開源')">#開源</span></div>
+    <div class="card-footer">
+      <span>02:35</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2kgs3/i_built_an_opensource_claude_code_skill_that/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#MCP,#AIAgent">
+    <div class="card-title">webpage-mcp: 將你現有的網頁轉變成 MCP 伺服器供 agent 控制</div>
+    <div class="card-summary">webpage-mcp 是一個專案，能把現有網頁轉成 MCP 伺服器以用於代理控制。此專案由 /u/unadlib 投稿，並提供 GitHub 專案頁與 Reddit 討論串連結，方便查看與使用。 via r/ClaudeAI March 25, 2026 at 02:19AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span></div>
+    <div class="card-footer">
+      <span>02:35</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2kbr1/webpagemcp_turn_your_existing_webpages_into_an/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#安全">
+    <div class="card-title">使用 Claude Code 進行安全審查 — 來自一位謙虛開發者的短篇故事</div>
+    <div class="card-summary">本文以謙虛開發者的短篇故事為引子，說明使用 Claude Code 進行安全審查，同時回顧對其新產品 Claude Code Security 的廣泛討論與相關貼文。 via Software Development on Medium March 25, 2026 at 02:19AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span></div>
+    <div class="card-footer">
+      <span>02:35</span>
+      <a class="read-more" href="https://medium.com/@christofferpedersen/using-claude-code-for-a-security-review-a-short-story-from-a-humble-developer-172c0b40ffbf?source=rss------software_development-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#OpenAI">
+    <div class="card-title">Sephora 在 ChatGPT 內推出「應用程式」，該平台宣佈購物體驗升級</div>
+    <div class="card-summary">Sephora 在 ChatGPT 內推出一個應用，並連結自家商品目錄以提升購物體驗；同時宣布平台升級，這被視為其在 AI 驅動消費領域邁出的新里程碑。 via News - FashionNetwork.com United Kingdom March 25, 2026 at 02:19AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span></div>
+    <div class="card-footer">
+      <span>02:35</span>
+      <a class="read-more" href="https://uk.fashionnetwork.com/news/Sephora-launches-an-app-within-chatgpt-as-the-platform-announces-upgrades-to-its-shopping-experience,1818568.html" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#AIAgent,#安全,#開發工具">
+    <div class="card-title">Context7 MCP Server — 用於 AI 編碼代理的實時庫文檔</div>
+    <div class="card-summary">Context7 是 最 受歡迎 的 MCP 伺服器，實時 提供 版本 對應 的 文檔 並 注入 提示， 解決 AI 助手 出現 不 存在 API 的 問題。 包含 resolve-library-id 與 query-docs 兩 工具，庫 覆蓋 廣泛，社群 貢獻 驅動。 風險 包括 Contex</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>02:29</span>
+      <a class="read-more" href="https://dev.to/grove_chatforest/context7-mcp-server-real-time-library-docs-for-ai-coding-agents-40k3" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Google,#MCP,#AIAgent,#開發工具">
+    <div class="card-title">OpenClaw 如何為多代理程序編排實現 MCP</div>
+    <div class="card-summary">OpenClaw 是一個基於 MCP 的多代理編排框架，提供三層整合：插件級 MCP 客戶端、mcporter 指令級工具、以及瀏覽器 MCP 整合。它支援跨通道訊息、逐代理工具存取控制、會話管理與持久閘道，並可自建 MCP 伺服器、發布於 ClawHub。相較於 Google ADK 與 Dyna</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Google')">#Google</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>02:29</span>
+      <a class="read-more" href="https://dev.to/ollieb89/how-openclaw-implements-mcp-for-multi-agent-orchestration-36hk" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#安全">
+    <div class="card-title">AI Native Engineering: MCP</div>
+    <div class="card-summary">本文提出 AI 原生工程的 MCP 概念，為 AI 代理建立對現有應用的標準化入口。透過統一前門，提升整合性、治理與安全性，從而顛覆以往的軟體建置與架構設計思維。 via AI on Medium March 25, 2026 at 02:13AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span></div>
+    <div class="card-footer">
+      <span>02:29</span>
+      <a class="read-more" href="https://medium.com/@modhajai/ai-native-engineering-mcp-92158b75b965?source=rss------ai-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#職場衝擊">
+    <div class="card-title">Ralph Loops：教授 Claude 在你睡覺時工作的程式碼</div>
+    <div class="card-summary">本文介紹 Ralph Loops，展示如何用 Bash 迴圈自動化 Claude 的編碼工作，讓程式在睡著時也能自行運作。核心在於產出結構化的 JSON 輸出，並以零干預的工作流程執行，實現無人監督的自動化編程。 via AI on Medium March 25, 2026 at 02:12AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>02:23</span>
+      <a class="read-more" href="https://medium.com/@davidroliver/ralph-loops-teaching-claude-code-to-work-while-you-sleep-aebb434b4432?source=rss------ai-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#AI編碼工具">
+    <div class="card-title">Cursor/Claude Code 在一個下午就能交付。Discovery 仍然需要兩週。有沒有人覺得瓶頸現在轉移到我們身上了？</div>
+    <div class="card-summary">Cursor/Claude Code 可日內交付，但發現階段仍需兩週。瓶頸已移至 discovery-to-decision：上游資料分散、未整合，輸出為不可信的靜態文件，工程解讀不一致。需串連用戶訪談、Jira、Slack 與使用數據，優化決策流程。有人有效做法？ via r/SaaS March</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#AI編碼工具')">#AI編碼工具</span></div>
+    <div class="card-footer">
+      <span>02:23</span>
+      <a class="read-more" href="https://www.reddit.com/r/SaaS/comments/1s2k270/cursorclaude_code_ships_in_an_afternoon_discovery/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#安全,#開發工具">
+    <div class="card-title">Claude Code 的新自動模式如何在不拖累你速度的情況下防止 AI 編碼災難</div>
+    <div class="card-summary">Anthropic 推出 Claude Code 自動模式，讓 AI 在工具呼叫前由分類器審核，低風險自動執行，高風險則阻止或請求使用者授權。這是介於嚴格安全與全自動之間的中間路徑，目前僅限 Team 計畫研究預覽，日後才開放給 Enterprise/API，且可能影響成本與延遲。 via Late</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>02:19</span>
+      <a class="read-more" href="https://www.zdnet.com/article/claude-code-auto-mode/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot,#職場衝擊">
+    <div class="card-title">將協作集中化：深入探討 Copilot Notebooks 和 Copilot Pages</div>
+    <div class="card-summary">本文 比較 Copilot Notebooks 與 Copilot Pages 的 協作 工作區。Notebooks 是 深度 研究 核心，支援 最多 20 個 資料來源，雲端連結 即時更新，局部檔案 需 重新 上傳。Pages 是 畫布，支援 多人 即時 編輯，頁面 永久 保存，完成後 可 轉成 </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>02:19</span>
+      <a class="read-more" href="https://www.c-sharpcorner.com/article/centralizing-collaboration-a-deep-dive-into-copilot-notebooks-and-copilot-pages/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Google,#多模態">
+    <div class="card-title">三項新的 Gemini 功能登陸 Google TV</div>
+    <div class="card-summary">Google TV 宣布三項 Gemini 功能：一、提供更豐富的視覺幫助，查分時同時顯示實時比分與觀看連結，並可搭配教學影片；二、提供視覺深度探索的互動走讀；三、Gemini 驅動的運動要點摘要。初期僅美國裝置支援，春季再拓展至更多國家。 via Engadget March 25, 2026 a</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Google')">#Google</span><span class="tag" onclick="filterByTag(null,'#多模態')">#多模態</span></div>
+    <div class="card-footer">
+      <span>02:19</span>
+      <a class="read-more" href="https://www.engadget.com/entertainment/streaming/three-new-gemini-features-come-to-google-tv-175724155.html?src=rss" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#開發工具">
+    <div class="card-title">Claude Code Section 2: Making Claude Personal — 7 Concepts That Turn a Generic Tool Into Your… 的台灣繁體中文翻譯為： Claude Code 第 2 節：讓 Claude 個人化——7 個將通用工具轉變為你的…概念</div>
+    <div class="card-summary">本文為 Claude Code 系列第 2 部，聚焦透過七個概念，將通用的 Claude 轉變為個人化工具。屬四部曲之一，若未讀過第 1 部「基礎」，請先閱讀。亦提供 Towards AI 的完整閱讀連結。 via Artificial Intelligence on Medium March 25</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>02:14</span>
+      <a class="read-more" href="https://pub.towardsai.net/claude-code-section-2-making-claude-personal-7-concepts-that-turn-a-generic-tool-into-your-5756e07bfb65?source=rss------artificial_intelligence-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot,#AIAgent,#職場衝擊,#開源">
+    <div class="card-title">我如何打造7個 AI Agents 為 VS Code Copilot 帶來紀律</div>
+    <div class="card-summary">BitFrog Copilot 是一款開源的 VS Code 擴充，為 GitHub Copilot Chat 增設 7+1 位專精代理與主路由器，採分工與任務交棒工作流程，提升結構與準確性。含安裝指引、三個場景與五大中國哲學原則，授權 MIT。 via DEV Community March 25</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#開源')">#開源</span></div>
+    <div class="card-footer">
+      <span>02:14</span>
+      <a class="read-more" href="https://dev.to/bitfrog/the-copilot-workflow-handoffs-not-chaos-1598" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Google,#GitHubCopilot,#安全">
+    <div class="card-title">GitHub 週刊：Copilot 變得更聰明，Actions 變得更友善</div>
+    <div class="card-summary">本週 GitHub 注重 開發者 日常 養護， 提升 效能 與 可用性， Copilot 更 快、 日誌 更 清晰， 提供 代理 會話 追蹤。 Gemini 3.1 Pro 公開 預覽， JetBrains 與 VS Code 均 支援 自動 模型 選擇。 Actions 增時區 與 非自動 部署。</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Google')">#Google</span><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span></div>
+    <div class="card-footer">
+      <span>02:14</span>
+      <a class="read-more" href="https://dev.to/htekdev/github-weekly-copilot-gets-smarter-actions-gets-friendlier-2nea" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#OpenAI,#多模態">
+    <div class="card-title">OpenAI 通過讓用戶上傳圖像或描述商品並包含預算等條件來改進 ChatGPT 的購物體驗（Ashley Capoot/CNBC）</div>
+    <div class="card-summary">OpenAI 為 ChatGPT 的購物體驗重磅改版，允許用戶上傳商品照片或描述項目，並加入預算等條件，以便更精準地搜尋與比較。此舉在 Instant Checkout 未受歡迎後推出，旨在提升購物流程的便利性與轉換率。 via Techmeme March 25, 2026 at 01:58AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span><span class="tag" onclick="filterByTag(null,'#多模態')">#多模態</span></div>
+    <div class="card-footer">
+      <span>02:14</span>
+      <a class="read-more" href="https://www.techmeme.com/260324/p34" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#VibeCoding,#開發工具,#記憶體">
+    <div class="card-title">第 34 集 - Scott 和 Mark 學習真正地進行 Vibe Coding（再一次）</div>
+    <div class="card-summary">本集由 Scott Hanselman 與 Mark Russinovich 討論以 AI 編碼代理人開發複雜軟體的現實。Mark 分享用現代模型在 Go 與 .NET 之間實作 gRPC 的共用記憶體傳輸，顯示 AI 顯著提速，但仍需持續監督；探討 AI 編碼工具的長處與局限、產能提升，以及未來開</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#VibeCoding')">#VibeCoding</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span><span class="tag" onclick="filterByTag(null,'#記憶體')">#記憶體</span></div>
+    <div class="card-footer">
+      <span>02:08</span>
+      <a class="read-more" href="https://www.youtube.com/watch?v=PQlIZaMyu80" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#VibeCoding,#開發工具,#記憶體">
+    <div class="card-title">第 34 集 - Scott &amp; Mark 學習...Vibe Coding，真正地（再次）</div>
+    <div class="card-summary">本集探討以 AI 編碼代理開發複雜軟件的現實。Mark 分享在 Go 與 .NET 關於共用記憶體的 gRPC 實作經驗，指出 AI 能顯著提速但需持續監控。討論工具的優劣與實際生產力，以及難題與未來展望。 via Scott Hanselman March 25, 2026 at 01:50AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#VibeCoding')">#VibeCoding</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span><span class="tag" onclick="filterByTag(null,'#記憶體')">#記憶體</span></div>
+    <div class="card-footer">
+      <span>02:03</span>
+      <a class="read-more" href="https://www.youtube.com/watch?v=PQlIZaMyu80" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#職場衝擊">
+    <div class="card-title">如何建立真正有效的自訂 Claude 程式碼技能</div>
+    <div class="card-summary">本文教你用可重用的 Skills 讓 Claude Code 按團隊工作流程運作。重點：建立 .claude/skills 目錄、撰寫符合前置資料的技能檔案、專案優先於全域、在設定中載入並可透過指令呼叫、持續測試與版本控管。 via DEV Community March 25, 2026 at 0</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>01:58</span>
+      <a class="read-more" href="https://dev.to/alanwest/how-to-build-custom-claude-code-skills-that-actually-work-2e1f" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#職場衝擊,#開源,#開發工具">
+    <div class="card-title">建立了一個免費開源桌面應用程式，包裝 Claude 程式碼目的是最大化生產力</div>
+    <div class="card-summary">免費開源桌面應用，包裝 Claude 程式碼以提升生產力。開發的工作樹管理器提供執行/設定腳本、完整隔離與 git 操作，以及在虛擬資料夾連結多儲存庫以規劃專案的新功能。公司使用中，歡迎回饋，亦可 Brew 安裝，詳見專案頁。 via r/Anthropic March 25, 2026 at 01</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#開源')">#開源</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>01:49</span>
+      <a class="read-more" href="https://www.reddit.com/r/Anthropic/comments/1s2jsdk/built_an_free_open_source_desktop_app_wrapping/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">Claude Code Cloud 排程任務。距離淘汰我的 VPS 只差一個功能。</div>
+    <div class="card-summary">本文討論 Claude Code Cloud 的排程任務功能，作者警告再缺少一個功能就可能讓他的彩票 VPS 遭受嚴重影響甚至崩潰，並附上提交者 /u/jonathanmalkin 與原文連結。 via r/Anthropic March 25, 2026 at 01:37AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>01:49</span>
+      <a class="read-more" href="https://www.reddit.com/r/Anthropic/comments/1s2j5nv/claude_code_cloud_scheduled_tasks_one_feature/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot,#開發工具,#法規政策">
+    <div class="card-title">【線上研討會】Copilot 沒有故障，它只是按字面意思理解：法律部門的治理與電子證據開示 - 4月7日，PDT 上午10點</div>
+    <div class="card-summary">4 月 7 日 10:00 PDT 舉辦，由 Association of Certified E-Discovery 專業協會主辦的研討會，面向法務、合規與 eDiscovery 專業人員，聚焦 Copilot 等 AI 工具的治理與風險管理。內容涵蓋訴訟就緒、可發現資料，以及資訊治理與作業流程的</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span><span class="tag" onclick="filterByTag(null,'#法規政策')">#法規政策</span></div>
+    <div class="card-footer">
+      <span>01:49</span>
+      <a class="read-more" href="https://www.jdsupra.com/legalnews/webinar-copilot-isn-t-broken-it-s-being-7930091/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#記憶體">
+    <div class="card-title">我的 AI 在凌晨 3 點 捕捉到一個 £3,200 的範圍蔓延，而我正在睡覺——這是我建立的 Notion MCP 系統</div>
+    <div class="card-summary">本文 介紹 Contract OS， 一個 以 Notion MCP 為 核心 的 自主 AI 系統， 能 讀取 合約、 電子郵件 與 日曆， 判定 範圍 變更、 付款 遲延 與 修訂 濫用， 並 將 健康分數、 警示、 草稿 信件 回寫 至 Notion， 六小時 自動 執行， 提供 連續 記憶 </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#記憶體')">#記憶體</span></div>
+    <div class="card-footer">
+      <span>01:44</span>
+      <a class="read-more" href="https://dev.to/_boweii/my-ai-caught-a-ps3200-scope-creep-at-3am-while-i-was-asleep-heres-the-notion-mcp-system-i-built-1mnj" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot,#MCP,#AIAgent,#職場衝擊,#安全">
+    <div class="card-title">在 GitHub Copilot 中架構代理資料庫工作流程</div>
+    <div class="card-summary">本分析比較 MCP（模型上下文協議）與原生 IDE 擴充在 Copilot 整合資料庫上下文的架構、功能與安全性，涵蓋設定、診斷、資料合成、視覺化查詢，以及硬性與軟性護欄之差異與適用情境。 via Dev Genius - Medium March 25, 2026 at 01:27AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span></div>
+    <div class="card-footer">
+      <span>01:44</span>
+      <a class="read-more" href="https://blog.devgenius.io/architecting-agentic-database-workflows-in-github-copilot-80d9085080fc?source=rss----4e2c1156667e---4" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#OpenAI,#職場衝擊,#多模態">
+    <div class="card-title">ChatGPT 剛推出了一個適用於你所有檔案的圖書館 - 它的工作原理</div>
+    <div class="card-summary">OpenAI 推出 ChatGPT Library，將上傳與 AI 產生的檔案集中於專用庫，方便存取與管理。支援圖片、文件、表格與簡報；生成的圖像仍在 Images 區。需 Plus/Pro/Business，地區受限，僅在 ChatGPT 網站使用，左側庫可查看、下載、上傳與刪除。 via ZDN</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#多模態')">#多模態</span></div>
+    <div class="card-footer">
+      <span>01:44</span>
+      <a class="read-more" href="https://www.zdnet.com/article/chatgpt-library-stores-uploaded-generated-files/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#VibeCoding">
+    <div class="card-title">2.5 週的 Vibe Coding</div>
+    <div class="card-summary">回顧 2.5 週的 Vibe Coding，與多年嘗試部署 AWS 以執行批次任務的代碼比較，探討是否以 AI 代理運作，以及關鍵學習要點。 via Artificial Intelligence on Medium March 25, 2026 at 01:24AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#VibeCoding')">#VibeCoding</span></div>
+    <div class="card-footer">
+      <span>01:39</span>
+      <a class="read-more" href="https://2ndsightlab.medium.com/2-5-weeks-of-vibe-coding-0efe6618ee42?source=rss------artificial_intelligence-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot,#AIAgent,#職場衝擊">
+    <div class="card-title">Lab - GitHub Copilot 自訂代理程式</div>
+    <div class="card-summary">GitHub Copilot 自訂代理是使用者在倉庫中以 .agent.md 描述的自定義 AI 助手，專為特定任務與工作流程而設，具可重用性。本文提供動手實驗，協助學習建立 Copilot 自訂代理，並附上實驗連結。 via Mark Harrison Blog March 25, 2026 at</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>01:39</span>
+      <a class="read-more" href="https://markharrison.uk/blog/github-copilot-custom-agents" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP">
+    <div class="card-title">智能 AI 整合與 Model Context Protocol</div>
+    <div class="card-summary">本次分享聚焦模型情境協定（MCP）的必要性、架構與核心元件，並示範如何設定與運作，讓任何人都能執行。另提供開發 MCP 伺服器的範例，作為整合自有知識資源的起點，並附逐字稿與微軟部落格連結。 via Mark Harrison Blog March 25, 2026 at 01:23AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span></div>
+    <div class="card-footer">
+      <span>01:39</span>
+      <a class="read-more" href="https://markharrison.uk/blog/model-context-protocol" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#OpenAI,#Google,#機器人">
+    <div class="card-title">ChatGPT 和 Gemini 正在爭奪成為向你推銷東西的 AI 機器人</div>
+    <div class="card-summary">Google 的 Gemini 與 OpenAI 的 ChatGPT 正競爭成為能在對話中直接購物的 AI 助手。Google 與 Gap Inc 合作，讓 Gemini 能代購 Gap、Old Navy、Banana Republic、Athleta 等品牌商品，並在聊天中直接下單；OpenAI </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span><span class="tag" onclick="filterByTag(null,'#Google')">#Google</span><span class="tag" onclick="filterByTag(null,'#機器人')">#機器人</span></div>
+    <div class="card-footer">
+      <span>01:39</span>
+      <a class="read-more" href="https://www.theverge.com/ai-artificial-intelligence/899677/openai-google-gemini-ai-shopping-features" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#LLM,#安全,#開發工具">
+    <div class="card-title">Claude Code 的替代方案 / 安全部署</div>
+    <div class="card-summary">本帖 概述 Claude Code 的 自托管 成本 與 安全 替代方案。主要 關切 包含 技術債、過度 使用 與 權限、無 人在迴圈、Need-to-Know 漏失、訓練資料 安全、提示 注入 與 過度 依賴。 同時 討論 GRC 措施、中心化 LLM、GDPR 相容、MS Purview，並 徵</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#LLM')">#LLM</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>01:35</span>
+      <a class="read-more" href="https://www.reddit.com/r/cybersecurity/comments/1s2jbsa/alternatives_to_secure_deployment_of_claude_code/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#職場衝擊,#開源,#開發工具">
+    <div class="card-title">打造一個免費、開源工具來封裝 Claude code sdk，旨在最大化生產力</div>
+    <div class="card-summary">免費開源工具，包裝 Claude Code SDK，極大提升生產力。核心功能包括執行/設定腳本、完整工作樹隔離與 git 差異與操作，以及以虛擬資料夾連結多倉庫以規劃與實作跨專案特徵。已在團隊使用、口碑良好，GitHub 開源，亦可透過 brew 安裝。 via r/ClaudeAI March 2</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#開源')">#開源</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>01:34</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2jpeb/built_a_free_open_source_tool_wrapping_the_claude/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#開源">
+    <div class="card-title">我為 Claude Code 建立了一個自我進化的層級 — 它在我睡眠期間每晚都會自我改進</div>
+    <div class="card-summary">為 Claude Code 打造自我進化層「Homunculus」，以目標樹指引系統自動選取機制（掛鉤、規則、技能、腳本、代理）並夜間升級。三週內收集 179 模式、10 技能、3 代理，完成 155 次自動提交，開源 MIT，GitHub 提供。 via r/ClaudeAI March 25, </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#開源')">#開源</span></div>
+    <div class="card-footer">
+      <span>01:34</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2j2m3/i_built_a_selfevolving_layer_for_claude_code_it/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#職場衝擊">
+    <div class="card-title">我用 Claude Code 建立了 reprompt 來分析我自己的 Claude Code 工作階段 — v1.3 現在將 100 輪對話濃縮到約 20 輪重要對話</div>
+    <div class="card-summary">reprompt v1.3 將長達 100 回合的 Claude Code 對話濃縮成約 20 個關鍵回合，透過六信號評分，約 20% 回合成為核心。新增 reprompt compress 採四層規則壓縮。完全本地運行、MIT 授權，源碼公開。 via r/ClaudeAI March 25, 2</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>01:34</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2ipin/i_built_reprompt_with_claude_code_to_analyze_my/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#職場衝擊">
+    <div class="card-title">我如何使用 Claude Code 在 30 天內交付 SaaS MVP —— 我的實際開發工作流程</div>
+    <div class="card-summary">以 Claude Code 作為實時資深搭檔，顛覆舊流程：認證與儀表板自兩週降至三天，Stripe 集成半日。技術棧：Next.js 16、TypeScript、Neon、Vercel；並入 Claude Partner Network。 via r/SaaS March 25, 2026 at 0</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>01:24</span>
+      <a class="read-more" href="https://www.reddit.com/r/SaaS/comments/1s2itam/how_i_ship_saas_mvps_in_under_30_days_using/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#安全">
+    <div class="card-title">ZDI-26-226: (0Day) Microsoft Azure MCP AzureCliService 命令注入遠端程式碼執行漏洞</div>
+    <div class="card-summary">ZDI-26-226 指出 Microsoft Azure MCP 的 azure-cli-mcp 出現未驗證字串導致的遠端命令注入，攻擊者無需認證即可於 MCP 伺服器上下文執行任意程式。CVSS 9.8，報告日 2025-09-10，公告與更新日皆為 2026-03-24。 via ZDI Pu</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span></div>
+    <div class="card-footer">
+      <span>01:24</span>
+      <a class="read-more" href="https://www.zerodayinitiative.com/advisories/ZDI-26-226/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#AIAgent,#職場衝擊,#安全,#開發工具">
+    <div class="card-title">AWS MCP server | Serverless Office Hours</div>
+    <div class="card-summary">AWS MCP 伺服器以自然語言建構 AWS 基礎設施，主持人 Julian Wood 與 Praneeta Prakash、Claudiu Popa 討論部署、排錯與複雜工作流程的實務做法，結合授權 API 與 AWS 文件知識的 Agent SOP 與自然語言工作流程，並示範 Lambda 安全</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>01:18</span>
+      <a class="read-more" href="https://www.youtube.com/watch?v=foYaB6_hd8w" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#安全">
+    <div class="card-title">ZDI-26-226：(0Day) Microsoft Azure MCP AzureCliService 命令注入遠端程式碼執行漏洞</div>
+    <div class="card-summary">ZDI-26-226 指出 Microsoft Azure MCP 的 azure-cli-mcp 元件存在未經認證的遠端命令注入與執行漏洞。攻擊者可在 MCP 伺服器上下文執行任意程式碼，且不需要認證即可利用。 via ZDI: Published Advisories March 25, 202</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span></div>
+    <div class="card-footer">
+      <span>01:04</span>
+      <a class="read-more" href="https://www.zerodayinitiative.com/advisories/ZDI-26-226/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Google,#多模態">
+    <div class="card-title">Gemini for Google TV 推出更突出的標籤頁、更豐富的視覺回應和運動摘要</div>
+    <div class="card-summary">Gemini for Google TV 新增更顯眼的標籤並移至左上，提供混合視覺、影片與文字的回應。內容含實時比分、教學影片、深度導覽與運動要點摘要，今日起於美加推出，春季擴展至更多裝置與國家，語音助理覆蓋英澳新。 via 9to5Google March 25, 2026 at 12:40AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Google')">#Google</span><span class="tag" onclick="filterByTag(null,'#多模態')">#多模態</span></div>
+    <div class="card-footer">
+      <span>00:58</span>
+      <a class="read-more" href="https://9to5google.com/2026/03/24/gemini-google-tv-visuals/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#VibeCoding,#AIAgent,#職場衝擊">
+    <div class="card-title">一個 AI 現在可以在 1 小時內建造出曾經需要一個團隊花 1 年才能完成的東西。這不再是 vibe coding 了。這是 agentic coding。</div>
+    <div class="card-summary">AI 如今 一 小時 內 即 能 完成 以往 一年 團隊 工作； 這 並非 單純 代碼，而是 agentic coding。 代理 型 程式 在 明確 目標 後 自動 規劃、 執行、 測試、 修正 與 交付； 你 監督 系統，但 不 需 指示 每 步。 開發者 變為 指揮者 與 監督 者， 著重 工</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#VibeCoding')">#VibeCoding</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>00:53</span>
+      <a class="read-more" href="https://dev.to/mami_a9c28bf33eeb8794cc86/an-ai-can-now-build-in-1-hour-what-used-to-take-a-team-1-year-this-isnt-vibe-coding-anymore-this-40lc" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#開發工具">
+    <div class="card-title">Anthropic 的 Claude Code 和 Cowork 現在可以控制你的電腦</div>
+    <div class="card-summary">本文宣布 Anthropic 的 Claude Code 與 Cowork 現已能控制你的電腦。貼文由 Reddit 使用者 /u/Secure-Address4385 發布，並附上指向 aitoolinsight.com 的連結與相關 Reddit 討論。 via r/Anthropic Marc</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>00:49</span>
+      <a class="read-more" href="https://www.reddit.com/r/Anthropic/comments/1s2ii2j/anthropics_claude_code_and_cowork_can_now_control/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#開發工具">
+    <div class="card-title">MCP 編碼教學：使用 Python 和 Streamlit 為初學者構建 MCP Client &amp; Server</div>
+    <div class="card-summary">此篇面向初學者的 MCP 教學，說明如何以 Python 與 Streamlit 建立 MCP 客戶端與伺服端。透過實作與逐步指導，使用 MCP Python SDK 完成端到端的開發與整合。 via Artificial Intelligence on Medium March 25, 2026 </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>00:49</span>
+      <a class="read-more" href="https://medium.com/@jitthenkumarr29/mcp-coding-tutorial-building-a-mcp-client-server-using-python-and-streamlit-for-beginners-3f80a7212c76?source=rss------artificial_intelligence-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">如何像資深工程師配對編程師一樣使用 Claude Code</div>
+    <div class="card-summary">本文標題為「如何像高級工程師一樣以搭檔程式設計使用 Claude Code」，概述以搭檔編程風格運用 Claude Code 的方法，並提供 Medium 連結以繼續閱讀。 via Machine Learning on Medium March 25, 2026 at 12:25AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>00:39</span>
+      <a class="read-more" href="https://medium.com/@sebuzdugan/how-to-use-claude-code-like-a-senior-engineer-pair-programmer-dc6b283640fc?source=rss------machine_learning-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#開發工具">
+    <div class="card-title">Claude Code 現在可以接管你的電腦來完成任務</div>
+    <div class="card-summary">Anthropic 的 Claude Code 與 Claude Cowork 現在 能 直接 控制 桌面 以 完成 任務， 包含 開啟 文件、 使用 瀏覽器 及 開發工具； 並 優先 使用 Connectors； 如 連線 不可 用， 會 要求 在 本機 授權 操作， 或 透過 Dispatch </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>00:39</span>
+      <a class="read-more" href="https://arstechnica.com/ai/2026/03/claude-code-can-now-take-over-your-computer-to-complete-tasks/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#MCP,#職場衝擊">
+    <div class="card-title">17 個 Claude 程式碼版本在 30 天內發布：改變的一切</div>
+    <div class="card-summary">三十日內發布十七次更新，Claude Code 從 v2.1.63 升至 v2.1.80，聚焦語音互動、工作流自動化、開發者體驗與模型效能。新增 /voice、/loop、MCP 指引、/teleport、ExitWorktree 與插件市集，並以 Opus 4.6 的 1M context 提升整</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span></div>
+    <div class="card-footer">
+      <span>00:39</span>
+      <a class="read-more" href="https://dev.to/ji_ai/17-claude-code-releases-in-30-days-everything-that-changed-1ec8" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#VibeCoding,#研究">
+    <div class="card-title">在 vibe coding 之後，什麼是 vibe physics？Anthropic 的 Claude 能像研究生一樣進行研究</div>
+    <div class="card-summary">Anthropic 的 Claude 展示 vibe physics，嘗試讓 AI 自動撰寫理論物理原創論文。實驗顯示 Claude 能快速產出草稿、整合資料並協助研究，但仍需人類專家監督與判斷，無法自主完成研究；AI 能顯著提升效率，但準確性與可靠性仍受限。 via Tech-Economic T</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#VibeCoding')">#VibeCoding</span><span class="tag" onclick="filterByTag(null,'#研究')">#研究</span></div>
+    <div class="card-footer">
+      <span>00:35</span>
+      <a class="read-more" href="https://m.economictimes.com/tech/artificial-intelligence/after-vibe-coding-what-is-vibe-physics-anthropics-claude-can-research-like-a-grad-student/articleshow/129780914.cms" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#OpenAI,#Google,#開源,#機器人">
+    <div class="card-title">我建立了開源機器人來在 WeChat、Telegram 和 Discord 中使用 Claude Code</div>
+    <div class="card-summary">開源橋接機器人，讓用戶在微信、Telegram、Discord 即時使用 Claude Code CLI。訊息轉發到本機並實時回覆，支援多輪對話、圖片辨識與動態切換模型，適用 Claude Code 的各類模型（OpenAI、Gemini、Ollama 等）。提供三個倉庫與資源清單，歡迎回饋。 vi</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span><span class="tag" onclick="filterByTag(null,'#Google')">#Google</span><span class="tag" onclick="filterByTag(null,'#開源')">#開源</span><span class="tag" onclick="filterByTag(null,'#機器人')">#機器人</span></div>
+    <div class="card-footer">
+      <span>00:35</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2i5kg/i_built_opensource_bots_to_use_claude_code_from/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">我用 Claude Code 為我的公司打造了一個「AI Cortex」—— 以下是我在 6 週內學到的東西</div>
+    <div class="card-summary">以 Claude Code 建立公司級 AI Cortex，讓 AI 自動撰寫、審查與自動合併程式碼。關鍵在於建立結構化上下文庫，讓 AI 每次會話前就讀取；六週後，AI 對公司瞭解比新聘員工一年更深。全文架構與需求見原文。 via r/ClaudeAI March 25, 2026 at 12:1</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>00:35</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2hmgw/i_built_an_ai_cortex_for_my_company_using_claude/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#職場衝擊,#開源">
+    <div class="card-title">我建立了一個網路儀表板來即時監控 Claude Code 工作階段——開源</div>
+    <div class="card-summary">開發者建立了一個開源的實時網頁儀表板，用於監控 Claude Code 會話。專案 CCDash 可在 GitHub 找到（zihenghe04/CCDash），相關內容由 Reddit 用戶 /u/nice-to_meet_you 提交，並附上原帖與討論連結。 via r/ClaudeAI Mar</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#職場衝擊')">#職場衝擊</span><span class="tag" onclick="filterByTag(null,'#開源')">#開源</span></div>
+    <div class="card-footer">
+      <span>00:35</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2hjn0/i_built_a_web_dashboard_to_monitor_claude_code/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#記憶體">
+    <div class="card-title">我放棄了 OpenClaw，改用 Cowork + Claude Code。我的大部分檔案直接轉移過來</div>
+    <div class="card-summary">作者把 OpenClaw 換成 Cowork + Claude Code，實現清晰分工：Cowork 負責思考、路由與長期記憶，Claude Code 負責實際執行與操作倉庫。以三層上下文與雙層記憶為核心，內容以 Markdown 文件遷移完成，實測顯示 Cron、派發與角色切換等優勢。 via r</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#記憶體')">#記憶體</span></div>
+    <div class="card-footer">
+      <span>00:35</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2halz/i_ditched_openclaw_for_cowork_claude_code_most_of/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">Claude Code 對話現在在終端機中預設會被截斷嗎？</div>
+    <div class="card-summary">使用者在 Windows Terminal 透過 Claude Code 聊天，發現終端顯示的對話歷史無法回溯到開頭，懷疑為效能限制所致，並詢問是否有可切換回完整顯示的選項。 via r/ClaudeAI March 25, 2026 at 12:18AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>00:35</span>
+      <a class="read-more" href="https://www.reddit.com/r/ClaudeAI/comments/1s2h1gj/are_claude_code_chats_truncated_in_the_terminal/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#機器人">
+    <div class="card-title">從聊天機器人到法律訴訟：Krafton 的 Subnautica 2 接管計畫如何沉沒</div>
+    <div class="card-summary">德拉瓦州衡平法院裁定 Krafton 未依 EPA 以“因由”解聘 Unknown Worlds 的創辦人與 CEO，並奪取運作控制，屬違約；法院恢復 CEO 全權，並延長 Earnout。要點：嚴格的因由定義、公司層級判定常態運作、以及對事後辯解的審核與救濟。 via Recent Contrib</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#機器人')">#機器人</span></div>
+    <div class="card-footer">
+      <span>00:28</span>
+      <a class="read-more" href="https://natlawreview.com/article/chatbot-chancery-how-kraftons-subnautica-2-takeover-plan-sank" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#OpenAI,#AIAgent">
+    <div class="card-title">在 ChatGPT 中強化產品探索</div>
+    <div class="card-summary">ChatGPT 推出以 Agentic Commerce Protocol 為核心的視覺化購物體驗，提升商品發現、並排比較與商家整合，讓使用者在平台內完成更豐富的商品探索。 via OpenAI March 25, 2026 at 12:05AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span></div>
+    <div class="card-footer">
+      <span>00:23</span>
+      <a class="read-more" href="https://openai.com/index/powering-product-discovery-in-chatgpt" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot,#開發工具">
+    <div class="card-title">使用 Copilot SDK 建立 AI 驅動的 GitHub issue 分類系統</div>
+    <div class="card-summary">本文示範如何以 Copilot SDK 建立 AI 驅動的 GitHub issue 分流工具 IssueCrush。重點在伺服器端執行 Copilot CLI、使用單一 SDK 實例、結構化提示與降級機制，搭配快取與日誌，提升 triage 速度並確保穩健性。 via The latest on </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>00:19</span>
+      <a class="read-more" href="https://github.blog/ai-and-ml/github-copilot/building-ai-powered-github-issue-triage-with-the-copilot-sdk/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#OpenAI,#GitHubCopilot,#AIAgent,#推理模型,#開發工具">
+    <div class="card-title">Microsoft 365 Copilot Declarative Agents 正在透過 GPT-5.2 變得更聰慧</div>
+    <div class="card-summary">Microsoft 365 Copilot Declarative Agents 將升級至 GPT‑5.2，提升推理、規劃、工具協調、文件分析與結構化輸出品質。全球分階段推出，預計在 2026 年 3 月前完成。無需設定變更，建議管理員與代理建置者驗證重點場景並提供回饋 (#GPT52)。 via </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span><span class="tag" onclick="filterByTag(null,'#推理模型')">#推理模型</span><span class="tag" onclick="filterByTag(null,'#開發工具')">#開發工具</span></div>
+    <div class="card-footer">
+      <span>00:19</span>
+      <a class="read-more" href="https://techcommunity.microsoft.com/blog/microsoft365copilotblog/microsoft-365-copilot-declarative-agents-are-getting-smarter-with-gpt%e2%80%915-2/4504774" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">Admiral 1.0.9 已推出。我為 Claude Code 推出了完整的 Skills Manager。</div>
+    <div class="card-summary">Admiral 1.0.9 已發布，為 Claude Code 提供完整技能管理。核心功能：Skills Manager、Skill Editor、Skill Inspector 與完整生命週期（建立、匯入、複製、刪除）。另新增拖放排序、對話滾動修正與專案概覽改進。免費下載 macOS 15+。 v</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>00:19</span>
+      <a class="read-more" href="https://www.reddit.com/r/swift/comments/1s2hgd0/admiral_109_is_out_i_shipped_a_full_skills/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#MCP,#安全,#開源">
+    <div class="card-title">停止讓你的 AI 重複犯同樣的錯誤：我建立了一個開源 MCP 可觀測性儀表板（React 19 + ECharts）🚀</div>
+    <div class="card-summary">開源 MCP 觀察儀表板 AIDA，解決 AI Amnesia 與黑箱問題。本地 MCP 伺服器自動把錯誤轉為持久規則，讓 AI 從失敗學習、避免重犯。技術棧：React 19、Tailwind、ECharts、Node/TS，100% 本地、安全。 via DEV Community March </div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span><span class="tag" onclick="filterByTag(null,'#開源')">#開源</span></div>
+    <div class="card-footer">
+      <span>00:14</span>
+      <a class="read-more" href="https://dev.to/wentao_long_b5409a04bcfb5/stop-letting-your-ai-repeat-mistakes-i-built-an-open-source-mcp-observability-dashboard-react-19-5674" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic">
+    <div class="card-title">創辦人可以從 Anthropic 與五角大廈的分裂中學到什麼</div>
+    <div class="card-summary">Anthropic 與美國政府的爭議，代表 AI 公司在控制技術使用上的早期測試。本文整理出創辦人應汲取的要點，幫助在技術、風險與監管間取得平衡。 via Forbes - Innovation March 25, 2026 at 12:00AM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span></div>
+    <div class="card-footer">
+      <span>00:13</span>
+      <a class="read-more" href="https://www.forbes.com/sites/dariashunina/2026/03/24/lessons-for-founders-from-anthropics-fight-with-federal-government/" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#OpenAI,#MCP,#AIAgent">
+    <div class="card-title">Claude、GPT 或 Llama？我的 6-Agent MCP Server 不在乎你選哪一個</div>
+    <div class="card-summary">六代理的 MCP 伺服器能在 Claude、GPT、Llama 等模型間切換，卻不需改動伺服器設定。透過三個 orchestrator 與 27 次呼叫完成切換，展現對模型替換的高度魯棒性，與普遍換模型就崩潰的系統不同。 via Artificial Intelligence on Medium M</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#OpenAI')">#OpenAI</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#AIAgent')">#AIAgent</span></div>
+    <div class="card-footer">
+      <span>00:08</span>
+      <a class="read-more" href="https://levelup.gitconnected.com/claude-gpt-or-llama-my-6-agent-mcp-server-doesnt-care-which-one-you-pick-3b4d43aeaef1?source=rss------artificial_intelligence-5" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#Anthropic,#MCP,#安全">
+    <div class="card-title">SQL MCP Server：從設置到即時資料</div>
+    <div class="card-summary">本文提供 SQL MCP 伺服器的完整設定與使用流程：安裝 DAB、建立 config、增添暴露表、啟動伺服器並驗證 REST 與 MCP 端點，接著透過 Claude Desktop 連接查詢實時資料，並討論本地開發與生產部署的安全與架構考量。 via sqlfingers.com March 2</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#Anthropic')">#Anthropic</span><span class="tag" onclick="filterByTag(null,'#MCP')">#MCP</span><span class="tag" onclick="filterByTag(null,'#安全')">#安全</span></div>
+    <div class="card-footer">
+      <span>00:08</span>
+      <a class="read-more" href="https://www.sqlfingers.com/2026/03/sql-mcp-server-from-setup-to-live-data.html" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+  <div class="card" data-tags="#GitHubCopilot">
+    <div class="card-title">Microsoft 縮減 Copilot，承諾 Windows 11 品質大整頓</div>
+    <div class="card-summary">微軟收緊 Windows 11 上的 Copilot 推動，承諾全面品質改革，優先提升效能與穩定性，放緩或延後 AI 功能擴張。 via News March 24, 2026 at 11:51PM</div>
+    <div class="tags"><span class="tag" onclick="filterByTag(null,'#GitHubCopilot')">#GitHubCopilot</span></div>
+    <div class="card-footer">
+      <span>00:03</span>
+      <a class="read-more" href="https://redmondmag.com/Articles/2026/03/24/Microsoft-Dials-Back-Copilot.aspx" target="_blank">閱讀原文 →</a>
+    </div>
+  </div>
+</div>
+<script>
+  let activeTag = null;
+  const totalCount = 198;
+  function filterByTag(el, tag) {
+    if (activeTag === tag) { clearFilter(); return; }
+    activeTag = tag;
+    document.querySelectorAll('.filter-tag:not(.clear-btn)').forEach(t => {
+      t.classList.toggle('active', t.textContent.trim().startsWith(tag));
+    });
+    let visible = 0;
+    document.querySelectorAll('.card').forEach(card => {
+      const show = card.dataset.tags.split(',').includes(tag);
+      card.classList.toggle('hidden', !show);
+      if (show) visible++;
+    });
+    document.getElementById('visibleCount').textContent = visible + ' 則資訊';
+    document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
+    document.getElementById('noResultsTag').textContent = tag;
+  }
+  function clearFilter() {
+    activeTag = null;
+    document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('hidden'));
+    document.getElementById('visibleCount').textContent = totalCount + ' 則資訊';
+    document.getElementById('noResults').style.display = 'none';
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Set Up Claude Code Like Boris Cherny - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; line-height: 1.8; }
+  .back-link { display: inline-block; margin-bottom: 1.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem; }
+  .back-link:hover { text-decoration: underline; }
+  .article-header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #2d3748; }
+  .article-header h1 { font-size: 1.5rem; font-weight: 700; color: #e2e8f0; line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-meta { font-size: 0.85rem; color: #4a5568; }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 { color: #e2e8f0; margin: 1.5rem 0 0.8rem; font-weight: 600; font-size: 1.15rem; }
+  .article-body h3 { color: #e2e8f0; margin: 1.2rem 0 0.6rem; font-weight: 600; font-size: 1rem; }
+  .article-body p { margin-bottom: 1rem; color: #cbd5e0; }
+  .article-body ul, .article-body ol { margin: 0.8rem 0 1rem 1.5rem; color: #cbd5e0; }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code { background: #2d3748; color: #f6ad55; font-family: 'Fira Code', monospace; font-size: 0.85em; padding: 0.1rem 0.4rem; border-radius: 4px; }
+  .article-body pre { background: #12141e; border: 1px solid #2d3748; border-radius: 8px; padding: 1rem; overflow-x: auto; margin: 1rem 0; }
+  .article-body pre code { background: none; padding: 0; color: #e2e8f0; }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice { background: #1a1d27; border: 1px solid #2d3748; border-left: 3px solid #9f7aea; border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #718096; }
+  .tip-box { background: #1a1d27; border: 1px solid #276749; border-left: 3px solid #68d391; border-radius: 8px; padding: 1rem 1.2rem; margin: 1rem 0; }
+  .tip-box .label { font-size: 0.75rem; color: #68d391; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  blockquote { border-left: 3px solid #4a5568; padding-left: 1rem; color: #718096; font-style: italic; margin: 1rem 0; }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-23.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>Set Up Claude Code Like Boris Cherny</h1>
+    <div class="article-meta">原文來源：<a href="https://www.xda-developers.com/set-up-claude-code-like-boris-cherny/" target="_blank">XDA Developers</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+
+    <h2>核心摘要</h2>
+    <p>Boris Cherny 是 Claude Code 的創作者（Anthropic 工程師），本文解析他本人如何使用 Claude Code，並提煉出可直接應用於個人工作流程的核心策略。</p>
+
+    <h2>策略一：同時執行多個並行 Session</h2>
+    <p>Cherny 最核心的使用模式是同時操作 10–15 個 concurrent Claude Code sessions<span class="zh">（並行工作階段）</span>：</p>
+    <ul>
+      <li>5 個在終端機（搭配 iTerm2 notifications<span class="zh">（iTerm2 通知）</span>，完成時提醒）</li>
+      <li>5–10 個在網頁瀏覽器</li>
+      <li>手機上另開額外 session</li>
+    </ul>
+    <div class="tip-box">
+      <div class="label">實踐建議</div>
+      <p>作者實際測試後發現，光是同時跑 3–4 個 session 就能顯著改變工作流程。不需要達到 Cherny 的規模，平行處理本身就帶來效率提升。</p>
+    </div>
+
+    <h2>策略二：優先使用 Plan Mode</h2>
+    <p>Cherny 每次 session 都從 Plan Mode<span class="zh">（計畫模式）</span>開始，視策略規劃為必要步驟。Claude Code 在 Plan Mode 中會先詢問：</p>
+    <ul>
+      <li>需要整合哪些 integrations<span class="zh">（整合項目）</span>？</li>
+      <li>使用什麼 tech stack<span class="zh">（技術堆疊）</span>？</li>
+      <li>整體目標是什麼？</li>
+    </ul>
+    <blockquote>「A good plan is really important.」——Boris Cherny</blockquote>
+
+    <h2>策略三：保持「Vanilla」設定</h2>
+    <p>Cherny 自描其設定「surprisingly vanilla<span class="zh">（出乎意料地簡潔）</span>」。Claude Code 刻意設計成可客製化、可 hack，但其創作者反而採用相對基本的配置，依然達到高效率。這說明工具本身已足夠強大，過度客製化未必必要。</p>
+
+    <h2>注意事項</h2>
+    <p>Cherny 在 Anthropic 工作，擁有大型工程團隊與完整的公司 codebase<span class="zh">（程式碼庫）</span>作為背景。但他的核心原則（Plan First、Parallel Sessions、保持簡潔）適用於任何規模的開發者。</p>
+
+    <h2>對程式設計師的意義</h2>
+    <p>從 Claude Code 的<strong>創作者本人</strong>學習使用方式，這是最直接的最佳實踐來源。最值得立即採用的是「Plan Mode 優先」——在開始任何較複雜的實作任務前先規劃，能顯著降低中途需要重新來過的機率。並行 session 策略則適合有多個獨立任務需要同時推進的開發者。</p>
+  </div>
+</body>
+</html>

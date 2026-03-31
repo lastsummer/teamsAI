@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diffity — GitHub 風格 Diff 檢視器 - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body h3 {
+    color: #e2e8f0;
+    margin: 1.2rem 0 0.6rem;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body pre {
+    background: #12141e;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+  .article-body pre code {
+    background: none;
+    padding: 0;
+    color: #e2e8f0;
+  }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-24.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>Diffity — GitHub-style diff viewer for AI coding tools<span class="zh">（GitHub 風格 Diff 檢視器，專為 AI 程式碼工具設計）</span></h1>
+    <div class="article-meta">原文來源：<a href="https://github.com/kamranahmedse/diffity" target="_blank">github.com/kamranahmedse/diffity</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+
+    <h2>核心摘要</h2>
+    <p>Diffity 是一個 agent-agnostic<span class="zh">（與 AI 代理無關，通用型）</span> 的程式碼審查平台，提供類似 GitHub 的 diff 檢視介面<span class="zh">（diff viewer interface）</span>。它可以與 Claude Code、Cursor、Codex 等 AI 程式設計助理無縫整合，讓開發者在 AI 生成的程式碼提交前進行可視化的程式碼審查<span class="zh">（code review）</span>。</p>
+
+    <h2>核心功能</h2>
+    <ul>
+      <li><strong>Diff 檢視</strong>：以語法高亮<span class="zh">（syntax highlighting）</span> 比較 working tree<span class="zh">（工作樹）</span>、commit<span class="zh">（提交）</span>、branch<span class="zh">（分支）</span>、tag<span class="zh">（標籤）</span> 之間的差異</li>
+      <li><strong>AI 程式碼審查</strong>：AI agents 可分析 diff 並留下帶有嚴重性標籤<span class="zh">（severity tags）</span> 的行內評論<span class="zh">（inline comments）</span></li>
+      <li><strong>File Browser</strong><span class="zh">（檔案瀏覽器）</span>：以語法高亮探索整個 repo，並支援評論功能</li>
+      <li><strong>Guided Tours</strong><span class="zh">（導覽功能）</span>：自動生成逐步的程式碼庫導覽，含高亮說明</li>
+      <li><strong>GitHub PR 整合</strong>：將 PR 拉取到本地審查，並將評論同步回 GitHub</li>
+      <li><strong>Multi-Project 支援</strong>：同時在自動分配的 port 上運行多個實例</li>
+    </ul>
+
+    <h2>安裝與使用</h2>
+    <pre><code># 全域安裝
+npm install -g diffity
+
+# 整合到 AI agent skill
+npx skills add kamranahmedse/diffity</code></pre>
+
+    <p>安裝後可使用以下指令：</p>
+    <pre><code>diffity          # 審查未提交的變更（uncommitted changes）
+diffity HEAD~1   # 審查最後一次 commit
+diffity main     # 與 main branch 比較
+diffity v1.0.0 v2.0.0  # 比較兩個 release 版本</code></pre>
+
+    <h2>在 Claude Code 中使用的 Slash Commands</h2>
+    <ul>
+      <li><code>/diffity-diff</code> — 開啟 diff 檢視器</li>
+      <li><code>/diffity-review</code> — AI 自動審查並留下評論</li>
+      <li><code>/diffity-resolve</code> — 套用 AI 或手動審查建議</li>
+      <li><code>/diffity-tree</code> — 瀏覽完整專案結構</li>
+      <li><code>/diffity-tour</code> — 生成程式碼庫導覽</li>
+    </ul>
+
+    <h2>對程式設計師的意義</h2>
+    <p>在 vibe coding<span class="zh">（氛圍程式設計）</span> 盛行的現在，AI 生成的程式碼量大幅增加，但「AI 生成 ≠ 正確且安全」。Diffity 提供了一個可視化的審查閘門<span class="zh">（review gate）</span>，讓開發者在 AI 的速度和人類的品質控制之間取得平衡。特別適合在 Claude Code、Cursor 等工具中，於 commit 前進行快速的目視審查，是減少 AI 生成程式碼引入 bug 的實用工具。</p>
+
+  </div>
+</body>
+</html>

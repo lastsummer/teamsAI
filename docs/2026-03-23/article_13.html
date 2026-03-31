@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4 Claude Code Workflows That Write Your Python Tests - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; line-height: 1.8; }
+  .back-link { display: inline-block; margin-bottom: 1.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem; }
+  .back-link:hover { text-decoration: underline; }
+  .article-header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #2d3748; }
+  .article-header h1 { font-size: 1.5rem; font-weight: 700; color: #e2e8f0; line-height: 1.4; margin-bottom: 0.5rem; }
+  .article-meta { font-size: 0.85rem; color: #4a5568; }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 { color: #e2e8f0; margin: 1.5rem 0 0.8rem; font-weight: 600; font-size: 1.15rem; }
+  .article-body h3 { color: #e2e8f0; margin: 1.2rem 0 0.6rem; font-weight: 600; font-size: 1rem; }
+  .article-body p { margin-bottom: 1rem; color: #cbd5e0; }
+  .article-body ul, .article-body ol { margin: 0.8rem 0 1rem 1.5rem; color: #cbd5e0; }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code { background: #2d3748; color: #f6ad55; font-family: 'Fira Code', monospace; font-size: 0.85em; padding: 0.1rem 0.4rem; border-radius: 4px; }
+  .article-body pre { background: #12141e; border: 1px solid #2d3748; border-radius: 8px; padding: 1rem; overflow-x: auto; margin: 1rem 0; }
+  .article-body pre code { background: none; padding: 0; color: #e2e8f0; }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice { background: #1a1d27; border: 1px solid #2d3748; border-left: 3px solid #9f7aea; border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #718096; }
+  .highlight-box { background: #1a1d27; border: 1px solid #2d3748; border-radius: 8px; padding: 1rem 1.2rem; margin: 1rem 0; }
+  .highlight-box .label { font-size: 0.75rem; color: #f6ad55; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-23.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>4 Claude Code Workflows That Write Your Python Tests</h1>
+    <div class="article-meta">原文來源：<a href="https://dev.to/klement_gunndu/4-claude-code-workflows-that-write-your-python-tests-14l6" target="_blank">dev.to</a> · 作者：Klement Gunndu</div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+
+    <h2>核心摘要</h2>
+    <p>本文介紹四種用 Claude Code 自動生成 Python 測試的實用工作流程。關鍵洞見是：AI 生成測試成功的關鍵在於<strong>全專案上下文</strong>——Claude Code 會讀取整個 codebase<span class="zh">（程式碼庫）</span>，包含 imports<span class="zh">（匯入）</span>、types<span class="zh">（型別）</span>、error handling<span class="zh">（錯誤處理）</span>和 docstrings<span class="zh">（文件字串）</span>，因此能生成符合既有慣例的測試，而非通用範例。</p>
+
+    <h2>Workflow 1：從現有函數生成 Unit Tests</h2>
+    <p>針對單一函數請求全面的 test coverage<span class="zh">（測試覆蓋率）</span>。以 authentication module<span class="zh">（驗證模組）</span>為例，Claude Code 生成了 15 個測試，涵蓋：</p>
+    <ul>
+      <li><strong>Happy path</strong><span class="zh">（正常路徑）</span>功能驗證</li>
+      <li>Error conditions<span class="zh">（錯誤情況）</span></li>
+      <li>Edge cases<span class="zh">（邊界案例）</span>，如 salt randomization<span class="zh">（鹽值隨機化）</span>驗證</li>
+      <li>Type validation<span class="zh">（型別驗證）</span></li>
+    </ul>
+    <p>生成的測試使用 pytest 慣例，採用 class-based organization<span class="zh">（類別化組織）</span>和描述性命名，並包含開發者常忽略的細節（如驗證相同密碼不同 salt 會產生不同 hash）。</p>
+
+    <h2>Workflow 2：從錯誤路徑生成 Edge Case Tests</h2>
+    <p>專門針對 boundary conditions<span class="zh">（邊界條件）</span>和 malformed inputs<span class="zh">（異常輸入）</span>。以 configuration loader<span class="zh">（設定載入器）</span>為例，生成的測試涵蓋：</p>
+    <ul>
+      <li>不存在的檔案、無效副檔名</li>
+      <li>Corrupted JSON<span class="zh">（損壞的 JSON）</span></li>
+      <li>Type mismatches<span class="zh">（型別不符）</span>（如陣列而非物件）</li>
+      <li>空白檔案、Unicode 內容處理</li>
+    </ul>
+
+    <h2>Workflow 3 & 4</h2>
+    <p>進階工作流程涵蓋 integration testing<span class="zh">（整合測試）</span>、property-based testing<span class="zh">（屬性驗證測試）</span>，以及從文件和錯誤情境生成測試——這些是手動測試最容易遺漏的部分。</p>
+
+    <h2>成效</h2>
+    <div class="highlight-box">
+      <div class="label">Key Result</div>
+      <p>從 30% test coverage 出發，透過這四個工作流程可大幅提升覆蓋率，且生成的測試可直接在 CI 環境中執行。</p>
+    </div>
+
+    <h2>對程式設計師的意義</h2>
+    <p>測試撰寫是最耗費時間卻最容易被忽略的開發工作。這四個 workflow 提供了具體的 prompt 策略，讓 Claude Code 能生成符合你 codebase 慣例的高品質測試。重點是「給予完整的專案上下文」——通用 prompt 只會得到通用測試。建議先從 Workflow 2（edge case）入手，因為這通常是人工測試最大的盲點。</p>
+  </div>
+</body>
+</html>

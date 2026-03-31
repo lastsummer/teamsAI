@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>在一個 Claude Code Session 中將 Laravel 遷移到自訂 PHP Framework - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body h3 {
+    color: #e2e8f0;
+    margin: 1.2rem 0 0.6rem;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body pre {
+    background: #12141e;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+  .article-body pre code {
+    background: none;
+    padding: 0;
+    color: #e2e8f0;
+  }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-24.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>I Migrated a Laravel App to a Custom PHP Framework in One Claude Code Session<span class="zh">（我在一個 Claude Code 會話中將 Laravel 應用程式遷移到自訂 PHP Framework）</span></h1>
+    <div class="article-meta">作者：Russell Jones｜2026-03-23｜原文來源：<a href="https://dev.to/jonesrussell/i-migrated-a-laravel-app-to-a-custom-php-framework-in-one-claude-code-session-n3a" target="_blank">dev.to</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+
+    <h2>核心摘要</h2>
+    <p>Russell Jones 記錄了一次驚人的工程壯舉：在約 8 小時的單一 Claude Code session 中，將 GoFormX（一個表單管理平台<span class="zh">（forms management platform）</span>）從 Laravel 12 完整遷移到 Waaseyaa（一個自訂 PHP framework<span class="zh">（框架）</span>）。這不只是遷移，過程中還從零發布了三個 Packagist 套件<span class="zh">（packages）</span>。</p>
+
+    <h2>成果一覽</h2>
+    <ul>
+      <li><strong>waaseyaa/inertia</strong> — 伺服器端 Inertia v3 adapter<span class="zh">（適配器）</span>，含 30 個測試</li>
+      <li><strong>waaseyaa/auth</strong> — Headless 認證系統<span class="zh">（headless authentication）</span>，含 46 個測試</li>
+      <li><strong>waaseyaa/billing</strong> — Stripe 付款整合<span class="zh">（Stripe integration）</span>，含 35 個測試</li>
+      <li>完整應用：7 個 controllers<span class="zh">（控制器）</span>、37 個 unit tests<span class="zh">（單元測試）</span>、28 個 Vue 3 components<span class="zh">（元件）</span>及完整基礎設施</li>
+    </ul>
+
+    <h2>TDD Pipeline 方法論</h2>
+    <p>Jones 採用可重複的 TDD pipeline<span class="zh">（測試驅動開發流水線）</span>，每個步驟都有具體可驗證的結果：</p>
+    <ol>
+      <li><strong>Scaffolding</strong><span class="zh">（鷹架搭建）</span> — 建立基本結構</li>
+      <li><strong>Test-driven development</strong><span class="zh">（測試驅動開發）</span> — 先寫測試再實作</li>
+      <li><strong>Wiring components</strong><span class="zh">（連接元件）</span> — 整合各模組</li>
+      <li><strong>Verification</strong><span class="zh">（驗證）</span> — 確認功能正常</li>
+      <li><strong>Deployment</strong><span class="zh">（部署）</span> — 上線</li>
+    </ol>
+    <p>Jones 強調：「Claude Code 能可靠執行這個 pipeline，因為每個步驟都有具體且可驗證的結果。」</p>
+
+    <h2>技術挑戰與解決方案</h2>
+    <ul>
+      <li><strong>資料庫相容性</strong>：Waaseyaa 使用 SQLite kernel 但 GoFormX 需要 MariaDB — 透過自訂 UserRepository<span class="zh">（使用者儲存庫）</span> 解決</li>
+      <li><strong>Inertia v3 page data format</strong><span class="zh">（頁面資料格式）</span> — 需要直接閱讀原始碼才能發現差異</li>
+      <li><strong>PHP-FPM 環境變數繼承</strong><span class="zh">（environment variable inheritance）</span> — 透過設定調整解決</li>
+    </ul>
+
+    <h2>端對端測試方式</h2>
+    <p>Jones 不使用基本的 curl 請求，而是採用 Playwright MCP<span class="zh">（瀏覽器自動化 MCP 伺服器）</span> 進行端對端測試<span class="zh">（end-to-end testing）</span>，驗證真實瀏覽器行為。</p>
+
+    <h2>對程式設計師的意義</h2>
+    <ul>
+      <li><strong>可重複的 Pipeline</strong>：這個案例證明，只要每個步驟有明確的可驗證結果，Claude Code 就能作為可靠的工程執行引擎。</li>
+      <li><strong>從框架遷移的新可能</strong>：過去需要數週的框架遷移，現在可以在一個工作天內完成。</li>
+      <li><strong>TDD 與 AI 的協同</strong>：TDD 的測試先行特性，使 AI 有清晰的「完成標準」，大幅提升遷移可靠性。</li>
+      <li><strong>MCP 工具鏈</strong>：Playwright MCP 搭配 Claude Code，讓 AI 能夠自主完成完整的 E2E 測試驗證。</li>
+    </ul>
+
+  </div>
+</body>
+</html>

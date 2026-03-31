@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>100 個 AI CLI Agent 指令指南 - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body h3 {
+    color: #e2e8f0;
+    margin: 1.2rem 0 0.6rem;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body pre {
+    background: #12141e;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+  .article-body pre code {
+    background: none;
+    padding: 0;
+    color: #e2e8f0;
+  }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-24.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>100 AI CLI Agent Commands: Guide to Claude Code, Aider, and Cursor CLI<span class="zh">（100 個 AI CLI Agent 指令：Claude Code、Aider 和 Cursor CLI 指南）</span></h1>
+    <div class="article-meta">原文來源：<a href="https://codeforgeek.com/ai-cli-agent-commands-for-claude-code-aider-cursor/" target="_blank">codeforgeek.com</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+
+    <h2>核心摘要</h2>
+    <p>這篇文章是一份 AI CLI agents<span class="zh">（AI 命令列代理）</span> 的完整指令參考手冊，涵蓋三大主流工具：Claude Code、Aider、Cursor CLI。文章將 AI CLI agents 定位為「住在終端機裡的配對程式設計師」<span class="zh">（pair programmer that lives inside your terminal）</span>，能理解自然語言需求並直接操作程式碼。</p>
+
+    <h2>Claude Code 核心指令分類</h2>
+
+    <h3>安裝與設定</h3>
+    <pre><code># 安裝 Claude Code
+npm install -g @anthropic-ai/claude-code
+
+# 登入驗證
+claude auth login
+
+# 更新工具
+claude update</code></pre>
+
+    <h3>Session 管理指令</h3>
+    <ul>
+      <li><code>/init</code> — 初始化專案，生成 CLAUDE.md</li>
+      <li><code>/clear</code> — 清除當前對話上下文<span class="zh">（context）</span></li>
+      <li><code>/compact</code> — 壓縮對話歷史以節省 token<span class="zh">（令牌）</span></li>
+      <li><code>/save</code> / <code>/load</code> — 儲存/載入對話狀態</li>
+    </ul>
+
+    <h3>程式碼工作流程指令</h3>
+    <ul>
+      <li><code>/review</code> — 程式碼審查<span class="zh">（code review）</span></li>
+      <li><code>/commit</code> — 生成 git commit 訊息並提交</li>
+      <li><code>/diff</code> — 檢視程式碼變更差異</li>
+    </ul>
+
+    <h2>Aider 核心指令</h2>
+    <ul>
+      <li><code>/add</code> / <code>/drop</code> — 加入/移除檔案到上下文</li>
+      <li><code>/read</code> — 以唯讀模式加入參考檔案</li>
+      <li><code>/git</code> — 執行 git 指令</li>
+      <li><code>/undo</code> — 撤銷最後一次 AI 修改</li>
+    </ul>
+
+    <h2>三工具比較</h2>
+    <ul>
+      <li><strong>Claude Code</strong>：最深度的 Anthropic 整合，支援 MCP<span class="zh">（模型上下文協定）</span> 和 hooks<span class="zh">（鉤子）</span>，適合大型專案</li>
+      <li><strong>Aider</strong>：開源、多模型支援，以 TDD<span class="zh">（測試驅動開發）</span> 工作流著稱</li>
+      <li><strong>Cursor CLI</strong>：IDE 功能延伸到終端，適合已在用 Cursor 編輯器的開發者</li>
+    </ul>
+
+    <h2>對程式設計師的意義</h2>
+    <p>這份指令參考表是日常使用 AI coding agents 的實用速查手冊。特別值得注意的是，三大工具在核心工作流上的指令設計趨於標準化（<code>/review</code>、<code>/commit</code>、<code>/diff</code>），學會其中一個後切換到另一個的學習成本相當低。建議收藏作為日常參考。</p>
+
+  </div>
+</body>
+</html>

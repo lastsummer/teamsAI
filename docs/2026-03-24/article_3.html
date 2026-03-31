@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code 的建構基石：創辦人實用指南 - 中文導讀</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    line-height: 1.8;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+  .article-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .article-meta {
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+  .article-meta a { color: #667eea; text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
+  .article-body h2 {
+    color: #e2e8f0;
+    margin: 1.5rem 0 0.8rem;
+    font-weight: 600;
+    font-size: 1.15rem;
+  }
+  .article-body h3 {
+    color: #e2e8f0;
+    margin: 1.2rem 0 0.6rem;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .article-body p {
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+  .article-body ul, .article-body ol {
+    margin: 0.8rem 0 1rem 1.5rem;
+    color: #cbd5e0;
+  }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body code {
+    background: #2d3748;
+    color: #f6ad55;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .article-body pre {
+    background: #12141e;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+  .article-body pre code {
+    background: none;
+    padding: 0;
+    color: #e2e8f0;
+  }
+  .article-body a { color: #667eea; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .zh { color: #9f7aea; font-size: 0.9em; }
+  .notice {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-left: 3px solid #9f7aea;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+</style>
+</head>
+<body>
+  <a class="back-link" href="../daily_report_2026-03-24.html">← 返回日報</a>
+  <div class="article-header">
+    <h1>The Building Blocks of Claude Code: A Practical Guide for Founders<span class="zh">（Claude Code 的建構基石：創辦人實用指南）</span></h1>
+    <div class="article-meta">作者：Jean Galea｜2026-03-23｜原文來源：<a href="https://jeangalea.com/the-building-blocks-of-claude-code-a-practical-guide-for-founders/" target="_blank">jeangalea.com</a></div>
+  </div>
+  <div class="notice">以下為核心要點摘要，附英文技術詞彙對照（<span class="zh">紫色</span>）幫助理解。</div>
+  <div class="article-body">
+
+    <h2>核心摘要</h2>
+    <p>本文由創辦人 Jean Galea 撰寫，深度拆解 Claude Code 的客製化架構層。他將 Claude Code 定位為一個「可程式化的協作者」<span class="zh">（programmable collaborator）</span>，而非單純的聊天機器人，並詳解七大核心建構基石，幫助技術創辦人打造真正整合到開發流程中的 AI 工作夥伴。</p>
+
+    <h2>七大建構基石</h2>
+
+    <h3>1. CLAUDE.md — 持久性專案指令</h3>
+    <p>這是一個在每次 session<span class="zh">（工作階段）</span> 開始時自動載入的「簡報文件」<span class="zh">（briefing document）</span>。內容包含：建置指令<span class="zh">（build commands）</span>、部署步驟<span class="zh">（deployment steps）</span>、程式碼偏好<span class="zh">（code preferences）</span>，以及專案特定的限制條件。本質上是「任何你不想每次重複解釋的內容」。</p>
+
+    <h3>2. Memory — 自動學習系統</h3>
+    <p>不同於 CLAUDE.md 由使用者維護，memory files<span class="zh">（記憶檔案）</span> 是由 Claude 自己寫入的。這些檔案儲存在本地，讓 Claude 可以跨 session 記住偏好設定和專案的特殊慣例，無需每次重新說明。</p>
+
+    <h3>3. Skills — 可重用工作流程</h3>
+    <p>以 slash command<span class="zh">（斜線指令）</span> 觸發的程序，例如 <code>/commit</code>、<code>/deploy</code>，定義在帶有 YAML frontmatter<span class="zh">（前置元資料）</span> 的 Markdown 檔案中。作者指出 Skills 是「按需觸發」，相較於 CLAUDE.md 的「常駐載入」各有其使用時機。</p>
+
+    <h3>4. Custom Agents — 專屬 AI 助理</h3>
+    <p>具有獨立個性的專屬 AI，擁有自己的 system prompt<span class="zh">（系統提示詞）</span>、工具存取權限<span class="zh">（tool access）</span>，以及模型選擇<span class="zh">（model selection）</span>。Agents 可以在背景獨立運行，並有細粒度的權限控制<span class="zh">（scoped permissions）</span>。</p>
+
+    <h3>5. MCP Servers — 外部工具整合</h3>
+    <p>Model Context Protocol<span class="zh">（模型上下文協定）</span> 將 Claude 連接到外部系統，例如 Playwright（瀏覽器自動化）、Notion、GitHub、Gmail。作者稱之為「能夠同時跨所有系統進行推理的協調層」<span class="zh">（coordination layer）</span>。</p>
+
+    <h3>6. Hooks — 確定性規則執行</h3>
+    <p>PreToolUse 和 PostToolUse hooks<span class="zh">（鉤子）</span> 會自動執行 shell 指令，繞過 Claude 的判斷，用於強制執行硬性安全規則（例如機械式阻擋危險指令）。這確保了某些規則是確定性的<span class="zh">（deterministic）</span>，不依賴 AI 的解讀。</p>
+
+    <h3>7. Settings &amp; Permissions — 三層設定體系</h3>
+    <p>由使用者層、專案層、本地層構成的三級階層<span class="zh">（three-level hierarchy）</span>，支援對檔案和工具的細粒度允許/拒絕規則<span class="zh">（granular allow/deny rules）</span>。</p>
+
+    <h2>核心洞察：複利效應</h2>
+    <p>文章強調這些客製化層具有「複利效應」<span class="zh">（compounding effect）</span>——隨時間累積改善，使 Claude 從一個臨時工具逐漸演變為真正的整合團隊成員，「應該隨著與你合作的時間越長，表現越來越好」。</p>
+
+    <h2>對程式設計師的意義</h2>
+    <ul>
+      <li><strong>架構思維</strong>：不要把 Claude Code 當聊天工具用，而要將其視為可程式化的系統，投資在 CLAUDE.md 和 Skills 的設定上。</li>
+      <li><strong>安全第一</strong>：善用 Hooks 執行不可繞過的安全規則，而非依賴 AI 判斷。</li>
+      <li><strong>長期投資</strong>：這些設定模式正成為業界標準，學習成本有長期回報。</li>
+      <li><strong>Agents 分工</strong>：對不同任務建立專屬 Agent，比一個萬用 AI 更有效率且更安全。</li>
+    </ul>
+
+  </div>
+</body>
+</html>

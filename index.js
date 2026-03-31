@@ -37,13 +37,18 @@ async function main() {
   if (args[0] === 'fetch') {
     const daysAgo = parseInt(args[1]);
     if (!isNaN(daysAgo) && daysAgo >= 2) {
-      // 抓取 N 天前到 N-1 天前的資訊，檔名使用 N-1 天前的時間
-      const since = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
-      const until = new Date(Date.now() - (daysAgo - 1) * 24 * 60 * 60 * 1000);
+      // 抓取指定天數前整天（00:00:00 ~ 23:59:59），檔名使用當天日期
+      // 例：daysAgo=2 → 昨天整天
+      const targetDate = new Date();
+      targetDate.setDate(targetDate.getDate() - (daysAgo - 1));
+      const since = new Date(targetDate);
+      since.setHours(0, 0, 0, 0);
+      const until = new Date(targetDate);
+      until.setHours(23, 59, 59, 999);
       console.log(`抓取區間：${since.toISOString()} ~ ${until.toISOString()}`);
-      await fetchAll(config, { since: since.toISOString(), until: until.toISOString(), fileDate: until });
+      await fetchAll(config, { since: since.toISOString(), until: until.toISOString(), fileDate: targetDate });
     } else {
-      // 立即執行一次（正常模式）
+      // 立即執行一次（今天 00:00:00 到目前時間）
       await fetchAll(config);
     }
     return;
@@ -53,8 +58,8 @@ async function main() {
   const schedule = config.schedule || '0 * * * *';
   console.log(`排程已啟動，規則：${schedule}`);
   console.log('提示：');
-  console.log('  node index.js fetch              立即抓取一次（昨天至今）');
-  console.log('  node index.js fetch <N>          抓取 N 天前至 N-1 天前，檔名用 N-1 天前日期');
+  console.log('  node index.js fetch              立即抓取一次（今天 00:00:00 至目前時間）');
+  console.log('  node index.js fetch <N>          抓取 N-1 天前整天（00:00~23:59），例：fetch 2 = 昨天整天');
   console.log('  node index.js list-teams         列出所有 Teams');
   console.log('  node index.js list-channels <teamId>  列出頻道\n');
 
