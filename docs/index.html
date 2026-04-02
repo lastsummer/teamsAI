@@ -13,10 +13,7 @@
     min-height: 100vh;
     padding: 2rem 1rem;
   }
-  .header {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
+  .header { text-align: center; margin-bottom: 2rem; }
   .header h1 {
     font-size: 1.8rem;
     font-weight: 700;
@@ -26,16 +23,8 @@
     background-clip: text;
     margin-bottom: 0.4rem;
   }
-  .header .meta {
-    color: #718096;
-    font-size: 0.9rem;
-  }
-  .grid {
-    max-width: 700px;
-    margin: 0 auto;
-    display: grid;
-    gap: 1rem;
-  }
+  .header .meta { color: #718096; font-size: 0.9rem; }
+  .grid { max-width: 700px; margin: 0 auto; display: grid; gap: 1rem; }
   .card {
     background: #1a1d27;
     border: 1px solid #2d3748;
@@ -49,49 +38,34 @@
     text-decoration: none;
     color: inherit;
   }
-  .card:hover {
-    border-color: #667eea;
-    transform: translateY(-2px);
-  }
+  .card:hover { border-color: #667eea; transform: translateY(-2px); }
   .card-left { flex: 1; }
-  .card-date {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #e2e8f0;
-    margin-bottom: 0.4rem;
-  }
-  .card-stats {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .stat-badge {
-    font-size: 0.78rem;
-    color: #718096;
-  }
-  .stat-badge span {
-    color: #9f7aea;
-    font-weight: 600;
-  }
-  .card-arrow {
-    color: #4a5568;
-    font-size: 1.2rem;
-    flex-shrink: 0;
-  }
+  .card-date { font-size: 1.1rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.4rem; }
+  .card-stats { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .stat-badge { font-size: 0.78rem; color: #718096; }
+  .stat-badge span { color: #9f7aea; font-weight: 600; }
+  .card-arrow { color: #4a5568; font-size: 1.2rem; flex-shrink: 0; }
   .card:hover .card-arrow { color: #667eea; }
-  .empty {
-    text-align: center;
-    color: #4a5568;
-    padding: 3rem;
-  }
+  .empty { text-align: center; color: #4a5568; padding: 3rem; }
 </style>
 </head>
 <body>
   <div class="header">
     <h1>Teams AI 日報總覽</h1>
-    <div class="meta">共 13 份日報</div>
+    <div class="meta">共 14 份日報</div>
   </div>
   <div class="grid">
+    <a class="card" href="daily_report_2026-04-01.html">
+      <div class="card-left">
+        <div class="card-date">2026年04月01日</div>
+        <div class="card-stats">
+          <span class="stat-badge">📰 <span>177</span> 則資訊</span>
+          <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
+          <span class="stat-badge">🌐 <span>0</span> 篇中文導讀</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
     <a class="card" href="daily_report_2026-03-31.html">
       <div class="card-left">
         <div class="card-date">2026年03月31日</div>
