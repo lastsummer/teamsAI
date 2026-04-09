@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>家長報表</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg:       #fafbfc;
+      --card:     #ffffff;
+      --card2:    #f8f9fa;
+      --border:   #e8d5e0;
+      --gold:     #ff8fb3;
+      --gold2:    #ffb3d0;
+      --jade:     #7dd4c4;
+      --purple:   #c9a0d8;
+      --blue:     #87ceeb;
+      --red:      #ff6b9d;
+      --text:     #3d3d3d;
+      --muted:    #a09a9a;
+      --radius:   12px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 40% at 20% 10%, rgba(255,143,179,.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(125,212,196,.08) 0%, transparent 60%);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      display: flex; align-items: center;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      position: sticky; top: 0; z-index: 200;
+      box-shadow: 0 2px 12px rgba(0,0,0,.08);
+      gap: 0;
+    }
+    .nav-logo {
+      color: var(--gold); font-size: 1.1rem; letter-spacing: 3px;
+      padding: 14px 24px 14px 0; margin-right: 24px;
+      border-right: 1px solid var(--border); white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .nav-parent-badge {
+      font-size: .72rem; padding: 2px 8px; border-radius: 8px;
+      background: rgba(122,90,170,.22); color: var(--purple);
+      border: 1px solid rgba(122,90,170,.35);
+      margin-right: 20px; white-space: nowrap; flex-shrink: 0;
+      letter-spacing: 1px;
+    }
+    .nav-tabs { display: flex; flex: 1; }
+    .nav-tab {
+      padding: 16px 28px; cursor: pointer;
+      color: var(--muted); font-size: .95rem;
+      border-bottom: 3px solid transparent;
+      transition: color .2s, border-color .2s;
+      user-select: none; white-space: nowrap;
+    }
+    .nav-tab:hover { color: var(--text); }
+    .nav-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+    /* ── Child Switcher ── */
+    .child-bar {
+      background: var(--card2);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
+      display: flex; align-items: center; gap: 12px;
+      position: sticky; top: 53px; z-index: 190;
+    }
+    .child-bar-label {
+      font-size: .78rem; color: var(--muted); letter-spacing: 1px; flex-shrink: 0;
+    }
+    .child-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .child-pill {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 16px; border-radius: 20px;
+      border: 1px solid var(--border);
+      background: transparent; color: var(--muted);
+      cursor: pointer; font-size: .88rem;
+      transition: all .2s; user-select: none;
+    }
+    .child-pill:hover { border-color: var(--gold); color: var(--text); }
+    .child-pill.active { background: var(--gold); color: var(--bg); border-color: var(--gold); font-weight: 600; }
+    .child-avatar {
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; line-height: 1;
+      background: rgba(255,255,255,.1);
+    }
+    .child-pill.active .child-avatar { background: rgba(0,0,0,.15); }
+
+    /* ── Pages ── */
+    .page { display: none; padding: 28px 24px; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+    .page.active { display: block; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
+    }
+    .card-title {
+      color: var(--gold); font-size: .95rem; margin-bottom: 18px;
+      display: flex; align-items: center; gap: 8px; letter-spacing: 1px;
+    }
+    .card-title::before { content: '◆'; font-size: .65rem; opacity: .7; }
+
+    /* ── Stat cards ── */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px; text-align: center;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .stat-card:hover { border-color: var(--gold); box-shadow: 0 0 20px rgba(255,143,179,.15); }
+    .stat-label { font-size: .78rem; color: var(--muted); margin-bottom: 10px; letter-spacing: 1px; }
+    .stat-value { font-size: 2.2rem; font-weight: 700; color: var(--gold); line-height: 1; }
+    .stat-value.danger { color: var(--red); }
+    .stat-value.good  { color: var(--jade); }
+    .stat-unit { font-size: .78rem; color: var(--muted); margin-top: 6px; }
+
+    /* ── Grid layouts ── */
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .chart-full { margin-bottom: 24px; }
+    .two-col { display: grid; grid-template-columns: 3fr 2fr; gap: 16px; }
+
+    /* ── Toggle buttons ── */
+    .toggle-group { display: flex; gap: 8px; margin-bottom: 16px; }
+    .toggle-btn {
+      padding: 6px 18px; border-radius: 20px;
+      border: 1px solid var(--border);
+      background: transparent; color: var(--muted);
+      cursor: pointer; font-size: .83rem; transition: all .2s;
+    }
+    .toggle-btn:hover { border-color: var(--gold); color: var(--text); }
+    .toggle-btn.active { background: var(--gold); color: var(--bg); border-color: var(--gold); font-weight: 600; }
+
+    /* ── Date nav ── */
+    .date-nav {
+      display: flex; align-items: center; justify-content: center;
+      gap: 16px; margin-bottom: 16px;
+    }
+    .date-nav-btn {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--gold); width: 34px; height: 34px;
+      border-radius: 6px; cursor: pointer;
+      font-size: 1.4rem; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color .2s, background .2s;
+    }
+    .date-nav-btn:hover { border-color: var(--gold); background: rgba(200,160,80,.12); }
+    .date-nav-label {
+      font-size: .9rem; color: var(--text);
+      min-width: 190px; text-align: center; letter-spacing: 1px;
+    }
+
+    /* ── Wuxing legend ── */
+    .wuxing-legend {
+      display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 14px;
+    }
+    .wuxing-item { display: flex; align-items: center; gap: 6px; font-size: .82rem; }
+    .wuxing-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── Calendar ── */
+    .calendar-nav {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+    }
+    .calendar-month { font-size: 1.1rem; color: var(--gold); letter-spacing: 2px; }
+    .calendar-btn {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text); padding: 6px 14px; border-radius: 6px;
+      cursor: pointer; font-size: .9rem; transition: border-color .2s;
+    }
+    .calendar-btn:hover { border-color: var(--gold); }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+    .cal-header { text-align: center; font-size: .75rem; color: var(--muted); padding: 6px 0; }
+    .cal-day {
+      aspect-ratio: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      border-radius: 8px; cursor: pointer;
+      transition: background .15s; position: relative; font-size: .88rem;
+    }
+    .cal-day:hover { background: var(--border); }
+    .cal-day.today {
+      background: rgba(200,160,80,.18); border: 1px solid rgba(200,160,80,.6);
+      color: var(--gold); font-weight: 700;
+    }
+    .cal-day.has-event::after {
+      content: '✦'; position: absolute; bottom: 2px;
+      font-size: .55rem; color: var(--jade);
+    }
+    .cal-day.empty { pointer-events: none; }
+    .cal-tooltip {
+      position: absolute; bottom: calc(100% + 6px); left: 50%;
+      transform: translateX(-50%);
+      background: #fff0f6; border: 1px solid var(--border);
+      border-radius: 6px; padding: 6px 10px;
+      font-size: .75rem; color: var(--text);
+      white-space: nowrap; z-index: 50;
+      pointer-events: none; display: none;
+    }
+    .cal-day:hover .cal-tooltip { display: block; }
+
+    /* ── Event list ── */
+    .event-list { display: flex; flex-direction: column; gap: 12px; }
+    .event-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px; background: rgba(255,255,255,.02);
+      border-radius: 8px; border-left: 3px solid var(--jade);
+      transition: background .2s;
+    }
+    .event-item:hover { background: rgba(255,255,255,.05); }
+    .event-date { min-width: 44px; text-align: center; }
+    .event-date .e-month { font-size: .7rem; color: var(--muted); }
+    .event-date .e-day { font-size: 1.5rem; font-weight: 700; line-height: 1; }
+    .event-name { font-size: .92rem; margin-bottom: 4px; }
+    .event-desc { font-size: .78rem; color: var(--muted); }
+    .event-badge {
+      display: inline-block; font-size: .68rem; padding: 2px 8px;
+      border-radius: 10px; margin-top: 5px;
+      background: rgba(58,138,120,.2); color: var(--jade); border: 1px solid rgba(58,138,120,.3);
+    }
+
+    /* ── Parent summary card ── */
+    .summary-banner {
+      display: flex; align-items: flex-start; gap: 20px;
+      padding: 20px; margin-bottom: 24px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .child-big-avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: linear-gradient(135deg, #c9a0d8, #7dd4c4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; flex-shrink: 0;
+      border: 2px solid rgba(255,143,179,.2);
+    }
+    .summary-info { flex: 1; }
+    .summary-name { font-size: 1.3rem; color: var(--gold); letter-spacing: 2px; margin-bottom: 4px; }
+    .summary-meta { font-size: .82rem; color: var(--muted); letter-spacing: .5px; margin-bottom: 12px; }
+    .summary-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .summary-tag {
+      font-size: .72rem; padding: 3px 10px; border-radius: 10px;
+      border: 1px solid var(--border); color: var(--muted);
+    }
+    .summary-tag.warn { border-color: rgba(200,64,64,.4); color: var(--red); background: rgba(200,64,64,.06); }
+    .summary-tag.ok   { border-color: rgba(58,138,120,.4); color: var(--jade); background: rgba(58,138,120,.06); }
+    .summary-score-area { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+    .summary-score-label { font-size: .72rem; color: var(--muted); }
+    .summary-score { font-size: 2.4rem; font-weight: 700; color: var(--gold); line-height: 1; }
+    .summary-score-sub { font-size: .72rem; color: var(--muted); }
+
+    /* ── Insight cards ── */
+    .insight-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 24px; }
+    .insight-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px;
+    }
+    .insight-icon { font-size: 1.6rem; margin-bottom: 8px; }
+    .insight-title { font-size: .78rem; color: var(--muted); margin-bottom: 6px; letter-spacing: 1px; }
+    .insight-body { font-size: .9rem; color: var(--text); line-height: 1.6; }
+    .insight-body strong { color: var(--gold); }
+    .insight-body.warn strong { color: var(--red); }
+
+    /* ── AI Elder chat ── */
+    .elder-wrap { margin-top: 24px; }
+    .elder-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .elder-title-row { display: flex; align-items: center; gap: 10px; }
+    .elder-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #c9a0d8, #7dd4c4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+      box-shadow: 0 0 12px rgba(201,160,216,.3);
+    }
+    .elder-name { color: var(--gold); font-size: 1rem; letter-spacing: 2px; }
+    .elder-sub  { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+    .elder-quota {
+      font-size: .78rem; color: var(--muted); letter-spacing: .5px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .elder-quota-dots { display: flex; gap: 4px; }
+    .elder-quota-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--jade); transition: background .3s;
+    }
+    .elder-quota-dot.used { background: var(--border); }
+
+    .chat-messages {
+      display: flex; flex-direction: column; gap: 14px;
+      max-height: 420px; overflow-y: auto;
+      padding-right: 4px; margin-bottom: 16px;
+    }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .chat-msg { display: flex; gap: 10px; align-items: flex-start; }
+    .chat-msg.user { flex-direction: row-reverse; }
+    .chat-msg-avatar {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+    .chat-msg.ai   .chat-msg-avatar { background: linear-gradient(135deg, #c9a0d8, #7dd4c4); }
+    .chat-msg.user .chat-msg-avatar { background: rgba(255,143,179,.2); border: 1px solid rgba(255,143,179,.3); }
+
+    .chat-msg-bubble {
+      max-width: 80%; padding: 12px 16px; border-radius: 14px;
+      font-size: .88rem; line-height: 1.7;
+    }
+    .chat-msg.ai   .chat-msg-bubble {
+      background: rgba(201,160,216,.15); border: 1px solid rgba(201,160,216,.3);
+      border-top-left-radius: 4px; color: var(--text);
+    }
+    .chat-msg.user .chat-msg-bubble {
+      background: rgba(255,143,179,.12); border: 1px solid rgba(255,143,179,.3);
+      border-top-right-radius: 4px; color: var(--text);
+    }
+    .chat-msg-bubble em { color: var(--gold); font-style: normal; }
+    .chat-msg-bubble strong { color: var(--jade); }
+
+    .chat-typing { display: flex; gap: 5px; align-items: center; padding: 6px 0; }
+    .typing-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--muted);
+      animation: typingBounce .9s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: .15s; }
+    .typing-dot:nth-child(3) { animation-delay: .3s; }
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: .4; }
+      30%           { transform: translateY(-6px); opacity: 1; }
+    }
+
+    .chat-input-row { display: flex; gap: 10px; align-items: flex-end; }
+    .chat-input {
+      flex: 1; background: var(--card2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 14px;
+      color: var(--text); font-size: .88rem; resize: none;
+      font-family: inherit; line-height: 1.5; outline: none;
+      transition: border-color .2s; min-height: 44px; max-height: 120px;
+    }
+    .chat-input:focus { border-color: var(--purple); }
+    .chat-input::placeholder { color: var(--muted); }
+    .chat-send-btn {
+      padding: 10px 20px; border-radius: 10px;
+      background: linear-gradient(135deg, #ff8fb3, #7dd4c4);
+      border: none; color: #fff; font-size: .88rem;
+      cursor: pointer; white-space: nowrap; flex-shrink: 0;
+      transition: opacity .2s; font-family: inherit;
+    }
+    .chat-send-btn:hover:not(:disabled) { opacity: .85; }
+    .chat-send-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    .elder-paywall {
+      margin-top: 12px; padding: 14px 18px;
+      border: 1px solid rgba(255,143,179,.3); border-radius: 10px;
+      background: linear-gradient(90deg, rgba(255,143,179,.08), rgba(201,160,216,.08));
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .paywall-text { font-size: .83rem; color: var(--muted); line-height: 1.5; }
+    .paywall-text strong { color: var(--gold); }
+    .paywall-btn {
+      padding: 8px 20px; border-radius: 20px; flex-shrink: 0;
+      background: linear-gradient(135deg, #ff8fb3, #c9a0d8);
+      border: none; color: #fff; font-size: .82rem;
+      cursor: pointer; font-family: inherit; white-space: nowrap; transition: opacity .2s;
+    }
+    .paywall-btn:hover { opacity: .85; }
+
+    /* ── Divider ── */
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 4px 0 24px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .charts-row { grid-template-columns: 1fr; }
+      .two-col { grid-template-columns: 1fr; }
+      .insight-row { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .nav-logo { display: none; }
+      .nav-tab { padding: 14px 16px; font-size: .85rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .stat-value { font-size: 1.7rem; }
+      .insight-row { grid-template-columns: 1fr; }
+      .summary-banner { flex-wrap: wrap; }
+      .summary-score-area { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ NAV ════════════════ -->
+<nav class="nav">
+  <div class="nav-logo">✨ 學習報表</div>
+  <span class="nav-parent-badge">家長版</span>
+  <div class="nav-tabs">
+    <div class="nav-tab active" data-tab="cultivation" onclick="switchTab(this,'cultivation')">&#9889; 修煉殿</div>
+    <div class="nav-tab"       data-tab="activities"  onclick="switchTab(this,'activities')">&#128220; 功法殿</div>
+  </div>
+</nav>
+
+<!-- ════════════════ CHILD SWITCHER ════════════════ -->
+<div class="child-bar">
+  <span class="child-bar-label">子女：</span>
+  <div class="child-pills" id="childPills"></div>
+</div>
+
+<!-- ════════════════ PAGE 1：學習統計 ════════════════ -->
+<div id="page-cultivation" class="page active">
+
+  <!-- Child summary banner -->
+  <div class="summary-banner" id="summaryBanner">
+    <div class="child-big-avatar" id="summaryAvatar"></div>
+    <div class="summary-info">
+      <div class="summary-name" id="summaryName"></div>
+      <div class="summary-meta" id="summaryMeta"></div>
+      <div class="summary-tags" id="summaryTags"></div>
+    </div>
+    <div class="summary-score-area">
+      <div class="summary-score-label">近期學習分</div>
+      <div class="summary-score" id="summaryScore"></div>
+      <div class="summary-score-sub">/ 100</div>
+    </div>
+  </div>
+
+  <!-- Parent insights -->
+  <div class="insight-row" id="insightRow"></div>
+
+  <div class="divider"></div>
+
+  <!-- Stat cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">累計修煉時長</div>
+      <div class="stat-value" id="statTotal">—</div>
+      <div class="stat-unit">小時</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">修煉次數</div>
+      <div class="stat-value" id="statCount">—</div>
+      <div class="stat-unit">次</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">日均修煉時長</div>
+      <div class="stat-value" id="statAvg">—</div>
+      <div class="stat-unit">分鐘 / 天</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">修煉中斷（放棄學習）</div>
+      <div class="stat-value danger" id="statInterrupt">—</div>
+      <div class="stat-unit">次</div>
+    </div>
+  </div>
+
+  <!-- Radar + Hourly -->
+  <div class="charts-row">
+    <div class="card">
+      <div class="card-title">五行修煉分布圖</div>
+      <canvas id="wuxingChart"></canvas>
+      <div class="wuxing-legend">
+        <div class="wuxing-item"><div class="wuxing-dot" style="background:#d4af37"></div><span style="color:#d4af37">金</span>&nbsp;數學</div>
+        <div class="wuxing-item"><div class="wuxing-dot" style="background:#4aaa4a"></div><span style="color:#4aaa4a">木</span>&nbsp;國文</div>
+        <div class="wuxing-item"><div class="wuxing-dot" style="background:#5a8ade"></div><span style="color:#5a8ade">水</span>&nbsp;英文</div>
+        <div class="wuxing-item"><div class="wuxing-dot" style="background:#e05a5a"></div><span style="color:#e05a5a">火</span>&nbsp;理化</div>
+        <div class="wuxing-item"><div class="wuxing-dot" style="background:#d4884a"></div><span style="color:#d4884a">土</span>&nbsp;社會</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">修煉時段分布</div>
+      <div class="toggle-group" id="hourlyToggle" style="margin-bottom:12px;">
+        <button class="toggle-btn active" onclick="switchHourlyMode('hour',this)">24小時</button>
+        <button class="toggle-btn"        onclick="switchHourlyMode('weekday',this)">星期累積</button>
+      </div>
+      <canvas id="hourlyChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Daily/Weekly/Monthly toggle -->
+  <div class="card chart-full">
+    <div class="card-title">修煉分布</div>
+    <div class="toggle-group" id="periodToggle">
+      <button class="toggle-btn active" onclick="switchPeriod('day',this)">天</button>
+      <button class="toggle-btn"        onclick="switchPeriod('week',this)">週</button>
+      <button class="toggle-btn"        onclick="switchPeriod('month',this)">月</button>
+      <button class="toggle-btn"        onclick="switchPeriod('year',this)">年</button>
+    </div>
+    <div class="date-nav" id="dateNav">
+      <button class="date-nav-btn" onclick="navigateDate(-1)">&#8249;</button>
+      <span class="date-nav-label" id="dateNavLabel"></span>
+      <button class="date-nav-btn" onclick="navigateDate(1)">&#8250;</button>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:8px;">
+      <div class="stat-card">
+        <div class="stat-label">修煉時長</div>
+        <div class="stat-value" id="distDuration">—</div>
+        <div class="stat-unit" id="distDurationUnit">分鐘</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">修煉次數</div>
+        <div class="stat-value" id="distCount">—</div>
+        <div class="stat-unit">次</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">中斷次數</div>
+        <div class="stat-value danger" id="distInterrupt">—</div>
+        <div class="stat-unit">次</div>
+      </div>
+    </div>
+    <div class="toggle-group" id="metricToggle" style="margin-top:16px;">
+      <button class="toggle-btn active" onclick="switchMetric('duration',this)">修煉時長</button>
+      <button class="toggle-btn"        onclick="switchMetric('count',this)">修煉次數</button>
+      <button class="toggle-btn"        onclick="switchMetric('interrupt',this)">中斷次數</button>
+    </div>
+    <canvas id="durationChart"></canvas>
+  </div>
+
+</div><!-- /page-cultivation -->
+
+
+<!-- ════════════════ PAGE 2：活動與推薦 ════════════════ -->
+<div id="page-activities" class="page">
+  <div class="two-col">
+
+    <!-- Calendar -->
+    <div class="card">
+      <div class="card-title">學習活動日誌</div>
+      <div class="calendar-nav">
+        <button class="calendar-btn" onclick="changeMonth(-1)">&#8249; 上月</button>
+        <div class="calendar-month" id="calTitle"></div>
+        <button class="calendar-btn" onclick="changeMonth(1)">下月 &#8250;</button>
+      </div>
+      <div class="calendar-grid" id="calGrid"></div>
+      <div style="margin-top:14px; font-size:.78rem; color:var(--muted); display:flex; align-items:center; gap:6px;">
+        <span style="color:var(--jade);">✦</span> 有學習活動&nbsp;&nbsp;
+        <span style="display:inline-block;width:12px;height:12px;background:rgba(200,160,80,.18);border:1px solid rgba(200,160,80,.6);border-radius:3px;"></span> 今日
+      </div>
+    </div>
+
+    <!-- Upcoming events -->
+    <div class="card">
+      <div class="card-title">近期活動推薦</div>
+      <div class="event-list" id="eventList"></div>
+    </div>
+
+  </div>
+
+  <!-- AI 長老提點 -->
+  <div class="card elder-wrap">
+    <div class="elder-header">
+      <div class="elder-title-row">
+        <div class="elder-avatar">🧙</div>
+        <div>
+          <div class="elder-name">AI 長老提點</div>
+          <div class="elder-sub" id="elderSub">依活動參與紀錄，給予學習方向建議</div>
+        </div>
+      </div>
+      <div class="elder-quota">
+        <span>今日問詢</span>
+        <div class="elder-quota-dots" id="quotaDots"></div>
+        <span id="quotaText"></span>
+      </div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="chat-input-row">
+      <textarea class="chat-input" id="chatInput" rows="1"
+        placeholder="向長老問詢學習方向…（Enter 送出，Shift+Enter 換行）"
+        onkeydown="handleChatKey(event)"></textarea>
+      <button class="chat-send-btn" id="chatSendBtn" onclick="sendChat()">問詢</button>
+    </div>
+
+    <div class="elder-paywall" id="elderPaywall" style="display:none;">
+      <div class="paywall-text">
+        免費問詢額度已用盡。如需<strong>深度指引</strong>，可開通「長老傳承」方案，每次問詢僅需 <strong>1 靈石</strong>，上限 10 次對話。
+      </div>
+      <button class="paywall-btn" onclick="unlockPaid()">✦ 靈石解鎖</button>
+    </div>
+  </div>
+
+</div><!-- /page-activities -->
+
+
+<!-- ════════════════ SCRIPTS ════════════════ -->
+<script>
+// ── Children Data ─────────────────────────────────────────────────────────────
+const CHILDREN = [
+  {
+    id: 'A',
+    name: '王小明',
+    avatar: '🧑',
+    grade: '高三',
+    school: '建國高中',
+    score: 82,
+    stats: { total: 71.3, count: 156, avg: 68, interrupt: 23 },
+    insights: [
+      { icon: '📈', title: '本週趨勢', body: '本週學習時長較上週<strong>增加 12%</strong>，表現穩定向好。', warn: false },
+      { icon: '⚠️', title: '需要關注', body: '英文學習時間<strong>明顯不足</strong>，佔比僅 18%，建議加強。', warn: true },
+      { icon: '🌙', title: '作息觀察', body: '常於<strong>深夜 22–24 時</strong>讀書，建議調整作息，早睡早起。', warn: true },
+    ],
+    tags: [
+      { text: '連續打卡 14 天', type: 'ok' },
+      { text: '深夜讀書偏多', type: 'warn' },
+      { text: '數學強項', type: '' },
+    ],
+    wuxing: { '金\n數學': 45, '木\n國文': 38, '水\n英文': 22, '火\n理化': 29, '土\n社會': 35 },
+    hourly: [0,0,0,0,0,3,8,18,38,50,55,40,25,18,60,75,52,30,68,88,80,58,28,6],
+    weekdayDuration: [312, 285, 340, 298, 375, 210, 180],
+    daily:       [45,90,120,30,75,110,85,60,95,130,80,45,105,90,70,115,60,85,100,75,130,45,90,110,80,60,95,120,85,70],
+    dailyCount:  [2,4,5,1,3,4,3,2,4,5,3,2,4,3,2,4,2,3,4,3,5,2,3,4,3,2,4,5,3,2],
+    dailyInt:    [1,1,2,0,1,2,1,1,2,2,1,0,2,1,1,2,1,1,2,1,2,0,1,2,1,1,2,2,1,1],
+    yearlyDur:   [2840,3120,2680,3450,2950,3280,2750,3100,2900,3200,2800,3050],
+    yearlyCount: [62,68,54,82,71,78,65,74,70,76,66,72],
+    yearlyInt:   [14,18,12,21,16,19,13,17,15,18,14,16],
+    activities: {
+      '2026-03-05': ['數學模擬考'],
+      '2026-03-08': ['英文寫作工作坊'],
+      '2026-03-09': ['台大醫院志工服務'],
+      '2026-03-12': ['物理實驗課'],
+      '2026-03-14': ['青年科學研討會（聽講）'],
+      '2026-03-15': ['校內演講比賽'],
+      '2026-03-18': ['自習室讀書會'],
+      '2026-03-20': ['學科能力測驗講座'],
+      '2026-03-22': ['國文閱讀測驗練習'],
+      '2026-03-23': ['台大醫院志工服務'],
+      '2026-03-25': ['自主複習'],
+      '2026-03-28': ['週考（數學＋理化）'],
+      '2026-02-14': ['寒假自習衝刺'],
+      '2026-02-22': ['英文聽力加強課'],
+      '2026-04-03': ['化學實驗觀摩'],
+      '2026-04-05': ['台大醫院志工服務'],
+      '2026-04-10': ['全校模擬考'],
+      '2026-04-19': ['高中生科學研討會（發表）'],
+    },
+    upcoming: [
+      { month:'03', day:'28', name:'週考（數學＋理化）',       desc:'根據近期練習題紀錄推薦重點',    badge:'週考',   color:'var(--jade)'   },
+      { month:'04', day:'05', name:'台大醫院志工服務',         desc:'固定每兩週一次，累計時數 12 hr', badge:'志工',   color:'#e05a5a'       },
+      { month:'04', day:'10', name:'全校模擬考',               desc:'距學測剩 45 天，建議全力衝刺',  badge:'模擬考', color:'var(--purple)' },
+      { month:'04', day:'19', name:'高中生科學研討會（發表）', desc:'根據青年科學研討會參與紀錄推薦', badge:'研討會', color:'var(--blue)'   },
+    ],
+  },
+  {
+    id: 'B',
+    name: '王小華',
+    avatar: '👧',
+    grade: '高一',
+    school: '北一女中',
+    score: 91,
+    stats: { total: 104.5, count: 218, avg: 92, interrupt: 8 },
+    insights: [
+      { icon: '🌟', title: '表現優異', body: '本月學習時長全校<strong>排名第 3</strong>，各科均衡發展。', warn: false },
+      { icon: '📚', title: '學科分析', body: '國文與英文為強項，<strong>理化</strong>尚有進步空間，建議補強。', warn: false },
+      { icon: '☀️', title: '作息觀察', body: '主要於<strong>上午 9–12 時</strong>及下午<strong>14–17 時</strong>讀書，作息規律。', warn: false },
+    ],
+    tags: [
+      { text: '連續打卡 30 天', type: 'ok' },
+      { text: '中斷率極低', type: 'ok' },
+      { text: '均衡發展', type: '' },
+    ],
+    wuxing: { '金\n數學': 38, '木\n國文': 55, '水\n英文': 60, '火\n理化': 28, '土\n社會': 42 },
+    hourly: [0,0,0,0,0,2,12,35,80,110,105,85,40,30,95,100,88,50,42,30,18,10,4,0],
+    weekdayDuration: [420, 380, 440, 395, 460, 350, 280],
+    daily:       [80,120,140,60,100,130,110,85,125,150,100,70,130,115,90,140,80,110,135,100,160,70,115,140,105,85,120,150,110,95],
+    dailyCount:  [3,5,6,2,4,5,4,3,5,6,4,3,5,4,3,5,3,4,5,4,6,3,4,5,4,3,5,6,4,3],
+    dailyInt:    [0,1,1,0,0,1,0,0,1,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,1,1,0,0],
+    yearlyDur:   [3800,4100,3600,4500,4000,4300,3900,4200,4000,4400,3900,4150],
+    yearlyCount: [85,92,74,108,96,102,88,98,94,104,88,98],
+    yearlyInt:   [6,8,5,9,7,8,6,7,6,8,6,7],
+    activities: {
+      '2026-03-03': ['晨讀打卡'],
+      '2026-03-07': ['社區醫院志工服務'],
+      '2026-03-08': ['全班英文競賽'],
+      '2026-03-12': ['英文口說特訓'],
+      '2026-03-14': ['青年科學論壇（聽講）'],
+      '2026-03-18': ['閱讀心得分享'],
+      '2026-03-21': ['社區醫院志工服務'],
+      '2026-03-24': ['國文古典研讀'],
+      '2026-03-26': ['英文寫作課'],
+      '2026-02-10': ['年假自主學習'],
+      '2026-02-20': ['開學準備衝刺'],
+      '2026-04-04': ['社區醫院志工服務'],
+      '2026-04-05': ['週末自習'],
+      '2026-04-12': ['期中考準備'],
+      '2026-04-17': ['高中生人文科學論壇（口頭發表）'],
+    },
+    upcoming: [
+      { month:'04', day:'04', name:'社區醫院志工服務',         desc:'每兩週固定排班，累計時數 18 hr',  badge:'志工',   color:'#e05a5a'       },
+      { month:'04', day:'12', name:'期中考前衝刺',             desc:'距期中考尚餘 17 天',              badge:'考試',   color:'var(--red)'    },
+      { month:'04', day:'17', name:'高中生人文科學論壇（發表）', desc:'根據科學論壇聽講紀錄推薦進階參與', badge:'研討會', color:'var(--blue)'   },
+      { month:'04', day:'25', name:'讀書會交流',               desc:'古典研讀同學共同推薦',            badge:'國文',   color:'var(--gold)'   },
+    ],
+  },
+  {
+    id: 'C',
+    name: '王小強',
+    avatar: '🧒',
+    grade: '國三',
+    school: '中正國中',
+    score: 65,
+    stats: { total: 38.2, count: 89, avg: 41, interrupt: 47 },
+    insights: [
+      { icon: '📉', title: '需要關注', body: '本週學習時長較上週<strong>下降 28%</strong>，請多留意學習狀態。', warn: true },
+      { icon: '⚠️', title: '中斷頻繁', body: '中斷次數偏高，平均每次學習<strong>中斷 0.5 次</strong>，專注力待加強。', warn: true },
+      { icon: '🎮', title: '作息觀察', body: '學習多集中在<strong>晚間 20–23 時</strong>，白天時段幾乎無學習紀錄。', warn: true },
+    ],
+    tags: [
+      { text: '連續打卡 3 天', type: '' },
+      { text: '中斷率偏高', type: 'warn' },
+      { text: '白天需加強', type: 'warn' },
+    ],
+    wuxing: { '金\n數學': 20, '木\n國文': 18, '水\n英文': 15, '火\n理化': 12, '土\n社會': 22 },
+    hourly: [0,0,0,0,0,0,2,5,8,10,12,8,5,4,10,12,8,5,20,38,45,30,12,2],
+    weekdayDuration: [120, 90, 150, 80, 180, 60, 40],
+    daily:       [20,40,55,10,35,60,40,25,50,70,35,15,55,40,25,65,20,45,55,30,75,15,40,60,35,20,50,70,40,25],
+    dailyCount:  [1,2,3,1,2,3,2,1,2,3,2,1,3,2,1,3,1,2,3,1,3,1,2,3,2,1,2,3,2,1],
+    dailyInt:    [1,2,3,1,2,3,2,1,2,3,2,1,2,2,1,3,1,2,3,1,3,1,2,3,2,1,2,3,2,1],
+    yearlyDur:   [1200,1400,1100,1600,1350,1450,1250,1380,1300,1420,1200,1350],
+    yearlyCount: [30,35,24,42,38,40,32,36,34,38,30,34],
+    yearlyInt:   [18,22,16,26,21,24,19,22,20,23,18,21],
+    activities: {
+      '2026-03-08': ['補習班數學'],
+      '2026-03-13': ['學校志工日（校內清潔服務）'],
+      '2026-03-15': ['補習班英文'],
+      '2026-03-20': ['國中生科學展覽參觀'],
+      '2026-03-22': ['補習班數學'],
+      '2026-02-20': ['寒假自主'],
+      '2026-04-05': ['補習班英文'],
+      '2026-04-11': ['學校志工日（圖書館整理）'],
+      '2026-04-16': ['縣市科學展覽（校隊參賽）'],
+    },
+    upcoming: [
+      { month:'04', day:'05', name:'英文補習班',            desc:'固定每兩週一次',              badge:'英文', color:'var(--blue)'   },
+      { month:'04', day:'11', name:'學校志工日（圖書館）',  desc:'每月一次學校安排',             badge:'志工', color:'#e05a5a'       },
+      { month:'04', day:'16', name:'縣市科學展覽（參賽）',  desc:'根據科學展覽參觀紀錄推薦參賽',  badge:'科展', color:'var(--gold)'   },
+      { month:'04', day:'20', name:'模擬考',                desc:'距會考剩 45 天',              badge:'會考', color:'var(--red)'    },
+    ],
+  },
+];
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let currentChildIdx = 0;
+let currentPeriod   = 'day';
+let currentMetric   = 'duration';
+let selectedDate    = new Date(2026, 2, 25);
+let selectedWeek    = new Date(2026, 2, 23);
+let selectedMonth   = new Date(2026, 2, 1);
+let selectedYear    = 2026;
+let calDate         = new Date(2026, 2, 1);
+let hourlyMode      = 'hour';
+
+let wuxingChartInst, hourlyChartInst, durationChart;
+
+const DAY_NAMES   = ['日','一','二','三','四','五','六'];
+const CN_MONTHS   = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+
+// ── Build child pills ─────────────────────────────────────────────────────────
+function buildChildPills() {
+  const container = document.getElementById('childPills');
+  container.innerHTML = '';
+  CHILDREN.forEach((child, idx) => {
+    const pill = document.createElement('div');
+    pill.className = 'child-pill' + (idx === currentChildIdx ? ' active' : '');
+    pill.innerHTML = `<span class="child-avatar">${child.avatar}</span>${child.name}`;
+    pill.onclick = () => selectChild(idx);
+    container.appendChild(pill);
+  });
+}
+
+function selectChild(idx) {
+  currentChildIdx = idx;
+  buildChildPills();
+  renderAll();
+}
+
+// ── Render all for current child ──────────────────────────────────────────────
+function renderAll() {
+  const c = CHILDREN[currentChildIdx];
+  renderSummary(c);
+  renderInsights(c);
+  renderStatCards(c);
+  buildWuxingChart(c);
+  buildHourlyChart(hourlyMode);
+  currentPeriod = 'day';
+  currentMetric = 'duration';
+  document.querySelectorAll('#periodToggle .toggle-btn').forEach((b,i) => b.classList.toggle('active', i===0));
+  document.querySelectorAll('#metricToggle .toggle-btn').forEach((b,i) => b.classList.toggle('active', i===0));
+  buildDuration('day');
+  renderCal();
+  renderEvents(c);
+  initElder();
+}
+
+// ── Summary banner ────────────────────────────────────────────────────────────
+function renderSummary(c) {
+  document.getElementById('summaryAvatar').textContent = c.avatar;
+  document.getElementById('summaryName').textContent   = c.name;
+  document.getElementById('summaryMeta').textContent   = `${c.grade} · ${c.school}`;
+  document.getElementById('summaryScore').textContent  = c.score;
+
+  const tagsEl = document.getElementById('summaryTags');
+  tagsEl.innerHTML = '';
+  c.tags.forEach(t => {
+    const span = document.createElement('span');
+    span.className = 'summary-tag' + (t.type ? ` ${t.type}` : '');
+    span.textContent = t.text;
+    tagsEl.appendChild(span);
+  });
+}
+
+// ── Insights ─────────────────────────────────────────────────────────────────
+function renderInsights(c) {
+  const row = document.getElementById('insightRow');
+  row.innerHTML = '';
+  c.insights.forEach(ins => {
+    const div = document.createElement('div');
+    div.className = 'insight-card';
+    div.innerHTML = `
+      <div class="insight-icon">${ins.icon}</div>
+      <div class="insight-title">${ins.title}</div>
+      <div class="insight-body${ins.warn ? ' warn' : ''}">${ins.body}</div>`;
+    row.appendChild(div);
+  });
+}
+
+// ── Stat cards ────────────────────────────────────────────────────────────────
+function renderStatCards(c) {
+  document.getElementById('statTotal').textContent     = c.stats.total;
+  document.getElementById('statCount').textContent     = c.stats.count;
+  document.getElementById('statAvg').textContent       = c.stats.avg;
+  document.getElementById('statInterrupt').textContent = c.stats.interrupt;
+}
+
+// ── Wuxing chart ──────────────────────────────────────────────────────────────
+function buildWuxingChart(c) {
+  if (wuxingChartInst) wuxingChartInst.destroy();
+  wuxingChartInst = new Chart(document.getElementById('wuxingChart'), {
+    type: 'radar',
+    data: {
+      labels: Object.keys(c.wuxing),
+      datasets: [{
+        data: Object.values(c.wuxing),
+        backgroundColor: 'rgba(200,160,80,.12)',
+        borderColor: '#c8a050',
+        borderWidth: 2,
+        pointBackgroundColor: ['#d4af37','#4aaa4a','#5a8ade','#e05a5a','#d4884a'],
+        pointBorderColor: '#fff',
+        pointRadius: 5,
+        pointHoverRadius: 7,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        r: {
+          min: 0, max: 60,
+          ticks: { color:'#6a6080', backdropColor:'transparent', stepSize:20, font:{size:10} },
+          grid: { color:'rgba(255,255,255,.08)' },
+          angleLines: { color:'rgba(255,255,255,.08)' },
+          pointLabels: { color:'#d8ccc0', font:{size:12} }
+        }
+      }
+    }
+  });
+}
+
+// ── Hourly chart ──────────────────────────────────────────────────────────────
+function buildHourlyChart(mode) {
+  const c = CHILDREN[currentChildIdx];
+  const isHour = mode === 'hour';
+  const labels = isHour
+    ? Array.from({length:24}, (_,i) => i%4===0 ? `${i}時` : '')
+    : ['一','二','三','四','五','六','日'];
+  const data   = isHour ? c.hourly : c.weekdayDuration;
+  const colors = isHour
+    ? data.map(v => v>=70 ? 'rgba(200,160,80,.85)' : v>=45 ? 'rgba(58,138,120,.8)' : v>=20 ? 'rgba(74,112,200,.7)' : 'rgba(100,90,130,.5)')
+    : ['rgba(74,112,200,.75)','rgba(74,112,200,.75)','rgba(74,112,200,.75)','rgba(74,112,200,.75)','rgba(74,112,200,.75)','rgba(58,138,120,.75)','rgba(58,138,120,.75)'];
+
+  if (hourlyChartInst) hourlyChartInst.destroy();
+  hourlyChartInst = new Chart(document.getElementById('hourlyChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ data, backgroundColor: colors, borderRadius: 4, borderSkipped: false }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: items => isHour
+              ? `${items[0].dataIndex}:00 ~ ${items[0].dataIndex+1}:00`
+              : `星期${items[0].label}`,
+            label: item => ` 修煉 ${item.raw} 分鐘`
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { color:'#6a6080', font:{size:10} }, grid: { color:'rgba(255,255,255,.04)' } },
+        y: { ticks: { color:'#6a6080' }, grid: { color:'rgba(255,255,255,.04)' } }
+      }
+    }
+  });
+}
+
+function switchHourlyMode(mode, btn) {
+  hourlyMode = mode;
+  document.querySelectorAll('#hourlyToggle .toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildHourlyChart(mode);
+}
+
+// ── Duration chart ────────────────────────────────────────────────────────────
+function seedValues(date, source, scale) {
+  const seed  = date.getFullYear() * 10000 + (date.getMonth()+1) * 100 + date.getDate();
+  const shift = seed % source.length;
+  return source.map((v, i) => {
+    const varied = source[(i + shift) % source.length];
+    return Math.max(0, Math.round(varied * (scale + (((seed * (i+7)) % 100) / (scale > 0.75 ? 167 : 500)))));
+  });
+}
+function getWeekValues(weekStart, source) {
+  const labels = [], values = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + i);
+    labels.push(`${d.getMonth()+1}/${d.getDate()}(${DAY_NAMES[d.getDay()]})`);
+    values.push(source[(d.getDate()-1) % source.length]);
+  }
+  return { labels, values };
+}
+function getMonthValues(monthDate, source) {
+  const y = monthDate.getFullYear(), m = monthDate.getMonth();
+  const days = new Date(y, m+1, 0).getDate();
+  const labels = [], values = [];
+  for (let d = 1; d <= days; d++) {
+    labels.push(d % 5 === 1 ? `${d}日` : '');
+    values.push(source[(d-1) % source.length]);
+  }
+  return { labels, values };
+}
+
+function updateDateNav() {
+  const label = document.getElementById('dateNavLabel');
+  if (currentPeriod === 'day') {
+    const y = selectedDate.getFullYear();
+    const m = String(selectedDate.getMonth()+1).padStart(2,'0');
+    const d = String(selectedDate.getDate()).padStart(2,'0');
+    label.textContent = `${y} / ${m} / ${d}`;
+  } else if (currentPeriod === 'week') {
+    const end = new Date(selectedWeek.getFullYear(), selectedWeek.getMonth(), selectedWeek.getDate()+6);
+    const fmt = d => `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+    label.textContent = `${fmt(selectedWeek)} ～ ${fmt(end)}`;
+  } else if (currentPeriod === 'month') {
+    const y = selectedMonth.getFullYear(), mo = selectedMonth.getMonth();
+    const ms = String(mo+1).padStart(2,'0');
+    const last = new Date(y, mo+1, 0).getDate();
+    label.textContent = `${y}/${ms}/01 ～ ${y}/${ms}/${String(last).padStart(2,'0')}`;
+  } else {
+    label.textContent = `${selectedYear} 年`;
+  }
+}
+
+function buildDuration(period) {
+  const c = CHILDREN[currentChildIdx];
+  let labels, durVals, cntVals, intVals;
+
+  if (period === 'day') {
+    labels  = Array.from({length:24}, (_,i) => i%4===0 ? `${i}時` : '');
+    durVals = seedValues(selectedDate, c.hourly, 0.7);
+    cntVals = seedValues(selectedDate, c.dailyCount, 0.8);
+    intVals = seedValues(selectedDate, c.dailyInt, 0.8);
+  } else if (period === 'week') {
+    const dur = getWeekValues(selectedWeek, c.daily);
+    const cnt = getWeekValues(selectedWeek, c.dailyCount);
+    const int = getWeekValues(selectedWeek, c.dailyInt);
+    labels = dur.labels; durVals = dur.values; cntVals = cnt.values; intVals = int.values;
+  } else if (period === 'month') {
+    const dur = getMonthValues(selectedMonth, c.daily);
+    const cnt = getMonthValues(selectedMonth, c.dailyCount);
+    const int = getMonthValues(selectedMonth, c.dailyInt);
+    labels = dur.labels; durVals = dur.values; cntVals = cnt.values; intVals = int.values;
+  } else {
+    labels  = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+    durVals = c.yearlyDur;
+    cntVals = c.yearlyCount;
+    intVals = c.yearlyInt;
+  }
+
+  const totalDur = durVals.reduce((a,b) => a+b, 0);
+  const durEl  = document.getElementById('distDuration');
+  const unitEl = document.getElementById('distDurationUnit');
+  if (totalDur >= 60) { durEl.textContent = (totalDur/60).toFixed(1); unitEl.textContent = '小時'; }
+  else                { durEl.textContent = totalDur; unitEl.textContent = '分鐘'; }
+  document.getElementById('distCount').textContent     = cntVals.reduce((a,b)=>a+b,0);
+  document.getElementById('distInterrupt').textContent = intVals.reduce((a,b)=>a+b,0);
+
+  let values, colors, tooltipLabel;
+  if (currentMetric === 'duration') {
+    values = durVals;
+    colors = period === 'day'
+      ? durVals.map(v => v>=70 ? 'rgba(200,160,80,.85)' : v>=45 ? 'rgba(58,138,120,.8)' : v>=20 ? 'rgba(74,112,200,.7)' : 'rgba(100,90,130,.5)')
+      : 'rgba(58,138,120,.65)';
+    tooltipLabel = item => ` 修煉 ${item.raw} 分鐘`;
+  } else if (currentMetric === 'count') {
+    values = cntVals; colors = 'rgba(122,90,170,.7)';
+    tooltipLabel = item => ` 修煉 ${item.raw} 次`;
+  } else {
+    values = intVals; colors = 'rgba(200,64,64,.7)';
+    tooltipLabel = item => ` 中斷 ${item.raw} 次`;
+  }
+
+  updateDateNav();
+  if (durationChart) durationChart.destroy();
+  durationChart = new Chart(document.getElementById('durationChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: colors,
+        borderColor: Array.isArray(colors) ? colors.map(cc => cc.replace(/[\d.]+\)$/, '1)')) : colors.replace(/[\d.]+\)$/, '1)'),
+        borderWidth: 1, borderRadius: 5, borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: items => period === 'day'
+              ? `${items[0].dataIndex}:00 ~ ${items[0].dataIndex+1}:00`
+              : items[0].label,
+            label: tooltipLabel
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { color:'#6a6080', maxRotation: period==='week'?30:0 }, grid: { color:'rgba(255,255,255,.04)' } },
+        y: { ticks: { color:'#6a6080' }, grid: { color:'rgba(255,255,255,.04)' } }
+      }
+    }
+  });
+}
+
+function navigateDate(delta) {
+  if (currentPeriod === 'day') {
+    selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate()+delta);
+  } else if (currentPeriod === 'week') {
+    selectedWeek = new Date(selectedWeek.getFullYear(), selectedWeek.getMonth(), selectedWeek.getDate()+delta*7);
+  } else if (currentPeriod === 'month') {
+    selectedMonth = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth()+delta, 1);
+  } else {
+    selectedYear += delta;
+  }
+  buildDuration(currentPeriod);
+}
+
+function switchPeriod(period, btn) {
+  currentPeriod = period;
+  document.querySelectorAll('#periodToggle .toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildDuration(period);
+}
+
+function switchMetric(metric, btn) {
+  currentMetric = metric;
+  document.querySelectorAll('#metricToggle .toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildDuration(currentPeriod);
+}
+
+// ── Calendar ─────────────────────────────────────────────────────────────────
+function renderCal() {
+  const c  = CHILDREN[currentChildIdx];
+  const yr = calDate.getFullYear(), mo = calDate.getMonth();
+  document.getElementById('calTitle').textContent = `${yr} 年 ${CN_MONTHS[mo]}`;
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  ['日','一','二','三','四','五','六'].forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'cal-header'; el.textContent = d;
+    grid.appendChild(el);
+  });
+
+  const firstDay = new Date(yr, mo, 1).getDay();
+  const daysInMo = new Date(yr, mo+1, 0).getDate();
+  const today    = new Date();
+
+  for (let i = 0; i < firstDay; i++) {
+    const el = document.createElement('div'); el.className = 'cal-day empty';
+    grid.appendChild(el);
+  }
+  for (let d = 1; d <= daysInMo; d++) {
+    const el  = document.createElement('div');
+    el.className = 'cal-day';
+    const key = `${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = today.getFullYear()===yr && today.getMonth()===mo && today.getDate()===d;
+    if (isToday)            el.classList.add('today');
+    if (c.activities[key])  el.classList.add('has-event');
+    el.innerHTML = `<span>${d}</span>`;
+    if (c.activities[key]) {
+      const tip = document.createElement('div');
+      tip.className = 'cal-tooltip';
+      tip.textContent = c.activities[key].join(' / ');
+      el.appendChild(tip);
+    }
+    grid.appendChild(el);
+  }
+}
+
+function changeMonth(delta) {
+  calDate = new Date(calDate.getFullYear(), calDate.getMonth()+delta, 1);
+  renderCal();
+}
+
+// ── Events ────────────────────────────────────────────────────────────────────
+function renderEvents(c) {
+  const eList = document.getElementById('eventList');
+  eList.innerHTML = '';
+  c.upcoming.forEach(e => {
+    const el = document.createElement('div');
+    el.className = 'event-item';
+    el.style.borderLeftColor = e.color;
+    el.innerHTML = `
+      <div class="event-date">
+        <div class="e-month">${e.month}月</div>
+        <div class="e-day" style="color:${e.color}">${e.day}</div>
+      </div>
+      <div style="flex:1">
+        <div class="event-name">${e.name}</div>
+        <div class="event-desc">${e.desc}</div>
+        <span class="event-badge" style="color:${e.color};border-color:${e.color};background:transparent;">${e.badge}</span>
+      </div>`;
+    eList.appendChild(el);
+  });
+}
+
+// ── AI 長老提點 ───────────────────────────────────────────────────────────────
+const FREE_QUOTA = 1;
+const MAX_TURNS  = 10;
+let chatTurns    = 0;
+let paidUnlocked = false;
+let usedResponses = [];
+
+// 每個孩子的開場白與回覆庫
+const ELDER_DATA = {
+  A: {
+    init: `${CHILDREN[0].name}近期參與了「台大醫院志工服務」、「青年科學研討會」與「校內演講比賽」，課外經歷相當豐富。建議可增加「英文口說練習」類的互動課程，英文學習時間目前佔比偏低；另外，高三衝刺期間志工與讀書的時間分配值得留意，建議以模擬考前兩週優先鞏固學科，研討會發表可提早準備摘要。`,
+    responses: [
+      `${CHILDREN[0].name}的志工服務累計已達 12 小時，在學測備審資料中是很好的加分項目。建議整理一份「志工心得反思」，說明在醫院服務中觀察到什麼、對未來科系選擇有何啟發，這比單純列出時數更有說服力。`,
+      `科學研討會從聽講進階到發表，是很大的一步。建議在發表前先找老師或同學做一次模擬口頭報告，熟悉 Q&A 環節的應對，並準備好兩三個可能被問到的問題的答案。`,
+      `英文學習時間佔比偏低，建議每天固定 30 分鐘練習閱讀或聽力。可結合志工經驗，嘗試閱讀英文醫療或科普文章，既補強英文又強化相關知識背景，一舉兩得。`,
+      `高三備考策略建議：學測前 45 天以「錯題集中複習」為主，每週至少一次整科模擬；志工與課外活動維持現有節奏即可，不必增加，避免影響睡眠與學習品質。`,
+      `關於選系方向，${CHILDREN[0].name}的醫院志工與理化學習紀錄顯示對醫療科學有興趣，可考慮醫學、生技或公共衛生相關科系。建議提早查詢目標校系的備審要求，以利規劃課外活動方向。`,
+    ],
+  },
+  B: {
+    init: `${CHILDREN[1].name}近期參與了「社區醫院志工服務」、「青年科學論壇」與「英文寫作課」，均衡且積極。累計志工時數 18 小時表現亮眼，建議準備一份具體的志工反思記錄，作為備審資料的核心素材。接下來的科學論壇發表是進一步展現思辨能力的好機會，建議提早練習口頭報告與問答應對。`,
+    responses: [
+      `${CHILDREN[1].name}的志工時數在同學中相當突出。建議除了記錄時數，也寫下每次服務的「具體觀察」與「個人反思」，例如和病患的互動、看到的醫療流程，這些具體內容在備審面試中遠比數字更有說服力。`,
+      `人文科學論壇的口頭發表是很好的機會。建議準備一個清晰的三段式架構：問題背景、你的觀點或研究、結論與未來展望。每段控制在 2 分鐘內，並多練習到不需要看稿為止。`,
+      `理化是${CHILDREN[1].name}目前相對弱的科目，建議每週安排兩次針對性練習，可搭配科學論壇所接觸的主題，找對應的課本章節做連結，讓興趣帶動學習。`,
+      `期中考前兩週建議的策略：第一週衝刺弱科（理化）題型練習，第二週做整合複習與模擬作答。課外活動在這段時間可稍微減少頻率，等考後再恢復節奏。`,
+      `以${CHILDREN[1].name}的語文強項來看，未來可考慮法律、外文、新聞傳播，或結合科學志趣走生醫人文交叉領域。建議多參加跨領域的講座與論壇，讓方向更清晰。`,
+    ],
+  },
+  C: {
+    init: `${CHILDREN[2].name}近期開始參與「學校志工日」與「縣市科學展覽」，這是很好的起步！學校志工日讓他建立服務意識，科展的參賽經歷則能培養問題解決與表達能力。建議接下來持續保持科展的參與熱情，並將學習時間逐步從晚間調整到下午，記憶效果會更好，也能降低疲勞學習的狀況。`,
+    responses: [
+      `科展參賽是國中階段非常珍貴的經驗。建議${CHILDREN[2].name}在參賽後整理一份「實驗筆記」，記錄遇到的問題與解決方法，不論結果如何，這份紀錄日後都能作為學習歷程的重要素材。`,
+      `學校志工日雖然是學校安排，但也可以主動增加參與，例如課後幫低年級同學補課、協助圖書館整理等，累積服務時數和服務熱忱，對未來高中備審資料很有幫助。`,
+      `${CHILDREN[2].name}的中斷次數偏多，建議先從環境改善著手：讀書時手機放另一個房間，每次學習前寫下「今天要完成什麼」，有明確目標比較不容易分心。`,
+      `會考距離不到 50 天，建議現在開始做「錯題本」：每次補習或練習錯的題目，當天記錄下來，考前一週集中複習這些錯題，比重新讀課本效率高很多。`,
+      `國中畢業後的高中選擇，建議${CHILDREN[2].name}根據科展的興趣方向考量：若喜歡實驗與動手做，可往自然組走；若對社會、人文更感興趣，社會組也是好選擇。不必現在就決定，但可以開始觀察自己對哪類科目最有活力。`,
+    ],
+  },
+};
+
+function getElderInit() {
+  const c = CHILDREN[currentChildIdx];
+  return ELDER_DATA[c.id]?.init ?? `根據${c.name}的活動紀錄，建議可多參加互動型的課外活動，並留意學習時間分配是否均衡。`;
+}
+
+function getElderResponse(userMsg) {
+  const c   = CHILDREN[currentChildIdx];
+  const pool = ELDER_DATA[c.id]?.responses ?? [];
+  const msg  = userMsg;
+
+  // keyword match
+  if (/志工|服務|醫院/.test(msg))              return pool[0] ?? '';
+  if (/研討會|科展|發表|論壇/.test(msg))       return pool[1] ?? '';
+  if (/英文|語文|閱讀/.test(msg))              return pool[2] ?? '';
+  if (/考試|模擬|複習|備考/.test(msg))         return pool[3] ?? '';
+  if (/方向|科系|選系|未來|志願/.test(msg))    return pool[4] ?? '';
+
+  // fallback: rotate
+  const unused = pool.filter(r => !usedResponses.includes(r));
+  const picked = (unused.length ? unused : pool)[Math.floor(Math.random() * (unused.length || pool.length))];
+  usedResponses.push(picked);
+  return picked;
+}
+
+function renderQuota() {
+  const remaining = MAX_TURNS - chatTurns;
+  document.getElementById('quotaText').textContent = `${remaining} / ${MAX_TURNS} 次`;
+  const dots = document.getElementById('quotaDots');
+  dots.innerHTML = '';
+  for (let i = 0; i < MAX_TURNS; i++) {
+    const d = document.createElement('div');
+    d.className = 'elder-quota-dot' + (i >= remaining ? ' used' : '');
+    dots.appendChild(d);
+  }
+}
+
+function appendMsg(role, text) {
+  const container = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = `chat-msg ${role}`;
+  const avatarChar = role === 'ai' ? '🧙' : '👨‍👩‍👦';
+  div.innerHTML = `
+    <div class="chat-msg-avatar">${avatarChar}</div>
+    <div class="chat-msg-bubble">${text.replace(/「/g, '<em>「').replace(/」/g, '」</em>')}</div>`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function appendTyping() {
+  const container = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg ai'; div.id = 'typingIndicator';
+  div.innerHTML = `
+    <div class="chat-msg-avatar">🧙</div>
+    <div class="chat-msg-bubble">
+      <div class="chat-typing">
+        <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+      </div>
+    </div>`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById('typingIndicator');
+  if (el) el.remove();
+}
+
+function checkPaywall() {
+  const overFree = chatTurns >= FREE_QUOTA && !paidUnlocked;
+  const overMax  = chatTurns >= MAX_TURNS;
+  const paywall  = document.getElementById('elderPaywall');
+  const sendBtn  = document.getElementById('chatSendBtn');
+  const input    = document.getElementById('chatInput');
+  if (overMax) {
+    paywall.style.display = 'none';
+    sendBtn.disabled = true; input.disabled = true;
+    input.placeholder = '問詢次數已達上限（10次）';
+  } else if (overFree) {
+    paywall.style.display = 'flex';
+    sendBtn.disabled = true; input.disabled = true;
+    input.placeholder = '請解鎖後繼續問詢…';
+  }
+}
+
+function unlockPaid() {
+  paidUnlocked = true;
+  document.getElementById('elderPaywall').style.display = 'none';
+  const input = document.getElementById('chatInput');
+  input.disabled = false; input.placeholder = '向長老問詢學習方向…（Enter 送出，Shift+Enter 換行）';
+  document.getElementById('chatSendBtn').disabled = false;
+  input.focus();
+  appendMsg('ai', '已解鎖，請繼續提問。');
+}
+
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const text  = input.value.trim();
+  if (!text || chatTurns >= MAX_TURNS) return;
+  if (chatTurns >= FREE_QUOTA && !paidUnlocked) return;
+  input.value = ''; input.style.height = '';
+  appendMsg('user', text);
+  chatTurns++;
+  renderQuota();
+  document.getElementById('chatSendBtn').disabled = true;
+  appendTyping();
+  setTimeout(() => {
+    removeTyping();
+    appendMsg('ai', getElderResponse(text));
+    document.getElementById('chatSendBtn').disabled = false;
+    checkPaywall();
+  }, 900 + Math.random() * 600);
+}
+
+function handleChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+  const ta = e.target;
+  ta.style.height = '';
+  ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+}
+
+function initElder() {
+  // reset state when switching children
+  chatTurns    = 0;
+  paidUnlocked = false;
+  usedResponses = [];
+  document.getElementById('chatMessages').innerHTML = '';
+  document.getElementById('elderPaywall').style.display = 'none';
+  const input   = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('chatSendBtn');
+  input.disabled   = false;
+  sendBtn.disabled = false;
+  input.placeholder = '向長老問詢學習方向…（Enter 送出，Shift+Enter 換行）';
+  // update sub-label
+  const c = CHILDREN[currentChildIdx];
+  document.getElementById('elderSub').textContent = `依 ${c.name} 的活動參與紀錄，給予學習方向建議`;
+  renderQuota();
+  appendMsg('ai', getElderInit());
+}
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+function switchTab(el, tab) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.page').forEach(p =>
+    p.classList.toggle('active', p.id === `page-${tab}`)
+  );
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+buildChildPills();
+renderAll();
+</script>
+</body>
+</html>

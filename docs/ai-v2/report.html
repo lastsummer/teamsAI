@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>學習報表</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg:       #fafbfc;
+      --card:     #ffffff;
+      --card2:    #f8f9fa;
+      --border:   #e8d5e0;
+      --gold:     #ff8fb3;
+      --gold2:    #ffb3d0;
+      --jade:     #7dd4c4;
+      --purple:   #c9a0d8;
+      --blue:     #87ceeb;
+      --red:      #ff6b9d;
+      --text:     #3d3d3d;
+      --muted:    #a09a9a;
+      --radius:   12px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Background glow ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 40% at 20% 10%, rgba(255,143,179,.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(125,212,196,.08) 0%, transparent 60%);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      display: flex; align-items: center;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      position: sticky; top: 0; z-index: 200;
+      box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    }
+    .nav-logo {
+      color: var(--gold); font-size: 1.1rem; letter-spacing: 3px;
+      padding: 14px 24px 14px 0; margin-right: 24px;
+      border-right: 1px solid var(--border); white-space: nowrap;
+    }
+    .nav-tabs { display: flex; }
+    .nav-tab {
+      padding: 16px 28px; cursor: pointer;
+      color: var(--muted); font-size: .95rem;
+      border-bottom: 3px solid transparent;
+      transition: color .2s, border-color .2s;
+      user-select: none;
+    }
+    .nav-tab:hover { color: var(--text); }
+    .nav-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+    /* ── Pages ── */
+    .page { display: none; padding: 28px 24px; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+    .page.active { display: block; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
+    }
+    .card-title {
+      color: var(--gold); font-size: .95rem; margin-bottom: 18px;
+      display: flex; align-items: center; gap: 8px; letter-spacing: 1px;
+    }
+    .card-title::before { content: '◆'; font-size: .65rem; opacity: .7; }
+
+    /* ── Stat cards ── */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px; text-align: center;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .stat-card:hover { border-color: var(--gold); box-shadow: 0 0 20px rgba(255,143,179,.15); }
+    .stat-label { font-size: .78rem; color: var(--muted); margin-bottom: 10px; letter-spacing: 1px; }
+    .stat-value { font-size: 2.2rem; font-weight: 700; color: var(--gold); line-height: 1; }
+    .stat-value.danger { color: var(--red); }
+    .stat-unit { font-size: .78rem; color: var(--muted); margin-top: 6px; }
+
+    /* ── Grid layouts ── */
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .chart-full { margin-bottom: 24px; }
+    .two-col { display: grid; grid-template-columns: 3fr 2fr; gap: 16px; }
+
+    /* ── Toggle buttons ── */
+    .toggle-group { display: flex; gap: 8px; margin-bottom: 16px; }
+    .toggle-btn {
+      padding: 6px 18px; border-radius: 20px;
+      border: 1px solid var(--border);
+      background: transparent; color: var(--muted);
+      cursor: pointer; font-size: .83rem; transition: all .2s;
+    }
+    .toggle-btn:hover { border-color: var(--gold); color: var(--text); }
+    .toggle-btn.active { background: #ff8fb3; color: #fff; border-color: #ff8fb3; font-weight: 600; }
+
+    /* ── Date nav ── */
+    .date-nav {
+      display: flex; align-items: center; justify-content: center;
+      gap: 16px; margin-bottom: 16px;
+    }
+    .date-nav-btn {
+      background: transparent; border: 1px solid var(--border);
+      color: #ff8fb3; width: 34px; height: 34px;
+      border-radius: 6px; cursor: pointer;
+      font-size: 1.4rem; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color .2s, background .2s;
+    }
+    .date-nav-btn:hover { border-color: #ff8fb3; background: rgba(255,143,179,.1); }
+    .date-nav-label {
+      font-size: .9rem; color: var(--text);
+      min-width: 190px; text-align: center; letter-spacing: 1px;
+    }
+
+    /* ── Wuxing legend ── */
+    .wuxing-legend {
+      display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 14px;
+    }
+    .wuxing-item { display: flex; align-items: center; gap: 6px; font-size: .82rem; }
+    .wuxing-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── Calendar ── */
+    .calendar-nav {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+    }
+    .calendar-month { font-size: 1.1rem; color: var(--gold); letter-spacing: 2px; }
+    .calendar-btn {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text); padding: 6px 14px; border-radius: 6px;
+      cursor: pointer; font-size: .9rem; transition: border-color .2s;
+    }
+    .calendar-btn:hover { border-color: var(--gold); }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+    .cal-header {
+      text-align: center; font-size: .75rem; color: var(--muted); padding: 6px 0;
+    }
+    .cal-day {
+      aspect-ratio: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      border-radius: 8px; cursor: pointer;
+      transition: background .15s; position: relative; font-size: .88rem;
+    }
+    .cal-day:hover { background: var(--border); }
+    .cal-day.today {
+      background: rgba(200,160,80,.18); border: 1px solid rgba(200,160,80,.6);
+      color: var(--gold); font-weight: 700;
+    }
+    .cal-day.has-event::after {
+      content: '✦'; position: absolute; bottom: 2px;
+      font-size: .55rem; color: var(--jade);
+    }
+    .cal-day.empty { pointer-events: none; }
+    .cal-tooltip {
+      position: absolute; bottom: calc(100% + 6px); left: 50%;
+      transform: translateX(-50%);
+      background: #fff0f6; border: 1px solid var(--border);
+      border-radius: 6px; padding: 6px 10px;
+      font-size: .75rem; color: var(--text);
+      white-space: nowrap; z-index: 50;
+      pointer-events: none; display: none;
+    }
+    .cal-day:hover .cal-tooltip { display: block; }
+
+    /* ── Event list ── */
+    .event-list { display: flex; flex-direction: column; gap: 12px; }
+    .event-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px; background: rgba(255,255,255,.02);
+      border-radius: 8px; border-left: 3px solid var(--jade);
+      transition: background .2s;
+    }
+    .event-item:hover { background: rgba(255,255,255,.05); }
+    .event-date { min-width: 44px; text-align: center; }
+    .event-date .e-month { font-size: .7rem; color: var(--muted); }
+    .event-date .e-day { font-size: 1.5rem; font-weight: 700; line-height: 1; }
+    .event-name { font-size: .92rem; margin-bottom: 4px; }
+    .event-desc { font-size: .78rem; color: var(--muted); }
+    .event-badge {
+      display: inline-block; font-size: .68rem; padding: 2px 8px;
+      border-radius: 10px; margin-top: 5px;
+      background: rgba(58,138,120,.2); color: var(--jade); border: 1px solid rgba(58,138,120,.3);
+    }
+
+    /* ── Tribulation page ── */
+    .trib-wrap { max-width: 780px; margin: 0 auto; padding: 20px 0 40px; text-align: center; }
+    .trib-title { font-size: 1.8rem; color: var(--gold); letter-spacing: 6px; margin-bottom: 6px; }
+    .trib-subtitle { color: var(--muted); font-size: .95rem; margin-bottom: 48px; letter-spacing: 2px; }
+
+    /* ── Flip counter ── */
+    .flip-counter { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 60px; }
+    .flip-digit {
+      width: 74px; height: 96px;
+      border-radius: 10px; border: 1px solid rgba(255,143,179,.3);
+      position: relative; overflow: hidden;
+      box-shadow: 0 4px 16px rgba(255,143,179,.15), inset 0 1px 0 rgba(255,255,255,.8);
+    }
+    .flip-half {
+      position: absolute; left: 0; right: 0; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.8rem; font-weight: 700; color: var(--gold);
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 0 8px rgba(255,143,179,.2);
+    }
+    .flip-half.top {
+      background: #fff0f6;
+      clip-path: inset(0 0 50% 0);
+    }
+    .flip-half.bot {
+      background: #fff5f9;
+      clip-path: inset(50% 0 0 0);
+    }
+    .flip-digit::after {
+      content: ''; position: absolute;
+      left: 0; right: 0; top: calc(50% - 1px);
+      height: 2px; background: rgba(200,200,200,.3); z-index: 3;
+    }
+    .flip-sep {
+      font-size: 1rem; color: var(--muted); margin: 0 4px;
+      align-self: flex-end; padding-bottom: 12px; letter-spacing: 1px;
+    }
+
+    /* ── Progress bar ── */
+    .prog-section { padding: 0 20px; }
+    .prog-label { font-size: .85rem; color: var(--muted); margin-bottom: 6px; letter-spacing: 1px; }
+    .prog-track {
+      position: relative; height: 18px;
+      background: var(--border); border-radius: 9px;
+      margin-top: 48px; margin-bottom: 0;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,.4);
+    }
+    .prog-fill {
+      height: 100%; border-radius: 9px;
+      background: linear-gradient(90deg, var(--jade) 0%, var(--gold) 100%);
+      transition: width .8s ease; position: relative;
+    }
+    .prog-fill::after {
+      content: ''; position: absolute;
+      top: 3px; left: 10px; right: 10px; height: 4px;
+      background: rgba(255,255,255,.2); border-radius: 2px;
+    }
+    .prog-char {
+      position: absolute; top: -46px;
+      font-size: 2rem;
+      transform: translateX(-50%);
+      transition: left .8s ease;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,.6));
+      line-height: 1;
+    }
+    .prog-foot {
+      display: flex; justify-content: space-between;
+      margin-top: 8px; font-size: .78rem; color: var(--muted);
+    }
+    .prog-info {
+      margin-top: 28px; font-size: .95rem; color: var(--text);
+      min-height: 24px; letter-spacing: 1px;
+    }
+    .danger-banner {
+      margin-top: 24px; padding: 14px 20px;
+      border: 1px solid var(--red); border-radius: 10px;
+      background: rgba(200,64,64,.08); color: var(--red);
+      font-size: .9rem; letter-spacing: 1px;
+      display: none;
+    }
+
+    /* ── Ranking ── */
+    .rank-list { display: flex; flex-direction: column; gap: 8px; }
+    .rank-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; border-radius: 10px;
+      background: rgba(255,255,255,.02);
+      border: 1px solid var(--border);
+      transition: background .2s;
+    }
+    .rank-item:hover { background: rgba(255,255,255,.05); }
+    .rank-item.rank-1 { border-color: rgba(212,175,55,.5); background: rgba(212,175,55,.06); }
+    .rank-item.rank-2 { border-color: rgba(180,180,180,.4); background: rgba(180,180,180,.04); }
+    .rank-item.rank-3 { border-color: rgba(180,100,50,.4); background: rgba(180,100,50,.04); }
+    .rank-item.rank-me { border-color: rgba(58,138,120,.6); background: rgba(58,138,120,.08); }
+    .rank-num {
+      min-width: 32px; text-align: center;
+      font-size: 1.1rem; font-weight: 700;
+    }
+    .rank-1 .rank-num { color: #d4af37; }
+    .rank-2 .rank-num { color: #b0b0b0; }
+    .rank-3 .rank-num { color: #c8784a; }
+    .rank-num.plain { color: var(--muted); font-size: .95rem; }
+    .rank-name { flex: 1; font-size: .92rem; }
+    .rank-school { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+    .rank-hours {
+      font-size: 1rem; font-weight: 700; color: var(--gold);
+      white-space: nowrap;
+    }
+    .rank-hours span { font-size: .72rem; color: var(--muted); font-weight: 400; margin-left: 2px; }
+    /* ── Live pulse ── */
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: .4; transform: scale(1.5); }
+    }
+    .live-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #3ecf8e; flex-shrink: 0;
+      animation: livePulse 1.6s ease-in-out infinite;
+    }
+    .live-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;
+    }
+    .live-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 20px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .live-card:first-child { border-color: rgba(62,207,142,.35); }
+    .live-card:last-child  { border-color: rgba(200,160,80,.3); }
+    .live-num {
+      font-size: 2rem; font-weight: 700; line-height: 1;
+    }
+    .live-card:first-child .live-num { color: #3ecf8e; }
+    .live-card:last-child  .live-num { color: var(--gold); }
+    .live-label { font-size: .8rem; color: var(--muted); margin-top: 4px; letter-spacing: .5px; }
+
+    .rank-dept { font-size: .78rem; color: var(--jade); margin-top: 2px; }
+    .rank-tag {
+      font-size: .68rem; padding: 1px 7px; border-radius: 8px;
+      background: rgba(122,90,170,.18); color: var(--purple);
+      border: 1px solid rgba(122,90,170,.3); white-space: nowrap;
+    }
+    .pro-banner {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 10px 20px; margin-bottom: 20px;
+      border: 1px solid rgba(255,143,179,.3);
+      border-radius: 10px;
+      background: linear-gradient(90deg, rgba(255,143,179,.08), rgba(201,160,216,.08));
+      font-size: .85rem; color: var(--gold); letter-spacing: 1px;
+    }
+    .pro-badge {
+      display: inline-block; font-size: .65rem; font-weight: 700;
+      padding: 2px 7px; border-radius: 6px;
+      background: linear-gradient(135deg, #ff8fb3, #c9a0d8);
+      color: #fff; letter-spacing: 1px; vertical-align: middle;
+    }
+
+    /* ── AI Elder chat ── */
+    .elder-wrap {
+      margin-top: 24px;
+    }
+    .elder-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .elder-title-row {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .elder-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #c9a0d8, #7dd4c4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+      box-shadow: 0 0 12px rgba(201,160,216,.3);
+    }
+    .elder-name { color: var(--gold); font-size: 1rem; letter-spacing: 2px; }
+    .elder-sub  { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+    .elder-quota {
+      font-size: .78rem; color: var(--muted); letter-spacing: .5px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .elder-quota-dots { display: flex; gap: 4px; }
+    .elder-quota-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--jade); transition: background .3s;
+    }
+    .elder-quota-dot.used { background: var(--border); }
+
+    .chat-messages {
+      display: flex; flex-direction: column; gap: 14px;
+      max-height: 420px; overflow-y: auto;
+      padding-right: 4px; margin-bottom: 16px;
+    }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .chat-msg {
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .chat-msg.user { flex-direction: row-reverse; }
+
+    .chat-msg-avatar {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+    .chat-msg.ai   .chat-msg-avatar { background: linear-gradient(135deg, #c9a0d8, #7dd4c4); }
+    .chat-msg.user .chat-msg-avatar { background: rgba(255,143,179,.2); border: 1px solid rgba(255,143,179,.3); }
+
+    .chat-msg-bubble {
+      max-width: 80%; padding: 12px 16px; border-radius: 14px;
+      font-size: .88rem; line-height: 1.7; position: relative;
+    }
+    .chat-msg.ai   .chat-msg-bubble {
+      background: rgba(201,160,216,.15);
+      border: 1px solid rgba(201,160,216,.3);
+      border-top-left-radius: 4px;
+      color: var(--text);
+    }
+    .chat-msg.user .chat-msg-bubble {
+      background: rgba(255,143,179,.12);
+      border: 1px solid rgba(255,143,179,.3);
+      border-top-right-radius: 4px;
+      color: var(--text);
+    }
+    .chat-msg-bubble em { color: var(--gold); font-style: normal; }
+    .chat-msg-bubble strong { color: var(--jade); }
+
+    .chat-typing {
+      display: flex; gap: 5px; align-items: center; padding: 6px 0;
+    }
+    .typing-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--muted);
+      animation: typingBounce .9s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: .15s; }
+    .typing-dot:nth-child(3) { animation-delay: .3s; }
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: .4; }
+      30%           { transform: translateY(-6px); opacity: 1; }
+    }
+
+    .chat-input-row {
+      display: flex; gap: 10px; align-items: flex-end;
+    }
+    .chat-input {
+      flex: 1; background: var(--card2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 14px;
+      color: var(--text); font-size: .88rem; resize: none;
+      font-family: inherit; line-height: 1.5; outline: none;
+      transition: border-color .2s;
+      min-height: 44px; max-height: 120px;
+    }
+    .chat-input:focus { border-color: var(--purple); }
+    .chat-input::placeholder { color: var(--muted); }
+    .chat-send-btn {
+      padding: 10px 20px; border-radius: 10px;
+      background: linear-gradient(135deg, #ff8fb3, #7dd4c4);
+      border: none; color: #fff; font-size: .88rem;
+      cursor: pointer; white-space: nowrap; flex-shrink: 0;
+      transition: opacity .2s; font-family: inherit;
+    }
+    .chat-send-btn:hover:not(:disabled) { opacity: .85; }
+    .chat-send-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    .elder-paywall {
+      display: none;
+      margin-top: 12px; padding: 14px 18px;
+      border: 1px solid rgba(255,143,179,.3); border-radius: 10px;
+      background: linear-gradient(90deg, rgba(255,143,179,.08), rgba(201,160,216,.08));
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .paywall-text { font-size: .83rem; color: var(--muted); line-height: 1.5; }
+    .paywall-text strong { color: var(--gold); }
+    .paywall-btn {
+      padding: 8px 20px; border-radius: 20px; flex-shrink: 0;
+      background: linear-gradient(135deg, #ff8fb3, #c9a0d8);
+      border: none; color: #fff; font-size: .82rem;
+      cursor: pointer; font-family: inherit; white-space: nowrap;
+      transition: opacity .2s;
+    }
+    .paywall-btn:hover { opacity: .85; }
+
+    /* ── Misc ── */
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 4px 0 24px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .charts-row { grid-template-columns: 1fr; }
+      .two-col { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .nav-logo { display: none; }
+      .nav-tab { padding: 14px 16px; font-size: .85rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .stat-value { font-size: 1.7rem; }
+      .flip-digit { width: 58px; height: 76px; }
+      .flip-half { font-size: 3rem; }
+      .flip-sep { font-size: .85rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ NAV ════════════════ -->
+<nav class="nav">
+  <div class="nav-logo">✨ 學習報表</div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" data-tab="cultivation" onclick="switchTab(this,'cultivation')">&#9889; 修煉殿</div>
+    <div class="nav-tab"       data-tab="activities"  onclick="switchTab(this,'activities')">&#128220; 功法殿</div>
+    <div class="nav-tab"       data-tab="tribulation" onclick="switchTab(this,'tribulation')">&#9876;&#65039; 渡劫台</div>
+    <div class="nav-tab"       data-tab="ranking"     onclick="switchTab(this,'ranking')">&#10024; 靈榜閣 <span class="pro-badge">PRO</span></div>
+  </div>
+</nav>
+
+<!-- ════════════════ PAGE 1：學習統計 ════════════════ -->
+<div id="page-cultivation" class="page active">
+
+  <!-- Stat cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">累計修煉時長</div>
+      <div class="stat-value">71.3</div>
+      <div class="stat-unit">小時</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">修煉次數</div>
+      <div class="stat-value">156</div>
+      <div class="stat-unit">次</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">日均修煉時長</div>
+      <div class="stat-value">68</div>
+      <div class="stat-unit">分鐘 / 天</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">修煉中斷（放棄學習）</div>
+      <div class="stat-value danger">23</div>
+      <div class="stat-unit">次</div>
+    </div>
+  </div>
+
+  <!-- Radar + Hourly -->
+  <div class="charts-row">
+    <div class="card">
+      <div class="card-title">五行修煉分布圖</div>
+      <canvas id="wuxingChart"></canvas>
+      <div class="wuxing-legend">
+        <div class="wuxing-item"><div class="wuxing-dot" style="background:#d4af37"></div><span style="color:#d4af37">金</span>&nbsp;數學</div>
+        <div class="wuxing-item"><div class="wuxing-dot" style="background:#4aaa4a"></div><span style="color:#4aaa4a">木</span>&nbsp;國文</div>
+        <div class="wuxing-item"><div class="wuxing-dot" style="background:#5a8ade"></div><span style="color:#5a8ade">水</span>&nbsp;英文</div>
+        <div class="wuxing-item"><div class="wuxing-dot" style="background:#e05a5a"></div><span style="color:#e05a5a">火</span>&nbsp;理化</div>
+        <div class="wuxing-item"><div class="wuxing-dot" style="background:#d4884a"></div><span style="color:#d4884a">土</span>&nbsp;社會</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">修煉時段分布</div>
+      <div class="toggle-group" id="hourlyToggle" style="margin-bottom:12px;">
+        <button class="toggle-btn active" onclick="switchHourlyMode('hour',this)">24小時</button>
+        <button class="toggle-btn"        onclick="switchHourlyMode('weekday',this)">星期累積</button>
+      </div>
+      <canvas id="hourlyChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Daily/Weekly/Monthly toggle -->
+  <div class="card chart-full">
+    <div class="card-title">修煉分布</div>
+    <div class="toggle-group" id="periodToggle">
+      <button class="toggle-btn active" onclick="switchPeriod('day',this)">天</button>
+      <button class="toggle-btn"        onclick="switchPeriod('week',this)">週</button>
+      <button class="toggle-btn"        onclick="switchPeriod('month',this)">月</button>
+      <button class="toggle-btn"        onclick="switchPeriod('year',this)">年</button>
+    </div>
+    <div class="date-nav" id="dateNav">
+      <button class="date-nav-btn" onclick="navigateDate(-1)">&#8249;</button>
+      <span class="date-nav-label" id="dateNavLabel"></span>
+      <button class="date-nav-btn" onclick="navigateDate(1)">&#8250;</button>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:8px;">
+      <div class="stat-card">
+        <div class="stat-label">修煉時長</div>
+        <div class="stat-value" id="distDuration">—</div>
+        <div class="stat-unit" id="distDurationUnit">分鐘</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">修煉次數</div>
+        <div class="stat-value" id="distCount">—</div>
+        <div class="stat-unit">次</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">中斷次數</div>
+        <div class="stat-value danger" id="distInterrupt">—</div>
+        <div class="stat-unit">次</div>
+      </div>
+    </div>
+    <div class="toggle-group" id="metricToggle" style="margin-top:16px;">
+      <button class="toggle-btn active" onclick="switchMetric('duration',this)">修煉時長</button>
+      <button class="toggle-btn"        onclick="switchMetric('count',this)">修煉次數</button>
+      <button class="toggle-btn"        onclick="switchMetric('interrupt',this)">中斷次數</button>
+    </div>
+    <canvas id="durationChart"></canvas>
+  </div>
+
+</div><!-- /page-cultivation -->
+
+
+<!-- ════════════════ PAGE 2：活動與推薦 ════════════════ -->
+<div id="page-activities" class="page">
+  <div class="two-col">
+
+    <!-- Calendar -->
+    <div class="card">
+      <div class="card-title">學習活動日誌</div>
+      <div class="calendar-nav">
+        <button class="calendar-btn" onclick="changeMonth(-1)">&#8249; 上月</button>
+        <div class="calendar-month" id="calTitle"></div>
+        <button class="calendar-btn" onclick="changeMonth(1)">下月 &#8250;</button>
+      </div>
+      <div class="calendar-grid" id="calGrid"></div>
+      <div style="margin-top:14px; font-size:.78rem; color:var(--muted); display:flex; align-items:center; gap:6px;">
+        <span style="color:var(--jade);">✦</span> 有學習活動&nbsp;&nbsp;
+        <span style="display:inline-block;width:12px;height:12px;background:rgba(200,160,80,.18);border:1px solid rgba(200,160,80,.6);border-radius:3px;"></span> 今日
+      </div>
+    </div>
+
+    <!-- Upcoming events -->
+    <div class="card">
+      <div class="card-title">近期活動推薦</div>
+      <div class="event-list" id="eventList"></div>
+    </div>
+
+  </div>
+
+  <!-- AI 長老提點 -->
+  <div class="card elder-wrap" style="margin-top:24px;">
+    <div class="elder-header">
+      <div class="elder-title-row">
+        <div class="elder-avatar">🧙</div>
+        <div>
+          <div class="elder-name">AI 長老提點</div>
+          <div class="elder-sub">依你的活動參與紀錄，給予學習方向建議</div>
+        </div>
+      </div>
+      <div class="elder-quota">
+        <span>今日問詢</span>
+        <div class="elder-quota-dots" id="quotaDots"></div>
+        <span id="quotaText"></span>
+      </div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="chat-input-row">
+      <textarea class="chat-input" id="chatInput" rows="1"
+        placeholder="向長老問詢修行之道…（按 Enter 送出，Shift+Enter 換行）"
+        onkeydown="handleChatKey(event)"></textarea>
+      <button class="chat-send-btn" id="chatSendBtn" onclick="sendChat()">問詢</button>
+    </div>
+
+    <div class="elder-paywall" id="elderPaywall" style="display:none;">
+      <div class="paywall-text">
+        免費問詢額度已用盡。如需<strong>深度指引</strong>，可開通「長老傳承」方案，每次問詢僅需 <strong>1 靈石</strong>，上限 10 次對話。
+      </div>
+      <button class="paywall-btn" onclick="unlockPaid()">✦ 靈石解鎖</button>
+    </div>
+  </div>
+
+</div><!-- /page-activities -->
+
+
+<!-- ════════════════ PAGE 3：考試倒計時 ════════════════ -->
+<div id="page-tribulation" class="page">
+  <div class="trib-wrap">
+    <div class="trib-title">天&#20551;倒計時</div>
+    <div class="trib-subtitle" id="tribSubtitle">距離【大學學測】還有</div>
+
+    <!-- Flip counter -->
+    <div class="flip-counter" id="flipCounter"></div>
+
+    <!-- Progress bar -->
+    <div class="card prog-section">
+      <div class="card-title">渡劫進度</div>
+      <div class="prog-track">
+        <div class="prog-fill"  id="progFill"></div>
+        <div class="prog-char"  id="progChar"></div>
+      </div>
+      <div class="prog-foot">
+        <span>&#9889; 考試日</span>
+        <span>起始</span>
+      </div>
+      <div class="prog-info" id="progInfo"></div>
+    </div>
+
+    <div class="danger-banner" id="dangerBanner">
+      &#9888;&#65039; 天劫臨近，望道友速速閉關修煉，切莫分心！
+    </div>
+  </div>
+</div><!-- /page-tribulation -->
+
+
+<!-- ════════════════ PAGE 4：排行榜 ════════════════ -->
+<div id="page-ranking" class="page">
+  <div class="pro-banner">
+    ✦ 靈榜閣 · 天下修士排行 ✦ &nbsp;<span class="pro-badge">PRO</span>&nbsp; 靈石解鎖專屬秘境
+  </div>
+
+  <!-- Live stats -->
+  <div class="live-row">
+    <div class="live-card">
+      <div class="live-dot"></div>
+      <div>
+        <div class="live-num" id="liveOnline">—</div>
+        <div class="live-label">修士正在修煉中</div>
+      </div>
+    </div>
+    <div class="live-card">
+      <div style="font-size:1.4rem;line-height:1;">⚡</div>
+      <div>
+        <div class="live-num" id="liveRecent">—</div>
+        <div class="live-label">修士已於一小時內完成修煉</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toggle-group" id="rankPeriodToggle">
+    <button class="toggle-btn" onclick="switchRankPeriod('day',this)">日</button>
+    <button class="toggle-btn" onclick="switchRankPeriod('week',this)">週</button>
+    <button class="toggle-btn" onclick="switchRankPeriod('month',this)">月</button>
+    <button class="toggle-btn" onclick="switchRankPeriod('year',this)">年</button>
+    <button class="toggle-btn active" onclick="switchRankPeriod('total',this)">總</button>
+  </div>
+
+  <div class="charts-row">
+
+    <!-- 全服榜 -->
+    <div class="card">
+      <div class="card-title" id="rankGlobalTitle">全服修煉榜 · TOP 10</div>
+      <div class="rank-list" id="rankGlobal"></div>
+    </div>
+
+    <!-- 同校榜 -->
+    <div class="card">
+      <div class="card-title" id="rankSchoolTitle">同校修煉榜 · TOP 10</div>
+      <div class="rank-list" id="rankSchool"></div>
+    </div>
+
+  </div>
+
+  <div class="charts-row" style="margin-top:16px;">
+
+    <!-- 同境去向榜 -->
+    <div class="card">
+      <div class="card-title">同境去向榜 · TOP 10</div>
+      <div style="font-size:.78rem; color:var(--muted); margin-bottom:12px; letter-spacing:.5px;">與你成績相近的修士，最終飛升至何處</div>
+      <div class="rank-list" id="rankScorePeers"></div>
+    </div>
+
+    <!-- 同道去向榜 -->
+    <div class="card">
+      <div class="card-title">同道去向榜 · TOP 10</div>
+      <div style="font-size:.78rem; color:var(--muted); margin-bottom:12px; letter-spacing:.5px;">與你同參法會的修士，最終飛升至何處</div>
+      <div class="rank-list" id="rankActivityPeers"></div>
+    </div>
+
+  </div>
+</div><!-- /page-ranking -->
+
+
+<!-- ════════════════ SCRIPTS ════════════════ -->
+<script>
+// ── Mock Data ───────────────────────────────────────────────────────────────
+const D = {
+  wuxing: { '金\n數學': 45, '木\n國文': 38, '水\n英文': 52, '火\n理化': 29, '土\n社會': 35 },
+
+  hourly: [0,0,0,0,0,3,8,18,38,50,55,40,25,18,60,75,52,30,68,88,80,58,28,6],
+
+  daily: [
+    45,90,120,30,75,110,85,60,95,130,
+    80,45,105,90,70,115,60,85,100,75,
+    130,45,90,110,80,60,95,120,85,70
+  ],
+  weeklyLabels:  ['第1週','第2週','第3週','第4週','第5週','第6週','第7週','第8週','第9週','第10週','第11週','第12週'],
+  weeklyValues:  [380,520,440,610,490,570,430,660,510,590,480,625],
+  monthlyLabels: ['10月','11月','12月','1月','2月','3月'],
+  monthlyValues: [2840,3120,2680,3450,2950,3280],
+
+  weekdayDuration:  [312, 285, 340, 298, 375, 210, 180], // 一～日，單位分鐘
+
+  hourlyCount:      [0,0,0,0,0,1,2,3,4,5,5,4,2,2,5,6,5,3,6,7,7,5,2,1],
+  hourlyInterrupts: [0,0,0,0,0,0,1,1,2,2,2,1,1,1,2,3,2,1,2,3,2,2,1,0],
+  weeklyCount:      [12,18,15,21,17,19,15,23,18,20,16,22],
+  weeklyInterrupts: [3,4,3,5,4,4,3,5,4,5,3,5],
+  dailyCount:       [2,4,5,1,3,4,3,2,4,5,3,2,4,3,2,4,2,3,4,3,5,2,3,4,3,2,4,5,3,2],
+  dailyInterrupts:  [1,1,2,0,1,2,1,1,2,2,1,0,2,1,1,2,1,1,2,1,2,0,1,2,1,1,2,2,1,1],
+  yearlyDuration:   [2840,3120,2680,3450,2950,3280,2750,3100,2900,3200,2800,3050],
+  yearlyCount:      [62,68,54,82,71,78,65,74,70,76,66,72],
+  yearlyInterrupts: [14,18,12,21,16,19,13,17,15,18,14,16],
+
+  activities: {
+    '2026-03-05': ['數學模擬考'],
+    '2026-03-08': ['英文寫作工作坊'],
+    '2026-03-09': ['台大醫院志工服務'],
+    '2026-03-12': ['物理實驗課'],
+    '2026-03-14': ['青年科學研討會（聽講）'],
+    '2026-03-15': ['校內演講比賽'],
+    '2026-03-18': ['自習室讀書會'],
+    '2026-03-20': ['學科能力測驗講座'],
+    '2026-03-22': ['國文閱讀測驗練習'],
+    '2026-03-23': ['台大醫院志工服務'],
+    '2026-03-25': ['自主複習'],
+    '2026-03-28': ['週考（數學＋理化）'],
+    '2026-02-14': ['寒假自習衝刺'],
+    '2026-02-22': ['英文聽力加強課'],
+    '2026-04-03': ['化學實驗觀摩'],
+    '2026-04-05': ['台大醫院志工服務'],
+    '2026-04-10': ['全校模擬考'],
+    '2026-04-19': ['高中生科學研討會（發表）'],
+  },
+
+  upcoming: [
+    { month:'03', day:'28', name:'週考（數學＋理化）',       desc:'根據近期練習題紀錄推薦重點',      badge:'週考',   color:'var(--jade)'   },
+    { month:'04', day:'05', name:'台大醫院志工服務',         desc:'固定每兩週一次，累計時數 12 hr',   badge:'志工',   color:'#e05a5a'       },
+    { month:'04', day:'10', name:'全校模擬考',               desc:'距學測剩 45 天，建議全力衝刺',     badge:'模擬考', color:'var(--purple)' },
+    { month:'04', day:'19', name:'高中生科學研討會（發表）', desc:'根據青年科學研討會參與紀錄推薦',   badge:'研討會', color:'var(--blue)'   },
+  ],
+
+  trib: { daysLeft: 45, totalDays: 90, examName: '大學學測' }
+};
+
+// ── Chart: Radar (五行) ──────────────────────────────────────────────────────
+new Chart(document.getElementById('wuxingChart'), {
+  type: 'radar',
+  data: {
+    labels: Object.keys(D.wuxing),
+    datasets: [{
+      data: Object.values(D.wuxing),
+      backgroundColor: 'rgba(200,160,80,.12)',
+      borderColor: '#c8a050',
+      borderWidth: 2,
+      pointBackgroundColor: ['#d4af37','#4aaa4a','#5a8ade','#e05a5a','#d4884a'],
+      pointBorderColor: '#fff',
+      pointRadius: 5,
+      pointHoverRadius: 7,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      r: {
+        min: 0, max: 60,
+        ticks: { color: '#6a6080', backdropColor: 'transparent', stepSize: 20, font: { size: 10 } },
+        grid: { color: 'rgba(255,255,255,.08)' },
+        angleLines: { color: 'rgba(255,255,255,.08)' },
+        pointLabels: { color: '#d8ccc0', font: { size: 12 } }
+      }
+    }
+  }
+});
+
+// ── Chart: Hourly ────────────────────────────────────────────────────────────
+let hourlyChartInst;
+
+function buildHourlyChart(mode) {
+  const isHour = mode === 'hour';
+  const labels = isHour
+    ? Array.from({length:24}, (_,i) => i%4===0 ? `${i}時` : '')
+    : ['一','二','三','四','五','六','日'];
+  const data = isHour ? D.hourly : D.weekdayDuration;
+  const colors = isHour
+    ? data.map(v => v>=70 ? 'rgba(200,160,80,.85)' : v>=45 ? 'rgba(58,138,120,.8)' : v>=20 ? 'rgba(74,112,200,.7)' : 'rgba(100,90,130,.5)')
+    : ['rgba(74,112,200,.75)','rgba(74,112,200,.75)','rgba(74,112,200,.75)','rgba(74,112,200,.75)','rgba(74,112,200,.75)','rgba(58,138,120,.75)','rgba(58,138,120,.75)'];
+  const tooltipTitle = isHour
+    ? items => `${items[0].dataIndex}:00 ~ ${items[0].dataIndex+1}:00`
+    : items => `星期${items[0].label}`;
+
+  if (hourlyChartInst) hourlyChartInst.destroy();
+  hourlyChartInst = new Chart(document.getElementById('hourlyChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: colors,
+        borderRadius: 4,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: tooltipTitle,
+            label: item => ` 修煉 ${item.raw} 分鐘`
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { color:'#6a6080', font:{size:10} }, grid: { color:'rgba(255,255,255,.04)' } },
+        y: { ticks: { color:'#6a6080' }, grid: { color:'rgba(255,255,255,.04)' } }
+      }
+    }
+  });
+}
+
+function switchHourlyMode(mode, btn) {
+  document.querySelectorAll('#hourlyToggle .toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildHourlyChart(mode);
+}
+
+buildHourlyChart('hour');
+
+// ── Distribution Stats + Chart ────────────────────────────────────────────────
+let durationChart;
+let currentPeriod = 'day';
+let currentMetric = 'duration';
+let selectedDate  = new Date(2026, 2, 25);
+let selectedWeek  = new Date(2026, 2, 23); // 週一
+let selectedMonth = new Date(2026, 2, 1);
+let selectedYear  = 2026;
+
+const DAY_NAMES = ['日','一','二','三','四','五','六'];
+
+function seedValues(date, source, scale) {
+  const seed = date.getFullYear() * 10000 + (date.getMonth()+1) * 100 + date.getDate();
+  const shift = seed % source.length;
+  return source.map((v, i) => {
+    const varied = source[(i + shift) % source.length];
+    return Math.max(0, Math.round(varied * (scale + (((seed * (i+7)) % 100) / (scale > 0.75 ? 167 : 500)))));
+  });
+}
+
+function getWeekValues(weekStart, source) {
+  const labels = [], values = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + i);
+    labels.push(`${d.getMonth()+1}/${d.getDate()}(${DAY_NAMES[d.getDay()]})`);
+    values.push(source[(d.getDate() - 1) % source.length]);
+  }
+  return { labels, values };
+}
+
+function getMonthValues(monthDate, source) {
+  const y = monthDate.getFullYear(), m = monthDate.getMonth();
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const labels = [], values = [];
+  for (let d = 1; d <= daysInMonth; d++) {
+    labels.push(d % 5 === 1 ? `${d}日` : '');
+    values.push(source[(d - 1) % source.length]);
+  }
+  return { labels, values };
+}
+
+function updateDateNav() {
+  const nav   = document.getElementById('dateNav');
+  const label = document.getElementById('dateNavLabel');
+  if (currentPeriod === 'day') {
+    const y = selectedDate.getFullYear();
+    const m = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const d = String(selectedDate.getDate()).padStart(2, '0');
+    label.textContent = `${y} / ${m} / ${d}`;
+  } else if (currentPeriod === 'week') {
+    const end = new Date(selectedWeek.getFullYear(), selectedWeek.getMonth(), selectedWeek.getDate() + 6);
+    const fmt = d => `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+    label.textContent = `${fmt(selectedWeek)} ～ ${fmt(end)}`;
+  } else if (currentPeriod === 'month') {
+    const y = selectedMonth.getFullYear(), mo = selectedMonth.getMonth();
+    const ms = String(mo + 1).padStart(2, '0');
+    const lastDay = new Date(y, mo + 1, 0).getDate();
+    label.textContent = `${y}/${ms}/01 ～ ${y}/${ms}/${String(lastDay).padStart(2, '0')}`;
+  } else {
+    label.textContent = `${selectedYear} 年`;
+  }
+  nav.style.display = '';
+}
+
+function buildDuration(period) {
+  let labels, durVals, cntVals, intVals;
+
+  if (period === 'day') {
+    labels  = Array.from({length: 24}, (_, i) => i % 4 === 0 ? `${i}時` : '');
+    durVals = seedValues(selectedDate, D.hourly, 0.7);
+    cntVals = seedValues(selectedDate, D.hourlyCount, 0.8);
+    intVals = seedValues(selectedDate, D.hourlyInterrupts, 0.8);
+  } else if (period === 'week') {
+    const dur = getWeekValues(selectedWeek, D.daily);
+    const cnt = getWeekValues(selectedWeek, D.dailyCount);
+    const int = getWeekValues(selectedWeek, D.dailyInterrupts);
+    labels = dur.labels; durVals = dur.values; cntVals = cnt.values; intVals = int.values;
+  } else if (period === 'month') {
+    const dur = getMonthValues(selectedMonth, D.daily);
+    const cnt = getMonthValues(selectedMonth, D.dailyCount);
+    const int = getMonthValues(selectedMonth, D.dailyInterrupts);
+    labels = dur.labels; durVals = dur.values; cntVals = cnt.values; intVals = int.values;
+  } else {
+    labels  = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+    durVals = D.yearlyDuration;
+    cntVals = D.yearlyCount;
+    intVals = D.yearlyInterrupts;
+  }
+
+  // Summary numbers
+  const totalDur = durVals.reduce((a, b) => a + b, 0);
+  const durEl = document.getElementById('distDuration');
+  const unitEl = document.getElementById('distDurationUnit');
+  if (totalDur >= 60) { durEl.textContent = (totalDur / 60).toFixed(1); unitEl.textContent = '小時'; }
+  else                { durEl.textContent = totalDur; unitEl.textContent = '分鐘'; }
+  document.getElementById('distCount').textContent     = cntVals.reduce((a, b) => a + b, 0);
+  document.getElementById('distInterrupt').textContent = intVals.reduce((a, b) => a + b, 0);
+
+  // Chart dataset
+  let values, colors, tooltipLabel;
+  if (currentMetric === 'duration') {
+    values = durVals;
+    colors = period === 'day'
+      ? durVals.map(v => v >= 70 ? 'rgba(200,160,80,.85)' : v >= 45 ? 'rgba(58,138,120,.8)' : v >= 20 ? 'rgba(74,112,200,.7)' : 'rgba(100,90,130,.5)')
+      : 'rgba(58,138,120,.65)';
+    tooltipLabel = item => ` 修煉 ${item.raw} 分鐘`;
+  } else if (currentMetric === 'count') {
+    values = cntVals; colors = 'rgba(122,90,170,.7)';
+    tooltipLabel = item => ` 修煉 ${item.raw} 次`;
+  } else {
+    values = intVals; colors = 'rgba(200,64,64,.7)';
+    tooltipLabel = item => ` 中斷 ${item.raw} 次`;
+  }
+
+  updateDateNav();
+  if (durationChart) durationChart.destroy();
+  durationChart = new Chart(document.getElementById('durationChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: colors,
+        borderColor: Array.isArray(colors) ? colors.map(c => c.replace(/[\d.]+\)$/, '1)')) : colors.replace(/[\d.]+\)$/, '1)'),
+        borderWidth: 1, borderRadius: 5, borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: items => period === 'day'
+              ? `${items[0].dataIndex}:00 ~ ${items[0].dataIndex+1}:00`
+              : items[0].label,
+            label: tooltipLabel
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { color:'#6a6080', maxRotation: period === 'week' ? 30 : 0 }, grid: { color:'rgba(255,255,255,.04)' } },
+        y: { ticks: { color:'#6a6080' }, grid: { color:'rgba(255,255,255,.04)' } }
+      }
+    }
+  });
+}
+buildDuration('day');
+
+function navigateDate(delta) {
+  if (currentPeriod === 'day') {
+    selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + delta);
+  } else if (currentPeriod === 'week') {
+    selectedWeek = new Date(selectedWeek.getFullYear(), selectedWeek.getMonth(), selectedWeek.getDate() + delta * 7);
+  } else if (currentPeriod === 'month') {
+    selectedMonth = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + delta, 1);
+  } else {
+    selectedYear += delta;
+  }
+  buildDuration(currentPeriod);
+}
+
+function switchPeriod(period, btn) {
+  currentPeriod = period;
+  document.querySelectorAll('#periodToggle .toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildDuration(period);
+}
+
+function switchMetric(metric, btn) {
+  currentMetric = metric;
+  document.querySelectorAll('#metricToggle .toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildDuration(currentPeriod);
+}
+
+// ── Calendar ─────────────────────────────────────────────────────────────────
+let calDate = new Date(2026, 2, 1); // March 2026
+const CN_MONTHS = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+
+function renderCal() {
+  const yr = calDate.getFullYear(), mo = calDate.getMonth();
+  document.getElementById('calTitle').textContent = `${yr} 年 ${CN_MONTHS[mo]}`;
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  ['日','一','二','三','四','五','六'].forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'cal-header'; el.textContent = d;
+    grid.appendChild(el);
+  });
+
+  const firstDay  = new Date(yr, mo, 1).getDay();
+  const daysInMo  = new Date(yr, mo+1, 0).getDate();
+  const today     = new Date();
+
+  for (let i = 0; i < firstDay; i++) {
+    const el = document.createElement('div'); el.className = 'cal-day empty';
+    grid.appendChild(el);
+  }
+  for (let d = 1; d <= daysInMo; d++) {
+    const el   = document.createElement('div');
+    el.className = 'cal-day';
+    const key  = `${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = today.getFullYear()===yr && today.getMonth()===mo && today.getDate()===d;
+    if (isToday)           el.classList.add('today');
+    if (D.activities[key]) el.classList.add('has-event');
+    el.innerHTML = `<span>${d}</span>`;
+    if (D.activities[key]) {
+      const tip = document.createElement('div');
+      tip.className = 'cal-tooltip';
+      tip.textContent = D.activities[key].join(' / ');
+      el.appendChild(tip);
+    }
+    grid.appendChild(el);
+  }
+}
+function changeMonth(delta) {
+  calDate = new Date(calDate.getFullYear(), calDate.getMonth() + delta, 1);
+  renderCal();
+}
+renderCal();
+
+// ── Upcoming events ───────────────────────────────────────────────────────────
+const eList = document.getElementById('eventList');
+D.upcoming.forEach(e => {
+  const el = document.createElement('div');
+  el.className = 'event-item';
+  el.style.borderLeftColor = e.color;
+  el.innerHTML = `
+    <div class="event-date">
+      <div class="e-month">${e.month}月</div>
+      <div class="e-day" style="color:${e.color}">${e.day}</div>
+    </div>
+    <div style="flex:1">
+      <div class="event-name">${e.name}</div>
+      <div class="event-desc">${e.desc}</div>
+      <span class="event-badge" style="color:${e.color};border-color:${e.color};background:transparent;">${e.badge}</span>
+    </div>`;
+  eList.appendChild(el);
+});
+
+// ── Tribulation ───────────────────────────────────────────────────────────────
+function renderTrib() {
+  const { daysLeft, totalDays, examName } = D.trib;
+  document.getElementById('tribSubtitle').textContent = `距離【${examName}】還有`;
+
+  // Flip counter
+  const counter = document.getElementById('flipCounter');
+  counter.innerHTML = '';
+  String(daysLeft).padStart(3,'0').split('').forEach(ch => {
+    const wrap = document.createElement('div');
+    wrap.className = 'flip-digit';
+    wrap.innerHTML = `<div class="flip-half top">${ch}</div><div class="flip-half bot">${ch}</div>`;
+    counter.appendChild(wrap);
+  });
+  const sep = document.createElement('div');
+  sep.className = 'flip-sep'; sep.textContent = '天';
+  counter.appendChild(sep);
+
+  // Progress
+  const pct = daysLeft / totalDays;
+  document.getElementById('progFill').style.width = `${pct*100}%`;
+  const charEl = document.getElementById('progChar');
+  charEl.style.left = `${pct*100}%`;
+
+  let mood, msg;
+  if      (pct > .66) { mood = '🧘'; msg = '境界穩固，修為充沛，渡劫在望。'; }
+  else if (pct > .33) { mood = '😤'; msg = '天劫之期漸近，需加緊修煉，切莫鬆懈！'; }
+  else if (pct > .10) { mood = '😰'; msg = '⚡ 危機迫近！速速閉關，全力衝刺！';
+    document.getElementById('dangerBanner').style.display = 'block'; }
+  else                { mood = '😱'; msg = '🚨 天劫就在眼前！緊急閉關，生死一搏！';
+    document.getElementById('dangerBanner').style.display = 'block'; }
+
+  charEl.textContent = mood;
+  const info = document.getElementById('progInfo');
+  info.textContent = msg;
+  info.style.color = pct < .33 ? 'var(--red)' : 'var(--text)';
+}
+renderTrib();
+
+// ── Ranking ───────────────────────────────────────────────────────────────────
+const RANK_GLOBAL = [
+  { name:'劍破蒼穹', school:'天元仙院',   hours:1234 },
+  { name:'天道無常', school:'玄靈道宗',   hours:1198 },
+  { name:'靈虛子',   school:'清雲修真院', hours:1156 },
+  { name:'紫雷真人', school:'玄靈道宗',   hours:1089 },
+  { name:'玄冥道君', school:'天元仙院',   hours:1043 },
+  { name:'破天一刀', school:'萬象宗',     hours:998  },
+  { name:'太虛散人', school:'清雲修真院', hours:956  },
+  { name:'混元老祖', school:'萬象宗',     hours:912  },
+  { name:'逍遙子',   school:'清雲修真院', hours:878  },
+  { name:'無名小卒', school:'天元仙院',   hours:834  },
+];
+
+const RANK_SCHOOL = [
+  { name:'靈虛子',   hours:1156, me:false },
+  { name:'太虛散人', hours:956,  me:false },
+  { name:'逍遙子',   hours:878,  me:false },
+  { name:'清風道長', hours:756,  me:false },
+  { name:'天機子',   hours:712,  me:false },
+  { name:'玄武真人', hours:689,  me:false },
+  { name:'白鶴仙人', hours:645,  me:false },
+  { name:'問劍客',   hours:601,  me:false },
+  { name:'紅塵過客', hours:578,  me:false },
+  { name:'吾（你）', hours:534,  me:true  },
+];
+
+const MEDALS = ['🥇','🥈','🥉'];
+
+function renderRankList(containerId, items, showSchool, unit = '小時') {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  items.forEach((item, idx) => {
+    const rank = idx + 1;
+    const div = document.createElement('div');
+    div.className = 'rank-item' + (rank <= 3 ? ` rank-${rank}` : '') + (item.me ? ' rank-me' : '');
+    const numHtml = rank <= 3
+      ? `<div class="rank-num">${MEDALS[idx]}</div>`
+      : `<div class="rank-num plain">${rank}</div>`;
+    const schoolHtml = showSchool ? `<div class="rank-school">${item.school}</div>` : '';
+    const meTag = item.me ? ' <span style="font-size:.7rem;color:var(--jade);">· 你</span>' : '';
+    div.innerHTML = `
+      ${numHtml}
+      <div class="rank-name">
+        <div>${item.name}${meTag}</div>
+        ${schoolHtml}
+      </div>
+      <div class="rank-hours">${item.hours.toLocaleString()}<span>${unit}</span></div>`;
+    el.appendChild(div);
+  });
+}
+
+// ── Ranking period data ───────────────────────────────────────────────────────
+const RANK_PERIODS = {
+  day: {
+    global: [
+      { name:'劍破蒼穹', school:'天元仙院',   hours:9.2 },
+      { name:'靈虛子',   school:'清雲修真院', hours:8.8 },
+      { name:'天道無常', school:'玄靈道宗',   hours:8.1 },
+      { name:'破天一刀', school:'萬象宗',     hours:7.9 },
+      { name:'太虛散人', school:'清雲修真院', hours:7.5 },
+      { name:'紫雷真人', school:'玄靈道宗',   hours:7.2 },
+      { name:'玄冥道君', school:'天元仙院',   hours:6.8 },
+      { name:'混元老祖', school:'萬象宗',     hours:6.5 },
+      { name:'逍遙子',   school:'清雲修真院', hours:6.1 },
+      { name:'無名小卒', school:'天元仙院',   hours:5.8 },
+    ],
+    school: [
+      { name:'靈虛子',   hours:8.8, me:false },
+      { name:'太虛散人', hours:7.5, me:false },
+      { name:'逍遙子',   hours:6.1, me:false },
+      { name:'清風道長', hours:5.8, me:false },
+      { name:'天機子',   hours:5.4, me:false },
+      { name:'玄武真人', hours:5.0, me:false },
+      { name:'白鶴仙人', hours:4.8, me:false },
+      { name:'問劍客',   hours:4.5, me:false },
+      { name:'紅塵過客', hours:4.2, me:false },
+      { name:'吾（你）', hours:3.8, me:true  },
+    ],
+    unit: '小時',
+    label: '今日',
+  },
+  week: {
+    global: [
+      { name:'天道無常', school:'玄靈道宗',   hours:58 },
+      { name:'劍破蒼穹', school:'天元仙院',   hours:54 },
+      { name:'靈虛子',   school:'清雲修真院', hours:51 },
+      { name:'紫雷真人', school:'玄靈道宗',   hours:48 },
+      { name:'玄冥道君', school:'天元仙院',   hours:45 },
+      { name:'太虛散人', school:'清雲修真院', hours:43 },
+      { name:'破天一刀', school:'萬象宗',     hours:41 },
+      { name:'逍遙子',   school:'清雲修真院', hours:38 },
+      { name:'混元老祖', school:'萬象宗',     hours:36 },
+      { name:'無名小卒', school:'天元仙院',   hours:33 },
+    ],
+    school: [
+      { name:'靈虛子',   hours:51, me:false },
+      { name:'太虛散人', hours:43, me:false },
+      { name:'逍遙子',   hours:38, me:false },
+      { name:'清風道長', hours:35, me:false },
+      { name:'天機子',   hours:32, me:false },
+      { name:'玄武真人', hours:30, me:false },
+      { name:'白鶴仙人', hours:28, me:false },
+      { name:'問劍客',   hours:26, me:false },
+      { name:'紅塵過客', hours:24, me:false },
+      { name:'吾（你）', hours:22, me:true  },
+    ],
+    unit: '小時',
+    label: '本週',
+  },
+  month: {
+    global: [
+      { name:'劍破蒼穹', school:'天元仙院',   hours:198 },
+      { name:'天道無常', school:'玄靈道宗',   hours:185 },
+      { name:'靈虛子',   school:'清雲修真院', hours:172 },
+      { name:'紫雷真人', school:'玄靈道宗',   hours:164 },
+      { name:'玄冥道君', school:'天元仙院',   hours:158 },
+      { name:'破天一刀', school:'萬象宗',     hours:149 },
+      { name:'太虛散人', school:'清雲修真院', hours:142 },
+      { name:'混元老祖', school:'萬象宗',     hours:136 },
+      { name:'逍遙子',   school:'清雲修真院', hours:128 },
+      { name:'無名小卒', school:'天元仙院',   hours:121 },
+    ],
+    school: [
+      { name:'靈虛子',   hours:172, me:false },
+      { name:'太虛散人', hours:142, me:false },
+      { name:'逍遙子',   hours:128, me:false },
+      { name:'清風道長', hours:118, me:false },
+      { name:'天機子',   hours:109, me:false },
+      { name:'玄武真人', hours:102, me:false },
+      { name:'白鶴仙人', hours:96,  me:false },
+      { name:'問劍客',   hours:89,  me:false },
+      { name:'紅塵過客', hours:84,  me:false },
+      { name:'吾（你）', hours:71,  me:true  },
+    ],
+    unit: '小時',
+    label: '本月',
+  },
+  year: {
+    global: [
+      { name:'劍破蒼穹', school:'天元仙院',   hours:2180 },
+      { name:'天道無常', school:'玄靈道宗',   hours:2045 },
+      { name:'靈虛子',   school:'清雲修真院', hours:1920 },
+      { name:'紫雷真人', school:'玄靈道宗',   hours:1834 },
+      { name:'玄冥道君', school:'天元仙院',   hours:1756 },
+      { name:'破天一刀', school:'萬象宗',     hours:1682 },
+      { name:'太虛散人', school:'清雲修真院', hours:1604 },
+      { name:'混元老祖', school:'萬象宗',     hours:1531 },
+      { name:'逍遙子',   school:'清雲修真院', hours:1458 },
+      { name:'無名小卒', school:'天元仙院',   hours:1385 },
+    ],
+    school: [
+      { name:'靈虛子',   hours:1920, me:false },
+      { name:'太虛散人', hours:1604, me:false },
+      { name:'逍遙子',   hours:1458, me:false },
+      { name:'清風道長', hours:1312, me:false },
+      { name:'天機子',   hours:1210, me:false },
+      { name:'玄武真人', hours:1148, me:false },
+      { name:'白鶴仙人', hours:1086, me:false },
+      { name:'問劍客',   hours:1024, me:false },
+      { name:'紅塵過客', hours:968,  me:false },
+      { name:'吾（你）', hours:856,  me:true  },
+    ],
+    unit: '小時',
+    label: '今年',
+  },
+  total: {
+    global: RANK_GLOBAL,
+    school: RANK_SCHOOL,
+    unit: '小時',
+    label: '累計',
+  },
+};
+
+const RANK_PERIOD_LABELS = { day:'日', week:'週', month:'月', year:'年', total:'總' };
+let currentRankPeriod = 'total';
+
+function switchRankPeriod(period, btn) {
+  currentRankPeriod = period;
+  document.querySelectorAll('#rankPeriodToggle .toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderRankPeriod(period);
+}
+
+function renderRankPeriod(period) {
+  const pd = RANK_PERIODS[period];
+  const label = RANK_PERIOD_LABELS[period];
+  document.getElementById('rankGlobalTitle').textContent = `全服修煉榜 · ${label} · TOP 10`;
+  document.getElementById('rankSchoolTitle').textContent = `同校修煉榜 · ${label} · TOP 10`;
+  renderRankList('rankGlobal', pd.global, true,  pd.unit);
+  renderRankList('rankSchool', pd.school, false, pd.unit);
+}
+
+renderRankPeriod('total');
+
+const RANK_SCORE_PEERS = [
+  { name:'劍心問道',   score:415, school:'台灣大學',     dept:'資訊工程學系' },
+  { name:'天青墨痕',   score:414, school:'台灣大學',     dept:'電機工程學系' },
+  { name:'清塵散人',   score:413, school:'陽明交通大學', dept:'資訊工程學系' },
+  { name:'星河渡客',   score:412, school:'清華大學',     dept:'數學系' },
+  { name:'雲深不知處', score:412, school:'成功大學',     dept:'電機工程學系' },
+  { name:'曉風殘月',   score:411, school:'政治大學',     dept:'法律學系' },
+  { name:'踏雪尋梅',   score:411, school:'中山大學',     dept:'資訊工程學系' },
+  { name:'問心無愧',   score:410, school:'中央大學',     dept:'資訊工程學系' },
+  { name:'浮生若夢',   score:410, school:'台師大',       dept:'數學教育學系' },
+  { name:'一葉知秋',   score:409, school:'中正大學',     dept:'電機工程學系' },
+];
+
+const RANK_ACTIVITY_PEERS = [
+  { name:'丹火凌雲',   activity:'師門大比武', school:'台灣大學',     dept:'醫學系' },
+  { name:'玉清真人',   activity:'陣法研習營', school:'台灣大學',     dept:'法律學系' },
+  { name:'靜水流深',   activity:'劍法交流會', school:'陽明交通大學', dept:'電機工程學系' },
+  { name:'蒼穹破劍',   activity:'丹藥煉製課', school:'清華大學',     dept:'化學系' },
+  { name:'無極道人',   activity:'師門大比武', school:'成功大學',     dept:'機械工程學系' },
+  { name:'鳳鳴朝陽',   activity:'經典解讀課', school:'政治大學',     dept:'中文學系' },
+  { name:'青雲直上',   activity:'陣法研習營', school:'中山大學',     dept:'海洋科學系' },
+  { name:'歸真返璞',   activity:'洞府自修',   school:'台師大',       dept:'物理學系' },
+  { name:'千山獨行',   activity:'丹藥煉製課', school:'中興大學',     dept:'化學系' },
+  { name:'大道至簡',   activity:'經典解讀課', school:'輔仁大學',     dept:'哲學系' },
+];
+
+function renderPeerList(containerId, items) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  items.forEach((item, idx) => {
+    const rank = idx + 1;
+    const div = document.createElement('div');
+    div.className = 'rank-item' + (rank <= 3 ? ` rank-${rank}` : '');
+    const numHtml = rank <= 3
+      ? `<div class="rank-num">${MEDALS[idx]}</div>`
+      : `<div class="rank-num plain">${rank}</div>`;
+    const tagHtml = item.activity
+      ? `<span class="rank-tag">${item.activity}</span>`
+      : `<span class="rank-tag">成績 ${item.score}</span>`;
+    div.innerHTML = `
+      ${numHtml}
+      <div class="rank-name" style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;">${item.name} ${tagHtml}</div>
+        <div class="rank-dept">${item.school} · ${item.dept}</div>
+      </div>`;
+    el.appendChild(div);
+  });
+}
+
+renderPeerList('rankScorePeers',    RANK_SCORE_PEERS);
+renderPeerList('rankActivityPeers', RANK_ACTIVITY_PEERS);
+
+// ── Live counters ─────────────────────────────────────────────────────────────
+function updateLive() {
+  document.getElementById('liveOnline').textContent =
+    (Math.floor(Math.random() * 80) + 120).toLocaleString();   // 120–199
+  document.getElementById('liveRecent').textContent =
+    (Math.floor(Math.random() * 60) + 40).toLocaleString();    // 40–99
+}
+updateLive();
+setInterval(updateLive, 8000);
+
+// ── AI 長老提點 ───────────────────────────────────────────────────────────────
+const FREE_QUOTA  = 1;   // 第一次免費
+const MAX_TURNS   = 10;  // 含付費最多10次
+let chatTurns     = 0;
+let paidUnlocked  = false;
+
+// 依活動紀錄與問題給出mock回應
+const ELDER_INIT = `根據你近期的參與紀錄，你在「演講比賽」、「學科能力測驗講座」與「讀書會」上都有出席，顯示學習主動性不錯。建議可以增加「英文口說練習」類的互動課程——你的英文學習時間佔比偏低，這類活動能讓開口練習變得更自然。距全校模擬考剩不到兩週，接下來可優先鞏固數學與理化的弱點題型，再搭配整科模擬練習。`;
+
+const ELDER_RESPONSES = [
+  `你參加過讀書會與講座，說明你有從群體學習中獲益的能力。建議可以更進一步報名「主題式小組討論」課程——每次聚焦一個科目的核心概念，比單純聽講效果更好，也能測試自己是否真的理解了。`,
+  `英文學習時間明顯偏少，目前佔整體比例不到兩成。建議每天固定撥出 30 分鐘練習英文閱讀或聽力，也可以報名「英文口說練習班」，透過真實對話情境來建立語感，比死背單字更有效率。`,
+  `你參加演講比賽後，接下來一週的學習時間都有明顯提升，顯示競賽型活動對你有很好的激勵效果。建議以一個月一次的競賽或模擬考節奏來維持學習動力，每次結束後整理一份檢討筆記。`,
+  `關於未來選系方向，建議先看自己各科目的學習時間分布。如果數理化佔多數，理工相關科系是自然選項；若語文和社會佔比高，人文或社科方向更適合。不用急著決定，但可以開始蒐集幾個目標校系的入學要求。`,
+  `從你的學習時段來看，深夜讀書的比例偏高。研究顯示晚上 10 點後的記憶鞏固效果較差，建議把高難度的新學習內容安排在下午 2–5 點，晚上則改做複習或練習題，品質會更好。`,
+  `全校模擬考即將到來，這是很重要的自我評估機會。建議考前一週不要再衝新進度，改以做過的錯題複習為主，搭配「限時模擬作答練習」，幫助適應考場節奏。考後記得做分科檢討，找出失分集中的題型。`,
+  `從長期發展來看，你可以考慮三個方向：一是走「數理路線」，著重數學、物理、化學，適合理工、資工類科系；二是走「語文人文路線」，強化國英文閱讀與寫作；三是「均衡備戰」，準備學測七科。三條路都可行，但最晚高二下要確定主軸。`,
+  `中斷次數偏多通常代表學習環境或任務切分有問題。建議嘗試「番茄鐘工作法」：25 分鐘專注、5 分鐘休息，每四個週期後長休息 15 分鐘。另外，手機放到另一個房間，是降低中斷率最直接有效的方法。`,
+  `自主複習的比例雖高，但缺少外部回饋。建議每週至少參加一次有老師或同學互動的活動，例如週考訂正討論、讀書會提問環節，或線上直播解題課，這些能讓你發現自己不知道自己不懂的盲點。`,
+];
+
+let usedResponses = [];
+
+function getElderResponse(userMsg) {
+  const msg = userMsg;
+  if (/英文|口說|聽力/.test(msg))           return ELDER_RESPONSES[1];
+  if (/競賽|比賽|排名|模擬考/.test(msg))    return ELDER_RESPONSES[2];
+  if (/方向|志願|科系|升學|選系/.test(msg)) return ELDER_RESPONSES[3];
+  if (/時間|作息|深夜|幾點|時段/.test(msg)) return ELDER_RESPONSES[4];
+  if (/考試|考前|模擬|複習/.test(msg))      return ELDER_RESPONSES[5];
+  if (/未來|發展|出路|大學/.test(msg))      return ELDER_RESPONSES[6];
+  if (/專注|中斷|分心|放棄/.test(msg))      return ELDER_RESPONSES[7];
+  if (/同學|朋友|互動|討論|讀書會/.test(msg)) return ELDER_RESPONSES[8];
+  if (/活動|課程|參加|推薦/.test(msg))      return ELDER_RESPONSES[0];
+  // fallback: rotate unused
+  const unused = ELDER_RESPONSES.filter(r => !usedResponses.includes(r));
+  const pool   = unused.length ? unused : ELDER_RESPONSES;
+  const picked = pool[Math.floor(Math.random() * pool.length)];
+  usedResponses.push(picked);
+  return picked;
+}
+
+function renderQuota() {
+  const remaining = MAX_TURNS - chatTurns;
+  document.getElementById('quotaText').textContent = `${remaining} / ${MAX_TURNS} 次`;
+  const dots = document.getElementById('quotaDots');
+  dots.innerHTML = '';
+  for (let i = 0; i < MAX_TURNS; i++) {
+    const d = document.createElement('div');
+    d.className = 'elder-quota-dot' + (i >= remaining ? ' used' : '');
+    dots.appendChild(d);
+  }
+}
+
+function appendMsg(role, text) {
+  const container = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = `chat-msg ${role}`;
+  const avatarChar = role === 'ai' ? '🧙' : '🧑';
+  div.innerHTML = `
+    <div class="chat-msg-avatar">${avatarChar}</div>
+    <div class="chat-msg-bubble">${text.replace(/「/g,'<em>「').replace(/」/g,'」</em>')}</div>`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function appendTyping() {
+  const container = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg ai';
+  div.id = 'typingIndicator';
+  div.innerHTML = `
+    <div class="chat-msg-avatar">🧙</div>
+    <div class="chat-msg-bubble">
+      <div class="chat-typing">
+        <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+      </div>
+    </div>`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById('typingIndicator');
+  if (el) el.remove();
+}
+
+function checkPaywall() {
+  const overFree = chatTurns >= FREE_QUOTA && !paidUnlocked;
+  const overMax  = chatTurns >= MAX_TURNS;
+  const paywall  = document.getElementById('elderPaywall');
+  const sendBtn  = document.getElementById('chatSendBtn');
+  const input    = document.getElementById('chatInput');
+
+  if (overMax) {
+    paywall.style.display = 'none';
+    sendBtn.disabled = true;
+    input.disabled   = true;
+    input.placeholder = '問詢次數已達上限（10次）';
+  } else if (overFree) {
+    paywall.style.display = 'flex';
+    sendBtn.disabled = true;
+    input.disabled   = true;
+    input.placeholder = '請解鎖後繼續問詢…';
+  }
+}
+
+function unlockPaid() {
+  paidUnlocked = true;
+  document.getElementById('elderPaywall').style.display = 'none';
+  const input   = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('chatSendBtn');
+  input.disabled   = false;
+  sendBtn.disabled = false;
+  input.placeholder = '向長老問詢修行之道…（按 Enter 送出，Shift+Enter 換行）';
+  input.focus();
+  appendMsg('ai', '靈石已驗收，老夫可繼續為你指點迷津。還有何疑惑，盡管道來。');
+}
+
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const text  = input.value.trim();
+  if (!text) return;
+  if (chatTurns >= MAX_TURNS) return;
+  if (chatTurns >= FREE_QUOTA && !paidUnlocked) return;
+
+  input.value = '';
+  input.style.height = '';
+  appendMsg('user', text);
+  chatTurns++;
+  renderQuota();
+
+  const sendBtn = document.getElementById('chatSendBtn');
+  sendBtn.disabled = true;
+  appendTyping();
+
+  setTimeout(() => {
+    removeTyping();
+    appendMsg('ai', getElderResponse(text));
+    sendBtn.disabled = false;
+    checkPaywall();
+  }, 900 + Math.random() * 600);
+}
+
+function handleChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendChat();
+  }
+  // auto-grow textarea
+  const ta = e.target;
+  ta.style.height = '';
+  ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+}
+
+// Init chat
+(function initElder() {
+  renderQuota();
+  appendMsg('ai', ELDER_INIT);
+})();
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+function switchTab(el, tab) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.page').forEach(p =>
+    p.classList.toggle('active', p.id === `page-${tab}`)
+  );
+}
+</script>
+</body>
+</html>
