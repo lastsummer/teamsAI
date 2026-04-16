@@ -13,7 +13,10 @@
     min-height: 100vh;
     padding: 2rem 1rem;
   }
-  .header { text-align: center; margin-bottom: 2rem; }
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
   .header h1 {
     font-size: 1.8rem;
     font-weight: 700;
@@ -23,8 +26,30 @@
     background-clip: text;
     margin-bottom: 0.4rem;
   }
-  .header .meta { color: #718096; font-size: 0.9rem; }
-  .grid { max-width: 700px; margin: 0 auto; display: grid; gap: 1rem; }
+  .header .meta {
+    color: #718096;
+    font-size: 0.9rem;
+  }
+  .header .meta span {
+    color: #9f7aea;
+    font-weight: 600;
+  }
+  .grid {
+    max-width: 700px;
+    margin: 0 auto;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .month-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #4a5568;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.5rem 0 0.2rem;
+    border-bottom: 1px solid #2d3748;
+    margin-bottom: 0.25rem;
+  }
   .card {
     background: #1a1d27;
     border: 1px solid #2d3748;
@@ -38,41 +63,251 @@
     text-decoration: none;
     color: inherit;
   }
-  .card:hover { border-color: #667eea; transform: translateY(-2px); }
+  .card:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+  }
   .card-left { flex: 1; }
-  .card-date { font-size: 1.1rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.4rem; }
-  .card-stats { display: flex; gap: 1rem; flex-wrap: wrap; }
-  .stat-badge { font-size: 0.78rem; color: #718096; }
-  .stat-badge span { color: #9f7aea; font-weight: 600; }
-  .card-arrow { color: #4a5568; font-size: 1.2rem; flex-shrink: 0; }
+  .card-date {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 0.4rem;
+  }
+  .card-stats {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .stat-badge {
+    font-size: 0.78rem;
+    color: #718096;
+  }
+  .stat-badge span {
+    color: #9f7aea;
+    font-weight: 600;
+  }
+  .stat-badge.translated span {
+    color: #68d391;
+  }
+  .stat-badge.dim {
+    opacity: 0.4;
+  }
+  .card-arrow {
+    color: #4a5568;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
   .card:hover .card-arrow { color: #667eea; }
-  .empty { text-align: center; color: #4a5568; padding: 3rem; }
+  .empty {
+    text-align: center;
+    color: #4a5568;
+    padding: 3rem;
+  }
+  .summary-bar {
+    max-width: 700px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .summary-stat {
+    background: #1a1d27;
+    border: 1px solid #2d3748;
+    border-radius: 999px;
+    padding: 0.4rem 1.2rem;
+    font-size: 0.82rem;
+    color: #718096;
+  }
+  .summary-stat span { color: #9f7aea; font-weight: 700; }
 </style>
 </head>
 <body>
   <div class="header">
     <h1>Teams AI 日報總覽</h1>
-    <div class="meta">共 14 份日報</div>
+    <div class="meta">共 <span>28</span> 份日報</div>
+  </div>
+  <div class="summary-bar">
+    <div class="summary-stat">📅 <span>28</span> 份日報</div>
+    <div class="summary-stat">📰 <span>4,955</span> 則資訊</div>
+    <div class="summary-stat">⭐ <span>555</span> 篇必讀</div>
   </div>
   <div class="grid">
+    <div class="month-label">2026年04月</div>
+    <a class="card" href="daily_report_2026-04-15.html">
+      <div class="card-left">
+        <div class="card-date">2026年04月15日</div>
+        <div class="card-stats">
+          <span class="stat-badge">📰 <span>196</span> 則資訊</span>
+          <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card" href="daily_report_2026-04-14.html">
+      <div class="card-left">
+        <div class="card-date">2026年04月14日</div>
+        <div class="card-stats">
+          <span class="stat-badge">📰 <span>197</span> 則資訊</span>
+          <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card" href="daily_report_2026-04-13.html">
+      <div class="card-left">
+        <div class="card-date">2026年04月13日</div>
+        <div class="card-stats">
+          <span class="stat-badge">📰 <span>192</span> 則資訊</span>
+          <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card" href="daily_report_2026-04-12.html">
+      <div class="card-left">
+        <div class="card-date">2026年04月12日</div>
+        <div class="card-stats">
+          <span class="stat-badge">📰 <span>199</span> 則資訊</span>
+          <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card" href="daily_report_2026-04-11.html">
+      <div class="card-left">
+        <div class="card-date">2026年04月11日</div>
+        <div class="card-stats">
+          <span class="stat-badge">📰 <span>179</span> 則資訊</span>
+          <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card" href="daily_report_2026-04-10.html">
+      <div class="card-left">
+        <div class="card-date">2026年04月10日</div>
+        <div class="card-stats">
+          <span class="stat-badge">📰 <span>178</span> 則資訊</span>
+          <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card" href="daily_report_2026-04-09.html">
+      <div class="card-left">
+        <div class="card-date">2026年04月09日</div>
+        <div class="card-stats">
+          <span class="stat-badge">📰 <span>246</span> 則資訊</span>
+          <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card" href="daily_report_2026-04-08.html">
+      <div class="card-left">
+        <div class="card-date">2026年04月08日</div>
+        <div class="card-stats">
+          <span class="stat-badge">📰 <span>178</span> 則資訊</span>
+          <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card" href="daily_report_2026-04-07.html">
+      <div class="card-left">
+        <div class="card-date">2026年04月07日</div>
+        <div class="card-stats">
+          <span class="stat-badge">📰 <span>177</span> 則資訊</span>
+          <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card" href="daily_report_2026-04-06.html">
+      <div class="card-left">
+        <div class="card-date">2026年04月06日</div>
+        <div class="card-stats">
+          <span class="stat-badge">📰 <span>179</span> 則資訊</span>
+          <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card" href="daily_report_2026-04-05.html">
+      <div class="card-left">
+        <div class="card-date">2026年04月05日</div>
+        <div class="card-stats">
+          <span class="stat-badge">📰 <span>176</span> 則資訊</span>
+          <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card" href="daily_report_2026-04-04.html">
+      <div class="card-left">
+        <div class="card-date">2026年04月04日</div>
+        <div class="card-stats">
+          <span class="stat-badge">📰 <span>170</span> 則資訊</span>
+          <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card" href="daily_report_2026-04-03.html">
+      <div class="card-left">
+        <div class="card-date">2026年04月03日</div>
+        <div class="card-stats">
+          <span class="stat-badge">📰 <span>169</span> 則資訊</span>
+          <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a class="card" href="daily_report_2026-04-02.html">
+      <div class="card-left">
+        <div class="card-date">2026年04月02日</div>
+        <div class="card-stats">
+          <span class="stat-badge">📰 <span>178</span> 則資訊</span>
+          <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
     <a class="card" href="daily_report_2026-04-01.html">
       <div class="card-left">
         <div class="card-date">2026年04月01日</div>
         <div class="card-stats">
           <span class="stat-badge">📰 <span>177</span> 則資訊</span>
           <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
-          <span class="stat-badge">🌐 <span>0</span> 篇中文導讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
         </div>
       </div>
       <div class="card-arrow">→</div>
     </a>
+    <div class="month-label">2026年03月</div>
     <a class="card" href="daily_report_2026-03-31.html">
       <div class="card-left">
         <div class="card-date">2026年03月31日</div>
         <div class="card-stats">
           <span class="stat-badge">📰 <span>173</span> 則資訊</span>
           <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
-          <span class="stat-badge">🌐 <span>0</span> 篇中文導讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
         </div>
       </div>
       <div class="card-arrow">→</div>
@@ -83,7 +318,7 @@
         <div class="card-stats">
           <span class="stat-badge">📰 <span>177</span> 則資訊</span>
           <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
-          <span class="stat-badge">🌐 <span>0</span> 篇中文導讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
         </div>
       </div>
       <div class="card-arrow">→</div>
@@ -94,7 +329,7 @@
         <div class="card-stats">
           <span class="stat-badge">📰 <span>178</span> 則資訊</span>
           <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
-          <span class="stat-badge">🌐 <span>0</span> 篇中文導讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
         </div>
       </div>
       <div class="card-arrow">→</div>
@@ -105,7 +340,7 @@
         <div class="card-stats">
           <span class="stat-badge">📰 <span>175</span> 則資訊</span>
           <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
-          <span class="stat-badge">🌐 <span>0</span> 篇中文導讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
         </div>
       </div>
       <div class="card-arrow">→</div>
@@ -116,7 +351,7 @@
         <div class="card-stats">
           <span class="stat-badge">📰 <span>177</span> 則資訊</span>
           <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
-          <span class="stat-badge">🌐 <span>0</span> 篇中文導讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
         </div>
       </div>
       <div class="card-arrow">→</div>
@@ -127,7 +362,7 @@
         <div class="card-stats">
           <span class="stat-badge">📰 <span>178</span> 則資訊</span>
           <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
-          <span class="stat-badge">🌐 <span>0</span> 篇中文導讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
         </div>
       </div>
       <div class="card-arrow">→</div>
@@ -138,7 +373,7 @@
         <div class="card-stats">
           <span class="stat-badge">📰 <span>178</span> 則資訊</span>
           <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
-          <span class="stat-badge">🌐 <span>0</span> 篇中文導讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
         </div>
       </div>
       <div class="card-arrow">→</div>
@@ -149,7 +384,7 @@
         <div class="card-stats">
           <span class="stat-badge">📰 <span>178</span> 則資訊</span>
           <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
-          <span class="stat-badge">🌐 <span>0</span> 篇中文導讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
         </div>
       </div>
       <div class="card-arrow">→</div>
@@ -160,7 +395,7 @@
         <div class="card-stats">
           <span class="stat-badge">📰 <span>177</span> 則資訊</span>
           <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
-          <span class="stat-badge">🌐 <span>0</span> 篇中文導讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
         </div>
       </div>
       <div class="card-arrow">→</div>
@@ -171,7 +406,7 @@
         <div class="card-stats">
           <span class="stat-badge">📰 <span>152</span> 則資訊</span>
           <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
-          <span class="stat-badge">🌐 <span>0</span> 篇中文導讀</span>
+          <span class="stat-badge dim">🌐 <span>0</span> 篇中文導讀</span>
         </div>
       </div>
       <div class="card-arrow">→</div>
@@ -182,7 +417,7 @@
         <div class="card-stats">
           <span class="stat-badge">📰 <span>64</span> 則資訊</span>
           <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
-          <span class="stat-badge">🌐 <span>6</span> 篇中文導讀</span>
+          <span class="stat-badge translated">🌐 <span>6</span> 篇中文導讀</span>
         </div>
       </div>
       <div class="card-arrow">→</div>
@@ -193,7 +428,7 @@
         <div class="card-stats">
           <span class="stat-badge">📰 <span>162</span> 則資訊</span>
           <span class="stat-badge">⭐ <span>15</span> 篇必讀</span>
-          <span class="stat-badge">🌐 <span>7</span> 篇中文導讀</span>
+          <span class="stat-badge translated">🌐 <span>7</span> 篇中文導讀</span>
         </div>
       </div>
       <div class="card-arrow">→</div>
@@ -204,7 +439,7 @@
         <div class="card-stats">
           <span class="stat-badge">📰 <span>195</span> 則資訊</span>
           <span class="stat-badge">⭐ <span>20</span> 篇必讀</span>
-          <span class="stat-badge">🌐 <span>8</span> 篇中文導讀</span>
+          <span class="stat-badge translated">🌐 <span>8</span> 篇中文導讀</span>
         </div>
       </div>
       <div class="card-arrow">→</div>
